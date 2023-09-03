@@ -7,7 +7,6 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
 {
     public class MstSchoolService : IGenericService<MstSchoolDto>
     {
-
         private IMapper _mapper;
         public MstSchoolService(IMapper mapper)
         {

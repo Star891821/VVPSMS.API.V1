@@ -81,6 +81,8 @@ builder.Services.AddTransient<IGenericService<AdmissionFormDto>, AdmissionServic
 builder.Services.AddTransient<IGenericService<MstSchoolGradeDto>, MstSchoolGradeService>();
 builder.Services.AddTransient<IGenericService<MstSchoolDto>, MstSchoolService>();
 builder.Services.AddTransient<IGenericService<MstClassDto>, MstClassService>();
+builder.Services.AddTransient<IGenericService<MstAcademicYearDto>, MstAcademicYearService>();
+builder.Services.AddTransient<IGenericService<MstSchoolStreamDto>, MstSchoolStreamService>();
 builder.Services.AddTransient<IStudentService, StudentService>();
 builder.Services.AddTransient<ITeacherService, TeacherService>();
 builder.Services.AddTransient<IExternalLoginAppService,ExternalLoginAppService>();

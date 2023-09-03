@@ -12,7 +12,8 @@ namespace VVPSMS.API.AutoMapper
             CreateMap<MstSchool, MstSchoolDto>();
             CreateMap<MstSchoolGrade, MstSchoolGradeDto>();
             CreateMap<MstClass, MstClassDto>();
-
+            CreateMap<MstAcademicYear, MstAcademicYearDto>();
+            CreateMap<MstSchoolStream, MstSchoolStreamDto>();
         }
     }
 }
