@@ -25,6 +25,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpPost("UpdateStudentProfile")]
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> UpdateStudentProfile(StudentDto studentDto)
         {
             var response = await _dataRepository.UpdateStudentProfile(studentDto);
