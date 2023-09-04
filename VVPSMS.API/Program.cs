@@ -78,11 +78,13 @@ builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddTransient<ILoginService, LoginService>();
 builder.Services.AddTransient<IGenericService<AdmissionFormDto>, AdmissionService>();
+builder.Services.AddTransient<IAdmissionDocumentService, AdmissionService>();
 builder.Services.AddTransient<IGenericService<MstSchoolGradeDto>, MstSchoolGradeService>();
 builder.Services.AddTransient<IGenericService<MstSchoolDto>, MstSchoolService>();
 builder.Services.AddTransient<IGenericService<MstClassDto>, MstClassService>();
 builder.Services.AddTransient<IGenericService<MstAcademicYearDto>, MstAcademicYearService>();
 builder.Services.AddTransient<IGenericService<MstSchoolStreamDto>, MstSchoolStreamService>();
+builder.Services.AddTransient<IGenericService<MstUserRoleDto>, MstUserRoleService>();
 builder.Services.AddTransient<IStudentService, StudentService>();
 builder.Services.AddTransient<ITeacherService, TeacherService>();
 builder.Services.AddTransient<IExternalLoginAppService,ExternalLoginAppService>();
