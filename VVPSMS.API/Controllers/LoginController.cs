@@ -19,19 +19,19 @@ namespace VVPSMS.API.Controllers
             _mapper = mapper;
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpPost("Login")]
-        [Microsoft.AspNetCore.Authorization.Authorize]
-        public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
-        {
-            var response = await _dataRepository.LoginDetails(loginRequestDto);
-            if (response == null)
-            {
-                return BadRequest("User ID or Password is Wrong");
-            }
-            else
-            {
-                return Ok(response);
-            }
-        }
+        //[Microsoft.AspNetCore.Mvc.HttpPost("Login")]
+        //[Microsoft.AspNetCore.Authorization.Authorize]
+        //public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
+        //{
+        //    var response = await _dataRepository.LoginDetails(loginRequestDto);
+        //    if (response == null)
+        //    {
+        //        return BadRequest("User ID or Password is Wrong");
+        //    }
+        //    else
+        //    {
+        //        return Ok(response);
+        //    }
+        //}
     }
 }
