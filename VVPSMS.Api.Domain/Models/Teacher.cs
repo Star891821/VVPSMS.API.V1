@@ -34,6 +34,4 @@ public partial class Teacher
     public int? ModifiedBy { get; set; }
 
     public DateTime? LastloginAt { get; set; }
-
-    public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
 }
