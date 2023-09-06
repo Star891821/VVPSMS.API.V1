@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace VVPSMS.Service.DataManagers
 {
-    public class AdmissionService : IGenericService<AdmissionFormDto>
+    public class AdmissionService : IGenericService<AdmissionFormDto>,IAdmissionDocumentService
     {
         private IMapper _mapper;
         private readonly IConfiguration _configuration;
@@ -25,6 +25,15 @@ namespace VVPSMS.Service.DataManagers
             {
                 var result = dbContext.AdmissionForms.ToList();
                 return _mapper.Map<List<AdmissionFormDto>>(result);
+            }
+        }
+
+        public List<AdmissionDocumentDto> GetAllDocumentsById(int formid)
+        {
+            using (var dbContext = new VvpsmsdbContext())
+            {
+                var result = dbContext.AdmissionDocuments.Where(e => e.FormId == formid).ToList();
+                return _mapper.Map<List<AdmissionDocumentDto>>(result);
             }
         }
 
@@ -49,16 +58,16 @@ namespace VVPSMS.Service.DataManagers
 
                         if (dbentity != null)
                         {
-                            dbContext.AdmissionForms.Update(ConvertFromDto(dbentity, entity));
-                            dbContext.SaveChanges();
+                            dbContext.AdmissionForms.Update(_mapper.Map<AdmissionForm>(entity));
                         }
                     }
                     else
                     {
-                        dbContext.AdmissionForms.Add(ConvertFromDto(new AdmissionForm(), entity));
-                        dbContext.SaveChanges();
+                        dbContext.AdmissionForms.Add(_mapper.Map<AdmissionForm>(entity));
+                        
                     }
-                    UpdateDocuments(entity);
+                    UpdateDocuments(dbContext,entity);
+                    dbContext.SaveChanges();
                 }
                 var result = dbContext.AdmissionForms.ToList();
                 return _mapper.Map<List<AdmissionFormDto>>(result);
@@ -80,58 +89,19 @@ namespace VVPSMS.Service.DataManagers
                 return _mapper.Map<List<AdmissionFormDto>>(result);
             }
         }
-        private static AdmissionForm ConvertFromDto(AdmissionForm mstAdmissionForm, AdmissionFormDto mstAdmissionFormDto)
+        private  void UpdateDocuments(VvpsmsdbContext dbContext, AdmissionFormDto mstAdmissionFormDto)
         {
-            mstAdmissionForm.AcademicId = mstAdmissionFormDto.AcademicId;
-            mstAdmissionForm.SchoolId = mstAdmissionFormDto.SchoolId;
-            mstAdmissionForm.StreamId = mstAdmissionFormDto.StreamId;
-            mstAdmissionForm.GradeId = mstAdmissionFormDto.GradeId;
-            mstAdmissionForm.ClassId = mstAdmissionFormDto.ClassId;
-            mstAdmissionForm.StudentGivenName = mstAdmissionFormDto.StudentGivenName;
-            mstAdmissionForm.StudentSurname = mstAdmissionFormDto.StudentSurname;
-            mstAdmissionForm.StudentDob = mstAdmissionFormDto.StudentDob;
-            mstAdmissionForm.StudentGender = mstAdmissionFormDto.StudentGender;
-            mstAdmissionForm.StudentAge = mstAdmissionFormDto.StudentAge;
-            mstAdmissionForm.ParentName1 = mstAdmissionFormDto.ParentName1;
-            mstAdmissionForm.HighestQualification1 = mstAdmissionFormDto.HighestQualification1;
-            mstAdmissionForm.ParentContact1 = mstAdmissionFormDto.ParentContact1;
-            mstAdmissionForm.ParentEmail1 = mstAdmissionFormDto.ParentEmail1;
-            mstAdmissionForm.ParentName2 = mstAdmissionFormDto.ParentName2;
-            mstAdmissionForm.HighestQualification2 = mstAdmissionFormDto.HighestQualification2;
-            mstAdmissionForm.ParentContact2 = mstAdmissionFormDto.ParentContact2;
-            mstAdmissionForm.ParentEmail2 = mstAdmissionFormDto.ParentEmail2;
-            mstAdmissionForm.PreferredContact = mstAdmissionFormDto.PreferredContact;
-            mstAdmissionForm.Declaration = mstAdmissionFormDto.Declaration;
-            mstAdmissionForm.SiblingsYn = mstAdmissionFormDto.SiblingsYn;
-            mstAdmissionForm.SpecialNeeds = mstAdmissionFormDto.SpecialNeeds;
-            mstAdmissionForm.LearningDisabilities = mstAdmissionFormDto.LearningDisabilities;
-            mstAdmissionForm.PreviousSchool = mstAdmissionFormDto.PreviousSchool;
-            mstAdmissionForm.ReasonDescription = mstAdmissionFormDto.ReasonDescription;
-            mstAdmissionForm.StudentExpelled = mstAdmissionFormDto.StudentExpelled;
-            mstAdmissionForm.DetailsExpulsion = mstAdmissionFormDto.DetailsExpulsion;
-            mstAdmissionForm.AdmissionStatus = mstAdmissionFormDto.AdmissionStatus;
-            mstAdmissionForm.CreatedAt = mstAdmissionFormDto.CreatedAt;
-            mstAdmissionForm.CreatedBy = mstAdmissionFormDto.CreatedBy;
-            mstAdmissionForm.ModifiedAt = mstAdmissionFormDto.ModifiedAt;
-            mstAdmissionForm.ModifiedBy = mstAdmissionFormDto.ModifiedBy;
-            return mstAdmissionForm;
-        }
-
-        private static void UpdateDocuments(AdmissionFormDto mstAdmissionFormDto)
-        {
-            if (mstAdmissionFormDto.Documents != null)
+            if (mstAdmissionFormDto.listOfAdmissionDocuments != null)
             {
-                using (var dbContext = new VvpsmsdbContext())
-                {
-                    var existing = dbContext.ArAdmissionDocuments.Where(e => e.FormId == mstAdmissionFormDto.FormId).ToList();
+                    var existing = dbContext.AdmissionDocuments.Where(e => e.FormId == mstAdmissionFormDto.FormId).ToList();
                     if (existing.Any())
                     {
-                        dbContext.ArAdmissionDocuments.RemoveRange(existing);
+                        dbContext.AdmissionDocuments.RemoveRange(existing);
                         dbContext.SaveChanges();
                     }
-                    foreach (var item in mstAdmissionFormDto.Documents)
+                    foreach (var item in mstAdmissionFormDto.listOfAdmissionDocuments)
                     {
-                        var mstArAdmissionDocument = new ArAdmissionDocument
+                        var mstArAdmissionDocument = new AdmissionDocument
                         {
                             FormId = mstAdmissionFormDto.FormId,
                             DocumentName = item.DocumentName,
@@ -142,12 +112,14 @@ namespace VVPSMS.Service.DataManagers
                             ModifiedBy = mstAdmissionFormDto.ModifiedBy
                         };
 
-                        dbContext.ArAdmissionDocuments.Add(mstArAdmissionDocument);
+                        dbContext.AdmissionDocuments.Add(mstArAdmissionDocument);
                         dbContext.SaveChanges();
                     }
-                }
+
+
             }
         }
 
+       
     }
 }

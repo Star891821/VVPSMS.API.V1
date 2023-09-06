@@ -8,14 +8,14 @@ namespace VVPSMS.API.AutoMapper
     {
         public AutoMapperProfile()
         {
-            CreateMap<AdmissionForm, AdmissionFormDto>();
-            CreateMap<MstSchool, MstSchoolDto>();
-            CreateMap<MstSchoolGrade, MstSchoolGradeDto>();
-            CreateMap<MstClass, MstClassDto>();
-            CreateMap<MstAcademicYear, MstAcademicYearDto>();
-            CreateMap<MstSchoolStream, MstSchoolStreamDto>();
-            CreateMap<MstUserRole, MstUserRoleDto>();
-            CreateMap<AdmissionDocument, AdmissionDocumentDto>();
+            CreateMap<AdmissionForm, AdmissionFormDto>().ReverseMap();
+            CreateMap<MstSchool, MstSchoolDto>().ReverseMap();
+            CreateMap<MstSchoolGrade, MstSchoolGradeDto>().ReverseMap();
+            CreateMap<MstClass, MstClassDto>().ReverseMap();
+            CreateMap<MstAcademicYear, MstAcademicYearDto>().ReverseMap();
+            CreateMap<MstSchoolStream, MstSchoolStreamDto>().ReverseMap();
+            CreateMap<MstUserRole, MstUserRoleDto>().ReverseMap();
+            CreateMap<AdmissionDocument, AdmissionDocumentDto>().ReverseMap();
         }
     }
 }

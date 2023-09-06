@@ -87,6 +87,5 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public MstSchoolDto? SchoolDetails { get; set; }
 
-        public List<DocumentDto>? Documents { get; set; }
     }
 }
