@@ -13,11 +13,17 @@ namespace VVPSMS.API.Controllers
     [ApiController]
     public class AdmissionController : GenericController<AdmissionFormDto>
     {
-        public AdmissionController(IGenericService<AdmissionFormDto> genericService)
+        IAdmissionDocumentService admissionDocumentService;
+        public AdmissionController(IGenericService<AdmissionFormDto> genericService, IAdmissionDocumentService documentService)
             : base(genericService)
         {
-
+            admissionDocumentService = documentService;
         }
 
+        [HttpGet("{id}"), ActionName("GetAllDocumentsById")]
+        public List<AdmissionDocumentDto> GetAllDocumentsById(int id)
+        {
+            return admissionDocumentService.GetAllDocumentsById(id);
+        }
     }
 }
