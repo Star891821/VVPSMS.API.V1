@@ -197,7 +197,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<Announcement>(entity =>
         {
-            entity.HasKey(e => e.PostId).HasName("PK__Announce__3ED78766A0A74BA2");
+            entity.HasKey(e => e.PostId).HasName("PK__Announce__3ED787662F6F2517");
 
             entity.Property(e => e.PostId).HasColumnName("post_id");
             entity.Property(e => e.CreatedAt)
@@ -226,7 +226,7 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Announcements)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Announcem__user___0C1BC9F9");
+                .HasConstraintName("FK__Announcem__user___324172E1");
         });
 
         modelBuilder.Entity<ArAdmissionDocument>(entity =>
@@ -610,11 +610,10 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<MstUser>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__MstUsers__B9BE370FEB949D71");
+            entity.HasKey(e => e.UserId).HasName("PK__MstUsers__B9BE370F849DE5AD");
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
@@ -626,6 +625,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.UserGivenName)
                 .HasMaxLength(255)
                 .HasColumnName("user_givenName");
@@ -635,9 +635,6 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.UserPhone)
                 .HasMaxLength(15)
                 .HasColumnName("user_phone");
-            entity.Property(e => e.UserRole)
-                .HasMaxLength(255)
-                .HasColumnName("user_role");
             entity.Property(e => e.UserSurname)
                 .HasMaxLength(255)
                 .HasColumnName("user_surname");
@@ -647,6 +644,11 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.Userpassword)
                 .HasMaxLength(255)
                 .HasColumnName("userpassword");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.MstUsers)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__MstUsers__role_i__2E70E1FD");
         });
 
         modelBuilder.Entity<MstUserRole>(entity =>

@@ -57,12 +57,12 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
 
                         if (dbentity != null)
                         {
-                            dbContext.MstClasses.Update(ConvertFromDto(dbentity, entity));
+                            dbContext.MstClasses.Update(_mapper.Map<MstClass>(entity));
                         }
                     }
                     else
                     {
-                        dbContext.MstClasses.Add(ConvertFromDto(new MstClass(), entity));
+                        dbContext.MstClasses.Add(_mapper.Map<MstClass>(entity));
                     }
                     dbContext.SaveChanges();
                 }
@@ -72,16 +72,5 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
             }
         }
 
-
-        private static MstClass ConvertFromDto(MstClass mstClass, MstClassDto mstClassDto)
-        {
-            mstClass.ClassName = mstClassDto.ClassName;
-            mstClass.ActiveYn = mstClassDto.ActiveYn;
-            mstClass.CreatedBy = mstClassDto.CreatedBy;
-            mstClass.CreatedAt = mstClassDto.CreatedAt;
-            mstClass.ModifiedBy = mstClassDto.ModifiedBy;
-            mstClass.ModifiedAt = mstClassDto.ModifiedAt;
-            return mstClass;
-        }
     }
 }

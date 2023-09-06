@@ -20,10 +20,10 @@ namespace VVPSMS.API.Controllers
             admissionDocumentService = documentService;
         }
 
-        [HttpGet("{id}"), ActionName("GetAllDocumentsById")]
-        public List<AdmissionDocumentDto> GetAllDocumentsById(int id)
+        [HttpGet("{formid}"), ActionName("GetAllDocumentsById")]
+        public List<AdmissionDocumentDto> GetAllDocumentsById(int formid)
         {
-            return admissionDocumentService.GetAllDocumentsById(id);
+            return admissionDocumentService.GetAllDocumentsById(formid);
         }
     }
 }

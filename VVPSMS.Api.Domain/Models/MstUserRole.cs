@@ -20,4 +20,6 @@ public partial class MstUserRole
     public int? ModifiedBy { get; set; }
 
     public virtual ICollection<MstRoleGroup> MstRoleGroups { get; set; } = new List<MstRoleGroup>();
+
+    public virtual ICollection<MstUser> MstUsers { get; set; } = new List<MstUser>();
 }
