@@ -9,7 +9,7 @@ public partial class AdmissionForm
 
     public int AcademicId { get; set; }
 
-    public int SchoolId { get; set; }
+    public int SchoolCode { get; set; }
 
     public int StreamId { get; set; }
 
@@ -71,15 +71,11 @@ public partial class AdmissionForm
 
     public int? ModifiedBy { get; set; }
 
-    public virtual MstAcademicYear Academic { get; set; } = null!;
-
     public virtual ICollection<AdmissionDocument> AdmissionDocuments { get; set; } = new List<AdmissionDocument>();
 
     public virtual MstClass Class { get; set; } = null!;
 
     public virtual MstSchoolGrade Grade { get; set; } = null!;
-
-    public virtual MstSchool School { get; set; } = null!;
 
     public virtual ICollection<SiblingInfo> SiblingInfos { get; set; } = new List<SiblingInfo>();
 

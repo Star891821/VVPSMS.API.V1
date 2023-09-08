@@ -17,7 +17,7 @@ public partial class MstUser
 
     public string? UserPhone { get; set; }
 
-    public int RoleId { get; set; }
+    public string UserRole { get; set; } = null!;
 
     public string UserLoginType { get; set; } = null!;
 
@@ -34,6 +34,4 @@ public partial class MstUser
     public DateTime? LastloginAt { get; set; }
 
     public virtual ICollection<Announcement> Announcements { get; set; } = new List<Announcement>();
-
-    public virtual MstUserRole Role { get; set; } = null!;
 }
