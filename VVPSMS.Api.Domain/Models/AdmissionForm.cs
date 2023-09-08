@@ -77,8 +77,6 @@ public partial class AdmissionForm
 
     public virtual MstClass Class { get; set; } = null!;
 
-    public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
-
     public virtual MstSchoolGrade Grade { get; set; } = null!;
 
     public virtual MstSchool School { get; set; } = null!;

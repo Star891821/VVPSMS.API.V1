@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace VVPSMS.Api.Models.ModelsDto
 {
-    public class DocumentDto
+    public class ParentDocumentDto
     {
         public int DocumentId { get; set; }
 
-        public int StudentId { get; set; }
-
-        public int TeacherId { get; set; }
+        public int ParentId { get; set; }
 
         public string DocumentName { get; set; } = null!;
 
@@ -25,6 +23,5 @@ namespace VVPSMS.Api.Models.ModelsDto
         public DateTime? ModifiedAt { get; set; }
 
         public int? ModifiedBy { get; set; }
-
     }
 }

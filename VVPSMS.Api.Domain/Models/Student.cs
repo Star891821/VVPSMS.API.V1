@@ -33,5 +33,5 @@ public partial class Student
 
     public DateTime? LastloginAt { get; set; }
 
-    public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
+    public virtual ICollection<StudentDocument> StudentDocuments { get; set; } = new List<StudentDocument>();
 }

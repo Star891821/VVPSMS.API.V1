@@ -17,6 +17,12 @@ namespace VVPSMS.API.AutoMapper
             CreateMap<MstUserRole, MstUserRoleDto>().ReverseMap();
             CreateMap<AdmissionDocument, AdmissionDocumentDto>().ReverseMap();
             CreateMap<MstUser, MstUserDto>().ReverseMap();
+            CreateMap<Student, StudentDto>().ReverseMap();
+            CreateMap<StudentDocument, StudentDocumentDto>().ReverseMap();
+            CreateMap<Teacher, TeacherDto>().ReverseMap();
+            CreateMap<TeacherDocument, TeacherDocumentDto>().ReverseMap();
+            CreateMap<Parent, ParentDto>().ReverseMap();
+            CreateMap<ParentDocument, ParentDocumentDto>().ReverseMap();
         }
     }
 }

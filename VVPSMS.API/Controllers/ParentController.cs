@@ -1,23 +1,20 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
-using VVPSMS.Service.Repository.Teachers;
-using VVPSMS.Service.Shared;
+using VVPSMS.Service.Repository.Parents;
 
 namespace VVPSMS.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class TeacherController : ControllerBase
+    public class ParentController : ControllerBase
     {
         private IMapper _mapper;
-        private readonly ITeacherUnitOfWork _unitOfWork;
+        private readonly IParentUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         //private readonly IStorageService _storageService;
-        public TeacherController(IMapper mapper, ITeacherUnitOfWork unitOfWork, IConfiguration configuration)
+        public ParentController(IMapper mapper, IParentUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -28,16 +25,16 @@ namespace VVPSMS.API.Controllers
         //[HttpPost("UpdateTeacherProfile")]
         //[Microsoft.AspNetCore.Authorization.Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAllTeacherDetails()
+        public async Task<IActionResult> GetAllParentDetails()
         {
-            var users = await _unitOfWork.TeacherService.GetAll();
+            var users = await _unitOfWork.ParentService.GetAll();
             return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetTeacherDetailsById(int id)
+        public async Task<IActionResult> GetParentDetailsById(int id)
         {
-            var item = await _unitOfWork.TeacherService.GetById(id);
+            var item = await _unitOfWork.ParentService.GetById(id);
 
             if (item == null)
                 return NotFound();
@@ -46,7 +43,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAllDocumentsByTeacherId(int id)
+        public async Task<IActionResult> GetAllDocumentsByParentId(int id)
         {
             var item = await _unitOfWork.DocumentService.GetAll(id);
 
@@ -57,14 +54,14 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> InsertOrUpdateStudent(TeacherDto teacherDto)
+        public async Task<IActionResult> InsertOrUpdateParent(ParentDto parentDto)
         {
 
-            var result = _mapper.Map<Teacher>(teacherDto);
-            var documents = _mapper.Map<List<TeacherDocument>>(teacherDto.Documents);
+            var result = _mapper.Map<Parent>(parentDto);
+            var documents = _mapper.Map<List<ParentDocument>>(parentDto.Documents);
             await _unitOfWork.DocumentService.RemoveRange(documents);
 
-            await _unitOfWork.TeacherService.InsertOrUpdate(result);
+            await _unitOfWork.ParentService.InsertOrUpdate(result);
 
             await _unitOfWork.CompleteAsync();
 
@@ -73,11 +70,11 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteStudent(TeacherDto teacherDto)
+        public async Task<IActionResult> DeleteParent(ParentDto parentDto)
         {
-            var result = _mapper.Map<Teacher>(teacherDto);
-            var item = await _unitOfWork.TeacherService.Remove(result);
-            var documents = _mapper.Map<List<TeacherDocument>>(teacherDto.Documents);
+            var result = _mapper.Map<Parent>(parentDto);
+            var item = await _unitOfWork.ParentService.Remove(result);
+            var documents = _mapper.Map<List<ParentDocument>>(parentDto.Documents);
             await _unitOfWork.DocumentService.RemoveRange(documents);
             return Ok(item);
         }

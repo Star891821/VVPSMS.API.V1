@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -9,8 +10,16 @@ using VVPSMS.API.AutoMapper;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Business;
 using VVPSMS.Service.DataManagers;
+using VVPSMS.Service.DataManagers.AdmissionDataManagers;
 using VVPSMS.Service.DataManagers.MasterDataManagers;
+using VVPSMS.Service.DataManagers.ParentDataManagers;
+using VVPSMS.Service.DataManagers.StudentDataManagers;
+using VVPSMS.Service.DataManagers.TeacherDataManagers;
 using VVPSMS.Service.Repository;
+using VVPSMS.Service.Repository.Admissions;
+using VVPSMS.Service.Repository.Parents;
+using VVPSMS.Service.Repository.Students;
+using VVPSMS.Service.Repository.Teachers;
 using VVPSMS.Service.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -76,9 +85,13 @@ builder.Services.AddSwaggerGen(c => {
 });
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddDbContext<VvpsmsdbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMS")));
 builder.Services.AddTransient<ILoginService, LoginService>();
-builder.Services.AddTransient<IGenericService<AdmissionFormDto>, AdmissionService>();
-builder.Services.AddTransient<IAdmissionDocumentService, AdmissionService>();
+builder.Services.AddScoped<IAdmissionUnitOfWork, AdmissionUnitOfWork>();
+builder.Services.AddScoped<IStudentUnitOfWork, StudentUnitOfWork>();
+builder.Services.AddScoped<ITeacherUnitOfWork, TeacherUnitOfWork>();
+builder.Services.AddScoped<IParentUnitOfWork, ParentUnitOfWork>();
 builder.Services.AddTransient<IGenericService<MstSchoolGradeDto>, MstSchoolGradeService>();
 builder.Services.AddTransient<IGenericService<MstSchoolDto>, MstSchoolService>();
 builder.Services.AddTransient<IGenericService<MstClassDto>, MstClassService>();
@@ -86,8 +99,6 @@ builder.Services.AddTransient<IGenericService<MstAcademicYearDto>, MstAcademicYe
 builder.Services.AddTransient<IGenericService<MstSchoolStreamDto>, MstSchoolStreamService>();
 builder.Services.AddTransient<IGenericService<MstUserRoleDto>, MstUserRoleService>();
 builder.Services.AddTransient<IGenericService<MstUserDto>, UserService>();
-builder.Services.AddTransient<IStudentService, StudentService>();
-builder.Services.AddTransient<ITeacherService, TeacherService>();
 builder.Services.AddTransient<IExternalLoginAppService,ExternalLoginAppService>();
 builder.Services.AddTransient<IJwtAuthManager,JwtAuthManager>();
 builder.Services.AddTransient<IStorageService, StorageService>();

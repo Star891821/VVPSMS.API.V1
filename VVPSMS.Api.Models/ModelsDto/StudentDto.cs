@@ -36,7 +36,7 @@ namespace VVPSMS.Api.Models.ModelsDto
         public int? ModifiedBy { get; set; }
 
         public DateTime? LastloginAt { get; set; }
-        public List<DocumentDto>? Documents { get; set; }
+        public List<StudentDocumentDto>? Documents { get; set; }
     }
 
 }

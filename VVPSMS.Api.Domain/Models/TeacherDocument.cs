@@ -3,15 +3,11 @@ using System.Collections.Generic;
 
 namespace VVPSMS.Domain.Models;
 
-public partial class Document
+public partial class TeacherDocument
 {
     public int DocumentId { get; set; }
 
-    public int? StudentId { get; set; }
-
-    public int? TeacherId { get; set; }
-
-    public int? FormId { get; set; }
+    public int TeacherId { get; set; }
 
     public string DocumentName { get; set; } = null!;
 
@@ -25,9 +21,5 @@ public partial class Document
 
     public int? ModifiedBy { get; set; }
 
-    public virtual AdmissionForm? Form { get; set; }
-
-    public virtual Student? Student { get; set; }
-
-    public virtual Teacher? Teacher { get; set; }
+    public virtual Teacher Teacher { get; set; } = null!;
 }

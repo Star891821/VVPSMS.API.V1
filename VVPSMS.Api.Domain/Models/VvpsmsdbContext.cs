@@ -25,8 +25,6 @@ public partial class VvpsmsdbContext : DbContext
 
     public virtual DbSet<ArAdmissionForm> ArAdmissionForms { get; set; }
 
-    public virtual DbSet<Document> Documents { get; set; }
-
     public virtual DbSet<MstAcademicYear> MstAcademicYears { get; set; }
 
     public virtual DbSet<MstAdmissionStatus> MstAdmissionStatuses { get; set; }
@@ -47,11 +45,19 @@ public partial class VvpsmsdbContext : DbContext
 
     public virtual DbSet<MstUserRole> MstUserRoles { get; set; }
 
+    public virtual DbSet<Parent> Parents { get; set; }
+
+    public virtual DbSet<ParentDocument> ParentDocuments { get; set; }
+
     public virtual DbSet<SiblingInfo> SiblingInfos { get; set; }
 
     public virtual DbSet<Student> Students { get; set; }
 
+    public virtual DbSet<StudentDocument> StudentDocuments { get; set; }
+
     public virtual DbSet<Teacher> Teachers { get; set; }
+
+    public virtual DbSet<TeacherDocument> TeacherDocuments { get; set; }
 
     public virtual DbSet<UserRegistration> UserRegistrations { get; set; }
 
@@ -331,42 +337,6 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.StudentSurname)
                 .HasMaxLength(255)
                 .HasColumnName("student_surname");
-        });
-
-        modelBuilder.Entity<Document>(entity =>
-        {
-            entity.HasKey(e => e.DocumentId).HasName("PK__Document__9666E8AC3CEE559C");
-
-            entity.Property(e => e.DocumentId).HasColumnName("document_id");
-            entity.Property(e => e.CreatedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("created_at");
-            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
-            entity.Property(e => e.DocumentName)
-                .HasMaxLength(255)
-                .HasColumnName("document_name");
-            entity.Property(e => e.DocumentPath)
-                .HasMaxLength(255)
-                .HasColumnName("document_path");
-            entity.Property(e => e.FormId).HasColumnName("form_id");
-            entity.Property(e => e.ModifiedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("modified_at");
-            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
-            entity.Property(e => e.StudentId).HasColumnName("student_id");
-            entity.Property(e => e.TeacherId).HasColumnName("teacher_id");
-
-            entity.HasOne(d => d.Form).WithMany(p => p.Documents)
-                .HasForeignKey(d => d.FormId)
-                .HasConstraintName("FK_Documents_AdmissionForms");
-
-            entity.HasOne(d => d.Student).WithMany(p => p.Documents)
-                .HasForeignKey(d => d.StudentId)
-                .HasConstraintName("FK_Documents_Students");
-
-            entity.HasOne(d => d.Teacher).WithMany(p => p.Documents)
-                .HasForeignKey(d => d.TeacherId)
-                .HasConstraintName("FK_Documents_Teachers");
         });
 
         modelBuilder.Entity<MstAcademicYear>(entity =>
@@ -671,6 +641,75 @@ public partial class VvpsmsdbContext : DbContext
                 .HasColumnName("role_name");
         });
 
+        modelBuilder.Entity<Parent>(entity =>
+        {
+            entity.HasKey(e => e.ParentId).HasName("PK__Parents__F2A6081933E7E8E8");
+
+            entity.Property(e => e.ParentId).HasColumnName("parent_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.Enforce2Fa).HasColumnName("enforce2FA");
+            entity.Property(e => e.LastloginAt)
+                .HasColumnType("datetime")
+                .HasColumnName("lastlogin_at");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.ParentGivenName)
+                .HasMaxLength(255)
+                .HasColumnName("parent_givenName");
+            entity.Property(e => e.ParentLoginType)
+                .HasMaxLength(255)
+                .HasColumnName("parent_loginType");
+            entity.Property(e => e.ParentPassword)
+                .HasMaxLength(255)
+                .HasColumnName("parent_password");
+            entity.Property(e => e.ParentPhone)
+                .HasMaxLength(15)
+                .HasColumnName("parent_phone");
+            entity.Property(e => e.ParentRole)
+                .HasMaxLength(255)
+                .HasColumnName("parent_role");
+            entity.Property(e => e.ParentSurname)
+                .HasMaxLength(255)
+                .HasColumnName("parent_surname");
+            entity.Property(e => e.ParentUsername)
+                .HasMaxLength(255)
+                .HasColumnName("parent_username");
+        });
+
+        modelBuilder.Entity<ParentDocument>(entity =>
+        {
+            entity.HasKey(e => e.DocumentId).HasName("PK__ParentDo__9666E8AC33250FF1");
+
+            entity.Property(e => e.DocumentId).HasColumnName("document_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.DocumentName)
+                .HasMaxLength(255)
+                .HasColumnName("document_name");
+            entity.Property(e => e.DocumentPath)
+                .HasMaxLength(255)
+                .HasColumnName("document_path");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.ParentId).HasColumnName("parent_id");
+
+            entity.HasOne(d => d.Parent).WithMany(p => p.ParentDocuments)
+                .HasForeignKey(d => d.ParentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Documents_Parents");
+        });
+
         modelBuilder.Entity<SiblingInfo>(entity =>
         {
             entity.HasKey(e => e.SiblingId).HasName("PK__SiblingI__7A415E3FE999D801");
@@ -748,6 +787,34 @@ public partial class VvpsmsdbContext : DbContext
                 .HasColumnName("student_username");
         });
 
+        modelBuilder.Entity<StudentDocument>(entity =>
+        {
+            entity.HasKey(e => e.DocumentId).HasName("PK__StudentD__9666E8AC665C9150");
+
+            entity.Property(e => e.DocumentId).HasColumnName("document_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.DocumentName)
+                .HasMaxLength(255)
+                .HasColumnName("document_name");
+            entity.Property(e => e.DocumentPath)
+                .HasMaxLength(255)
+                .HasColumnName("document_path");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.StudentId).HasColumnName("student_id");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.StudentDocuments)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Documents_Students");
+        });
+
         modelBuilder.Entity<Teacher>(entity =>
         {
             entity.HasKey(e => e.TeacherId).HasName("PK__Teachers__03AE777E4FDDE195");
@@ -788,6 +855,34 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.TeacherUsername)
                 .HasMaxLength(255)
                 .HasColumnName("teacher_username");
+        });
+
+        modelBuilder.Entity<TeacherDocument>(entity =>
+        {
+            entity.HasKey(e => e.DocumentId).HasName("PK__TeacherD__9666E8AC185AEAD7");
+
+            entity.Property(e => e.DocumentId).HasColumnName("document_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.DocumentName)
+                .HasMaxLength(255)
+                .HasColumnName("document_name");
+            entity.Property(e => e.DocumentPath)
+                .HasMaxLength(255)
+                .HasColumnName("document_path");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.TeacherId).HasColumnName("teacher_id");
+
+            entity.HasOne(d => d.Teacher).WithMany(p => p.TeacherDocuments)
+                .HasForeignKey(d => d.TeacherId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Documents_Teachers");
         });
 
         modelBuilder.Entity<UserRegistration>(entity =>

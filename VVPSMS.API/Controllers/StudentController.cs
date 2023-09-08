@@ -3,42 +3,79 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using VVPSMS.Api.Models.ModelsDto;
-using VVPSMS.Service.Repository;
+using VVPSMS.Domain.Models;
+using VVPSMS.Service.Repository.Students;
 using VVPSMS.Service.Shared;
 
 namespace VVPSMS.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class StudentController : ControllerBase
     {
+        private readonly IStudentUnitOfWork _unitOfWork;
         private IMapper _mapper;
-        private readonly IStudentService _dataRepository;
-        private readonly IConfiguration _configuration;
-        //private readonly IStorageService _storageService;
-        public StudentController(IMapper mapper, IStudentService dataRepository, IConfiguration configuration)
+        public StudentController(IStudentUnitOfWork unitOfWork, IMapper mapper)
         {
-            _dataRepository = dataRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _configuration = configuration;
-           // _storageService = new StorageService(_configuration);
         }
 
-        [HttpPost("UpdateStudentProfile")]
-        [Microsoft.AspNetCore.Authorization.Authorize]
-        public async Task<IActionResult> UpdateStudentProfile(StudentDto studentDto)
+        [HttpGet]
+        public async Task<IActionResult> GetAllStudentDetails()
         {
-            var response = await _dataRepository.UpdateStudentProfile(studentDto);
-            if (response.Status)
-            {
-                // blob to store here
-                return Ok(response);
-            }
-            else
-            {
-                return BadRequest(response.Message);
-            }
+            var users = await _unitOfWork.StudentService.GetAll();
+            return Ok(users);
+        }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetStudentDetailsById(int id)
+        {
+            var item = await _unitOfWork.StudentService.GetById(id);
+
+            if (item == null)
+                return NotFound();
+
+            return Ok(item);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAllDocumentsByStudentId(int id)
+        {
+            var item = await _unitOfWork.DocumentService.GetAll(id);
+
+            if (item == null)
+                return NotFound();
+
+            return Ok(item);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateStudent(StudentDto studentDto)
+        {
+
+            var result = _mapper.Map<Student>(studentDto);
+            var documents = _mapper.Map<List<StudentDocument>>(studentDto.Documents);
+            await _unitOfWork.DocumentService.RemoveRange(documents);
+
+            await _unitOfWork.StudentService.InsertOrUpdate(result);
+            
+            await _unitOfWork.CompleteAsync();
+
+            return Ok();
+
+        }
+
+
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteStudent(StudentDto studentDto)
+        {
+            var result = _mapper.Map<Student>(studentDto);
+            var item = await _unitOfWork.StudentService.Remove(result);
+            var documents = _mapper.Map<List<StudentDocument>>(studentDto.Documents);
+            await _unitOfWork.DocumentService.RemoveRange(documents);
+            return Ok(item);
         }
     }
 }
