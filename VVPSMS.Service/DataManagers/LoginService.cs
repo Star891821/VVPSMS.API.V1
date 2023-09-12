@@ -29,6 +29,8 @@ namespace VVPSMS.Service.DataManagers
                                 UserName = student.StudentUsername,
                                 GivenName = student.StudentGivenName,
                                 Phone = student.StudentPhone ?? string.Empty,
+                                Status=true,
+                                Message="Valid User"
                             };
                         }
                         break;
@@ -41,11 +43,12 @@ namespace VVPSMS.Service.DataManagers
                                 UserName = teacher.TeacherUsername,
                                 GivenName = teacher.TeacherGivenName,
                                 Phone = teacher.TeacherPhone ?? string.Empty,
+                                Status = true,
+                                Message = "Valid User"
                             };
                         }
                         break;
-                    default:
-                        loginResponseDto = new LoginResponseDto();
+                    default:                        
                         break;
                 }
             }

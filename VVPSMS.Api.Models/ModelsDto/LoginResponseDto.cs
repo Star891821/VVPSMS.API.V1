@@ -1,6 +1,6 @@
 ﻿namespace VVPSMS.Api.Models.ModelsDto
 {
-    public class LoginResponseDto
+    public class LoginResponseDto:CommonResponse
     {
         public string UserName { get; set; }
 

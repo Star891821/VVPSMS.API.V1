@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System.Web.Http;
-using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Service.Repository;
-using Microsoft.AspNetCore.Authorization;
 
 namespace VVPSMS.API.Controllers
 {

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Web.Http;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Service.Repository;
 
@@ -28,7 +28,7 @@ namespace VVPSMS.API.Controllers
             if(loginRequest != null)
             {
                 var loginResponse = await _dataRepository.LoginDetails(loginRequest);
-                if(loginResponse != null)
+                if(loginResponse!=null && loginResponse.Status ==true)
                 {
                     var issuer = _configuration["Jwt:Issuer"];
                     var audience = _configuration["Jwt:Audience"];
@@ -58,7 +58,7 @@ namespace VVPSMS.API.Controllers
                     var jwtToken=tokenHandler.WriteToken(token);
 
                     return Ok(jwtToken);
-                }
+                }                
             }
             return response;
         }
