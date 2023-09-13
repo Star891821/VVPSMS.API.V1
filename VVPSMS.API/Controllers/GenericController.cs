@@ -14,7 +14,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet]
-        [Microsoft.AspNetCore.Authorization.Authorize]
+       // [Microsoft.AspNetCore.Authorization.Authorize]
         public List<T> Get()
         {
             return service.GetAll();
