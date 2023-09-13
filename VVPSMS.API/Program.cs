@@ -114,7 +114,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(devCorsPolicy, builder =>
     {
-        builder.WithOrigins("http://localhost:4200","https://localhost:4200", "http://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/", "https://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        builder.WithOrigins("http://localhost:4200",
+            "https://localhost:4200", 
+            "http://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/", 
+            "https://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
         //builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
         //builder.SetIsOriginAllowed(origin => true);
@@ -125,7 +128,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(devCorsPolicy, builder =>
     {
-        builder.WithOrigins("http://localhost:4200","https://localhost:4200", "http://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/", "https://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        builder.WithOrigins("http://localhost:4200",
+            "https://localhost:4200", 
+            "http://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/", 
+            "https://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
