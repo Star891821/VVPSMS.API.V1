@@ -20,7 +20,7 @@ namespace VVPSMS.Service.DataManagers
             {
                 switch (loginRequest.LoginUser.ToUpper())
                 {
-                    case "STUDENT":
+                    case "STUDENT" or "S":
                         var student = await _vvpsmsdbContext.Students.FirstOrDefaultAsync(x => x.StudentUsername == loginRequest.UserId && x.StudentPassword == loginRequest.Password);
                         if (student != null)
                         {
@@ -34,8 +34,9 @@ namespace VVPSMS.Service.DataManagers
                             };
                         }
                         break;
-                    case "TEACHER":
-                        var teacher = await _vvpsmsdbContext.Teachers.FirstOrDefaultAsync(x => x.TeacherUsername == loginRequest.UserId && x.TeacherPassword == loginRequest.Password);
+                    case "TEACHER" or "T":
+                        var teacher = await _vvpsmsdbContext.Teachers.FirstOrDefaultAsync(x => x.TeacherUsername == loginRequest.UserId 
+                        && x.TeacherPassword == loginRequest.Password);
                         if (teacher != null)
                         {
                             loginResponseDto = new LoginResponseDto()
@@ -48,7 +49,20 @@ namespace VVPSMS.Service.DataManagers
                             };
                         }
                         break;
-                    default:                        
+                    default:
+                        var user = await _vvpsmsdbContext.MstUsers.FirstOrDefaultAsync(x => x.Username == loginRequest.UserId
+                        && x.Userpassword == loginRequest.Password);
+                        if (user != null)
+                        {
+                            loginResponseDto = new LoginResponseDto()
+                            {
+                                UserName = user.Username,
+                                GivenName = user.UserGivenName,
+                                Phone = user.UserPhone ?? string.Empty,
+                                Status = true,
+                                Message = "Valid User"
+                            };
+                        }
                         break;
                 }
             }

@@ -64,7 +64,13 @@ namespace VVPSMS.API.Controllers
                     var token=tokenHandler.CreateToken(tokenDescriptor);
                     var jwtToken=tokenHandler.WriteToken(token);
 
-                    return Ok(jwtToken);
+                    var authResponse = new LoginAuthResponse()
+                    {
+                        JwtToken = jwtToken,
+                        ExpiryDateTime= expires.ToString(),
+                        LoggedInUser= loginRequest.LoginUser
+                    };
+                    return Ok(authResponse);
                 }                
             }
             return response;

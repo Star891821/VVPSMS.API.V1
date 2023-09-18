@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
@@ -8,6 +9,7 @@ namespace VVPSMS.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class AdmissionController : ControllerBase
     {
         private readonly IAdmissionUnitOfWork _unitOfWork;
