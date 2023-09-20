@@ -68,7 +68,7 @@ namespace VVPSMS.API.Controllers
                     {
                         JwtToken = jwtToken,
                         ExpiryDateTime= expires.ToString(),
-                        LoggedInUser= loginRequest.LoginUser
+                        LoggedInUser= loginResponse.Role
                     };
                     return Ok(authResponse);
                 }                

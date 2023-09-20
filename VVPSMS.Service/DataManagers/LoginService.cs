@@ -30,7 +30,8 @@ namespace VVPSMS.Service.DataManagers
                                 GivenName = student.StudentGivenName,
                                 Phone = student.StudentPhone ?? string.Empty,
                                 Status=true,
-                                Message="Valid User"
+                                Message="Valid User",
+                                Role="STUDENT"
                             };
                         }
                         break;
@@ -45,7 +46,8 @@ namespace VVPSMS.Service.DataManagers
                                 GivenName = teacher.TeacherGivenName,
                                 Phone = teacher.TeacherPhone ?? string.Empty,
                                 Status = true,
-                                Message = "Valid User"
+                                Message = "Valid User",
+                                Role = "TEACHER"
                             };
                         }
                         break;
@@ -54,13 +56,15 @@ namespace VVPSMS.Service.DataManagers
                         && x.Userpassword == loginRequest.Password);
                         if (user != null)
                         {
+                            var loggedInRole= await _vvpsmsdbContext.MstUserRoles.FirstOrDefaultAsync(x=>x.RoleId==user.RoleId);
                             loginResponseDto = new LoginResponseDto()
                             {
                                 UserName = user.Username,
                                 GivenName = user.UserGivenName,
                                 Phone = user.UserPhone ?? string.Empty,
                                 Status = true,
-                                Message = "Valid User"
+                                Message = "Valid User",
+                                Role = loggedInRole!=null? loggedInRole.RoleName:"Unknown"
                             };
                         }
                         break;

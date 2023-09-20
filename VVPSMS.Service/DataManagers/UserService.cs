@@ -51,6 +51,15 @@ namespace VVPSMS.Service.DataManagers
             }
         }
 
+        public MstUserDto? GetByName(string userName)
+        {
+            using (var dbContext = new VvpsmsdbContext())
+            {
+                var result = dbContext.MstUsers?.FirstOrDefault(e => e.Username.Equals(userName));
+                return _mapper.Map<MstUserDto>(result);
+            }
+        }
+
         public List<MstUserDto> InsertOrUpdate(MstUserDto entity)
         {
             using (var dbContext = new VvpsmsdbContext())
@@ -68,11 +77,18 @@ namespace VVPSMS.Service.DataManagers
                     }
                     else
                     {
-                        dbContext.MstUsers.Add(_mapper.Map<MstUser>(entity));
+                        var mstUser = dbContext.MstUsers.FirstOrDefault(x => x.UserId == entity.UserId);
+                        if (mstUser!=null && mstUser.Userpassword==entity.Userpassword)
+                        {
+                            dbContext.MstUsers.Add(_mapper.Map<MstUser>(entity));
+                        }
+                        else
+                        {
+                            throw new Exception("Password MissMatch");
+                        }
                     }
                     dbContext.SaveChanges();
                 }
-
                 var result = dbContext.MstUsers.ToList();
                 return _mapper.Map<List<MstUserDto>>(result);
             }
