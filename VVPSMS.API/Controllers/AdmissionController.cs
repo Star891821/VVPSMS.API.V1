@@ -9,7 +9,7 @@ namespace VVPSMS.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+
     public class AdmissionController : ControllerBase
     {
         private readonly IAdmissionUnitOfWork _unitOfWork;
