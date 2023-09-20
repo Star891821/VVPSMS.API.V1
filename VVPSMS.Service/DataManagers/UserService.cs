@@ -7,7 +7,7 @@ using VVPSMS.Service.Shared;
 
 namespace VVPSMS.Service.DataManagers
 {
-    public class UserService : IGenericService<MstUserDto>
+    public class UserService : IUserService<MstUserDto>
     {
         private IMapper _mapper;
         private readonly IConfiguration _configuration;

@@ -12,13 +12,18 @@ namespace VVPSMS.API.Controllers
     [Authorize]
     public class UserController : GenericController<MstUserDto>
     {
-      
-        public UserController(IGenericService<MstUserDto> genericService)
+        IUserService<MstUserDto> userService;
+        public UserController(IUserService<MstUserDto> genericService)
             : base(genericService)
         {
+            userService = genericService;
           
         }
 
-        
+        [HttpGet("{name}")]
+        public MstUserDto GetUserByName(string name)
+        {
+            return userService.GetByName(name);
+        }
     }
 }

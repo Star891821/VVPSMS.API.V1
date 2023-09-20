@@ -98,7 +98,7 @@ builder.Services.AddTransient<IGenericService<MstClassDto>, MstClassService>();
 builder.Services.AddTransient<IGenericService<MstAcademicYearDto>, MstAcademicYearService>();
 builder.Services.AddTransient<IGenericService<MstSchoolStreamDto>, MstSchoolStreamService>();
 builder.Services.AddTransient<IGenericService<MstUserRoleDto>, MstUserRoleService>();
-builder.Services.AddTransient<IGenericService<MstUserDto>, UserService>();
+builder.Services.AddTransient<IUserService<MstUserDto>, UserService>();
 builder.Services.AddTransient<IExternalLoginAppService,ExternalLoginAppService>();
 builder.Services.AddTransient<IJwtAuthManager,JwtAuthManager>();
 builder.Services.AddTransient<IStorageService, StorageService>();
