@@ -69,23 +69,19 @@ namespace VVPSMS.Service.DataManagers
                     if (entity.UserId != 0)
                     {
                         var dbentity = dbContext.MstUsers.FirstOrDefault(e => e.UserId == entity.UserId);
-
-                        if (dbentity != null)
+                        if (dbentity != null && dbentity.Userpassword == entity.Userpassword)
                         {
                             dbContext.MstUsers.Update(_mapper.Map<MstUser>(entity));
                         }
+                        else
+                        {
+                            throw new Exception("Record miss-match");
+                        }
+                            
                     }
                     else
                     {
-                        var mstUser = dbContext.MstUsers.FirstOrDefault(x => x.UserId == entity.UserId);
-                        if (mstUser!=null && mstUser.Userpassword==entity.Userpassword)
-                        {
-                            dbContext.MstUsers.Add(_mapper.Map<MstUser>(entity));
-                        }
-                        else
-                        {
-                            throw new Exception("Password MissMatch");
-                        }
+                       dbContext.MstUsers.Add(_mapper.Map<MstUser>(entity));                       
                     }
                     dbContext.SaveChanges();
                 }
@@ -93,6 +89,5 @@ namespace VVPSMS.Service.DataManagers
                 return _mapper.Map<List<MstUserDto>>(result);
             }
         }
-
     }
 }
