@@ -7,7 +7,7 @@ namespace VVPSMS.API.Controllers.MasterControllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+
     public class AcademicYearController : GenericController<MstAcademicYearDto>
     {
         public AcademicYearController(IGenericService<MstAcademicYearDto> genericService)

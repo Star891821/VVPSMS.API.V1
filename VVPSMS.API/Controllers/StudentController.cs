@@ -12,7 +12,7 @@ namespace VVPSMS.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+
     public class StudentController : ControllerBase
     {
         private readonly IStudentUnitOfWork _unitOfWork;
@@ -59,16 +59,10 @@ namespace VVPSMS.API.Controllers
             var result = _mapper.Map<Student>(studentDto);
             var documents = _mapper.Map<List<StudentDocument>>(studentDto.Documents);
             await _unitOfWork.DocumentService.RemoveRange(documents);
-
-            await _unitOfWork.StudentService.InsertOrUpdate(result);
-            
+            await _unitOfWork.StudentService.InsertOrUpdate(result);            
             await _unitOfWork.CompleteAsync();
-
             return Ok();
-
         }
-
-
 
         [HttpDelete]
         public async Task<IActionResult> DeleteStudent(StudentDto studentDto)

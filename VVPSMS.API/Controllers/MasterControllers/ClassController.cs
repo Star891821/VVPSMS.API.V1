@@ -8,7 +8,7 @@ namespace VVPSMS.API.Controllers.MasterControllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+
     public class ClassController : GenericController<MstClassDto>
     {
         public ClassController(IGenericService<MstClassDto> genericService)
