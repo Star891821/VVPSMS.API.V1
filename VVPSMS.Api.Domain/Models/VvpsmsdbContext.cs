@@ -17,6 +17,8 @@ public partial class VvpsmsdbContext : DbContext
 
     public virtual DbSet<AdmissionDocument> AdmissionDocuments { get; set; }
 
+    public virtual DbSet<AdmissionEnquiryDetail> AdmissionEnquiryDetails { get; set; }
+
     public virtual DbSet<AdmissionForm> AdmissionForms { get; set; }
 
     public virtual DbSet<Announcement> Announcements { get; set; }
@@ -25,11 +27,17 @@ public partial class VvpsmsdbContext : DbContext
 
     public virtual DbSet<ArAdmissionForm> ArAdmissionForms { get; set; }
 
+    public virtual DbSet<EmergencyContactDetail> EmergencyContactDetails { get; set; }
+
+    public virtual DbSet<FamilyOrGuardianInfoDetail> FamilyOrGuardianInfoDetails { get; set; }
+
     public virtual DbSet<MstAcademicYear> MstAcademicYears { get; set; }
 
     public virtual DbSet<MstAdmissionStatus> MstAdmissionStatuses { get; set; }
 
     public virtual DbSet<MstClass> MstClasses { get; set; }
+
+    public virtual DbSet<MstEnquiryQuestionDetail> MstEnquiryQuestionDetails { get; set; }
 
     public virtual DbSet<MstGroupOfSchool> MstGroupOfSchools { get; set; }
 
@@ -49,27 +57,37 @@ public partial class VvpsmsdbContext : DbContext
 
     public virtual DbSet<ParentDocument> ParentDocuments { get; set; }
 
+    public virtual DbSet<PreviousSchoolDetail> PreviousSchoolDetails { get; set; }
+
     public virtual DbSet<SiblingInfo> SiblingInfos { get; set; }
 
     public virtual DbSet<Student> Students { get; set; }
 
     public virtual DbSet<StudentDocument> StudentDocuments { get; set; }
 
+    public virtual DbSet<StudentHealthInfoDetail> StudentHealthInfoDetails { get; set; }
+
+    public virtual DbSet<StudentIllnessDetail> StudentIllnessDetails { get; set; }
+
+    public virtual DbSet<StudentInfoDetail> StudentInfoDetails { get; set; }
+
     public virtual DbSet<Teacher> Teachers { get; set; }
 
     public virtual DbSet<TeacherDocument> TeacherDocuments { get; set; }
+
+    public virtual DbSet<TransportDetail> TransportDetails { get; set; }
 
     public virtual DbSet<UserRegistration> UserRegistrations { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=192.168.59.3;Initial Catalog=VVPSMSDB;User Id=sa;Password=D#$q2023P@s;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Integrated Security=false;");
+        => optionsBuilder.UseSqlServer("Server=MSI;Initial Catalog=VVPSMSDB;User Id=sa;Password=1992;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Integrated Security=false;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AdmissionDocument>(entity =>
         {
-            entity.HasKey(e => e.DocumentId).HasName("PK__Admissio__9666E8ACA9609B66");
+            entity.HasKey(e => e.DocumentId).HasName("PK__Admissio__9666E8AC99A879AE");
 
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.CreatedAt)
@@ -92,118 +110,63 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasOne(d => d.Form).WithMany(p => p.AdmissionDocuments)
                 .HasForeignKey(d => d.FormId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Admission__form___6383C8BA");
+                .HasConstraintName("FK__Admission__form___414EAC47");
         });
 
-        modelBuilder.Entity<AdmissionForm>(entity =>
+        modelBuilder.Entity<AdmissionEnquiryDetail>(entity =>
         {
-            entity.HasKey(e => e.FormId).HasName("PK__Admissio__190E16C9A91A41A1");
+            entity.HasKey(e => e.AdmissionenquirydetailsId).HasName("PK__Admissio__88CE46A2157C3480");
 
-            entity.Property(e => e.FormId).HasColumnName("form_id");
-            entity.Property(e => e.AcademicId).HasColumnName("academic_id");
-            entity.Property(e => e.AdmissionStatus).HasColumnName("admission_status");
-            entity.Property(e => e.ClassId).HasColumnName("class_id");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime")
-                .HasColumnName("created_at");
+            entity.Property(e => e.AdmissionenquirydetailsId).HasColumnName("admissionenquirydetails_id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
-            entity.Property(e => e.Declaration).HasColumnName("declaration");
-            entity.Property(e => e.DetailsExpulsion)
-                .HasColumnType("text")
-                .HasColumnName("details_expulsion");
-            entity.Property(e => e.GradeId).HasColumnName("grade_id");
-            entity.Property(e => e.HighestQualification1)
+            entity.Property(e => e.EnquiryResponse)
                 .HasMaxLength(255)
-                .HasColumnName("highest_qualification1");
-            entity.Property(e => e.HighestQualification2)
-                .HasMaxLength(255)
-                .HasColumnName("highest_qualification2");
-            entity.Property(e => e.LearningDisabilities).HasColumnName("learning_disabilities");
+                .HasColumnName("enquiry_response");
+            entity.Property(e => e.FormId).HasColumnName("form_id");
             entity.Property(e => e.ModifiedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
-            entity.Property(e => e.ParentContact1)
-                .HasMaxLength(15)
-                .HasColumnName("parent_contact1");
-            entity.Property(e => e.ParentContact2)
-                .HasMaxLength(15)
-                .HasColumnName("parent_contact2");
-            entity.Property(e => e.ParentEmail1)
+            entity.Property(e => e.MstenquiryquestiondetailsId).HasColumnName("mstenquiryquestiondetails_id");
+
+            entity.HasOne(d => d.Form).WithMany(p => p.AdmissionEnquiryDetails)
+                .HasForeignKey(d => d.FormId)
+                .HasConstraintName("FK__Admission__form___39AD8A7F");
+
+            entity.HasOne(d => d.Mstenquiryquestiondetails).WithMany(p => p.AdmissionEnquiryDetails)
+                .HasForeignKey(d => d.MstenquiryquestiondetailsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Admission__msten__3AA1AEB8");
+        });
+
+        modelBuilder.Entity<AdmissionForm>(entity =>
+        {
+            entity.HasKey(e => e.FormId).HasName("PK__Admissio__190E16C9BF8EC362");
+
+            entity.Property(e => e.FormId).HasColumnName("form_id");
+            entity.Property(e => e.AcademicId).HasColumnName("academic_id");
+            entity.Property(e => e.AdmissionStatus)
                 .HasMaxLength(255)
-                .HasColumnName("parent_email1");
-            entity.Property(e => e.ParentEmail2)
-                .HasMaxLength(255)
-                .HasColumnName("parent_email2");
-            entity.Property(e => e.ParentName1)
-                .HasMaxLength(255)
-                .HasColumnName("parent_name1");
-            entity.Property(e => e.ParentName2)
-                .HasMaxLength(255)
-                .HasColumnName("parent_name2");
-            entity.Property(e => e.PreferredContact)
-                .HasMaxLength(15)
-                .HasColumnName("preferred_contact");
-            entity.Property(e => e.PreviousSchool)
-                .HasMaxLength(255)
-                .HasColumnName("previous_school");
-            entity.Property(e => e.ReasonDescription)
-                .HasColumnType("text")
-                .HasColumnName("reason_description");
-            entity.Property(e => e.SchoolId).HasColumnName("school_id");
-            entity.Property(e => e.SiblingsYn)
-                .HasMaxLength(4)
                 .IsUnicode(false)
-                .IsFixedLength()
-                .HasColumnName("siblings_YN");
-            entity.Property(e => e.SpecialNeeds).HasColumnName("special_needs");
-            entity.Property(e => e.StreamId).HasColumnName("stream_id");
-            entity.Property(e => e.StudentAge).HasColumnName("student_age");
-            entity.Property(e => e.StudentDob)
+                .HasColumnName("admission_status");
+            entity.Property(e => e.ClassId).HasColumnName("class_id");
+            entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
-                .HasColumnName("student_dob");
-            entity.Property(e => e.StudentExpelled).HasColumnName("student_expelled");
-            entity.Property(e => e.StudentGender)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("student_gender");
-            entity.Property(e => e.StudentGivenName)
-                .HasMaxLength(255)
-                .HasColumnName("student_givenName");
-            entity.Property(e => e.StudentSurname)
-                .HasMaxLength(255)
-                .HasColumnName("student_surname");
-
-            entity.HasOne(d => d.Academic).WithMany(p => p.AdmissionForms)
-                .HasForeignKey(d => d.AcademicId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Admission__acade__6477ECF3");
-
-            entity.HasOne(d => d.Class).WithMany(p => p.AdmissionForms)
-                .HasForeignKey(d => d.ClassId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Admission__class__656C112C");
-
-            entity.HasOne(d => d.Grade).WithMany(p => p.AdmissionForms)
-                .HasForeignKey(d => d.GradeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Admission__grade__66603565");
-
-            entity.HasOne(d => d.School).WithMany(p => p.AdmissionForms)
-                .HasForeignKey(d => d.SchoolId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Admission__schoo__6754599E");
-
-            entity.HasOne(d => d.Stream).WithMany(p => p.AdmissionForms)
-                .HasForeignKey(d => d.StreamId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Admission__strea__68487DD7");
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.GradeId).HasColumnName("grade_id");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.SchoolId).HasColumnName("school_id");
+            entity.Property(e => e.StreamId).HasColumnName("stream_id");
         });
 
         modelBuilder.Entity<Announcement>(entity =>
         {
-            entity.HasKey(e => e.PostId).HasName("PK__Announce__3ED78766423229CD");
+            entity.HasKey(e => e.PostId).HasName("PK__Announce__3ED787662F6F2517");
 
             entity.Property(e => e.PostId).HasColumnName("post_id");
             entity.Property(e => e.CreatedAt)
@@ -232,16 +195,16 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Announcements)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Announcem__user___693CA210");
+                .HasConstraintName("FK__Announcem__user___324172E1");
         });
 
         modelBuilder.Entity<ArAdmissionDocument>(entity =>
         {
-            entity.HasKey(e => e.DocumentId).HasName("PK__ArAdmiss__9666E8ACCEC2B800");
+            entity.HasKey(e => e.DocumentId).HasName("PK__ArAdmiss__9666E8AC43027B05");
 
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
+            entity.Property(e => e.ArformId).HasColumnName("Arform_id");
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
@@ -251,7 +214,6 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.DocumentPath)
                 .HasMaxLength(255)
                 .HasColumnName("document_path");
-            entity.Property(e => e.FormId).HasColumnName("form_id");
             entity.Property(e => e.ModifiedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("modified_at");
@@ -260,14 +222,13 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<ArAdmissionForm>(entity =>
         {
-            entity.HasKey(e => e.FormId).HasName("PK__ArAdmiss__190E16C960768815");
+            entity.HasKey(e => e.ArformId).HasName("PK__ArAdmiss__5F937045AF6BD4A1");
 
-            entity.Property(e => e.FormId).HasColumnName("form_id");
+            entity.Property(e => e.ArformId).HasColumnName("Arform_id");
             entity.Property(e => e.AcademicId).HasColumnName("academic_id");
             entity.Property(e => e.AdmissionStatus).HasColumnName("admission_status");
             entity.Property(e => e.ClassId).HasColumnName("class_id");
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
@@ -339,9 +300,107 @@ public partial class VvpsmsdbContext : DbContext
                 .HasColumnName("student_surname");
         });
 
+        modelBuilder.Entity<EmergencyContactDetail>(entity =>
+        {
+            entity.HasKey(e => e.EmergencycontactdetailsId).HasName("PK__Emergenc__BFAEBFB96EB38D05");
+
+            entity.Property(e => e.EmergencycontactdetailsId).HasColumnName("emergencycontactdetails_id");
+            entity.Property(e => e.ContactNumber).HasColumnName("contact_number");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.FormId).HasColumnName("form_id");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.NameofparentIncaseofstaffWard)
+                .HasMaxLength(255)
+                .HasColumnName("nameofparent_incaseofstaff_ward");
+            entity.Property(e => e.Relationship)
+                .HasMaxLength(100)
+                .HasColumnName("relationship");
+
+            entity.HasOne(d => d.Form).WithMany(p => p.EmergencyContactDetails)
+                .HasForeignKey(d => d.FormId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Emergency__form___2C538F61");
+        });
+
+        modelBuilder.Entity<FamilyOrGuardianInfoDetail>(entity =>
+        {
+            entity.HasKey(e => e.FamilyorguardianinfodetailsId).HasName("PK__FamilyOr__8B52AFBE022539A6");
+
+            entity.Property(e => e.FamilyorguardianinfodetailsId).HasColumnName("familyorguardianinfodetails_id");
+            entity.Property(e => e.AadharNumber)
+                .HasMaxLength(100)
+                .HasColumnName("aadhar_number");
+            entity.Property(e => e.AnnualIncome).HasColumnName("annual_income");
+            entity.Property(e => e.Contact)
+                .HasMaxLength(15)
+                .HasColumnName("contact");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.DesignationNameofcompany)
+                .HasMaxLength(80)
+                .HasColumnName("designation_nameofcompany");
+            entity.Property(e => e.Dob)
+                .HasMaxLength(255)
+                .HasColumnName("dob");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("email");
+            entity.Property(e => e.FormId).HasColumnName("form_id");
+            entity.Property(e => e.HighestQualification)
+                .HasMaxLength(255)
+                .HasColumnName("highest_qualification");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.Occupation)
+                .HasMaxLength(100)
+                .HasColumnName("occupation");
+            entity.Property(e => e.OfficeAddress)
+                .HasMaxLength(100)
+                .HasColumnName("office_address");
+            entity.Property(e => e.PanNumber)
+                .HasMaxLength(100)
+                .HasColumnName("pan_number");
+            entity.Property(e => e.Passportexpirydate)
+                .HasColumnType("datetime")
+                .HasColumnName("passportexpirydate");
+            entity.Property(e => e.Passportissuedate)
+                .HasColumnType("datetime")
+                .HasColumnName("passportissuedate");
+            entity.Property(e => e.Passportnumber)
+                .HasMaxLength(100)
+                .HasColumnName("passportnumber");
+            entity.Property(e => e.Preferredcontact)
+                .HasMaxLength(255)
+                .HasColumnName("preferredcontact");
+            entity.Property(e => e.Relationshiptype)
+                .HasMaxLength(100)
+                .HasColumnName("relationshiptype");
+
+            entity.HasOne(d => d.Form).WithMany(p => p.FamilyOrGuardianInfoDetails)
+                .HasForeignKey(d => d.FormId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__FamilyOrG__form___25A691D2");
+        });
+
         modelBuilder.Entity<MstAcademicYear>(entity =>
         {
-            entity.HasKey(e => e.AcademicId).HasName("PK__MstAcade__B5573C116C4EFC34");
+            entity.HasKey(e => e.AcademicId).HasName("PK__MstAcade__B5573C11017E2C8D");
 
             entity.Property(e => e.AcademicId).HasColumnName("academicId");
             entity.Property(e => e.AcademicEnddate)
@@ -397,7 +456,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<MstClass>(entity =>
         {
-            entity.HasKey(e => e.ClassId).HasName("PK__MstClass__FDF4798693F2E580");
+            entity.HasKey(e => e.ClassId).HasName("PK__MstClass__FDF47986DAD93171");
 
             entity.Property(e => e.ClassId).HasColumnName("class_id");
             entity.Property(e => e.ActiveYn).HasColumnName("activeYN");
@@ -415,9 +474,25 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
         });
 
+        modelBuilder.Entity<MstEnquiryQuestionDetail>(entity =>
+        {
+            entity.HasKey(e => e.MstenquiryquestiondetailsId).HasName("PK__MstEnqui__F6F57677A8256014");
+
+            entity.Property(e => e.MstenquiryquestiondetailsId).HasColumnName("mstenquiryquestiondetails_id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.EnquiryQuestion)
+                .HasMaxLength(255)
+                .HasColumnName("enquiry_question");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+        });
+
         modelBuilder.Entity<MstGroupOfSchool>(entity =>
         {
-            entity.HasKey(e => e.GroupofSchoolsId).HasName("PK__MstGroup__037B607A58FCDED0");
+            entity.HasKey(e => e.GroupofSchoolsId).HasName("PK__MstGroup__037B607A1B07ABC6");
 
             entity.Property(e => e.GroupofSchoolsId).HasColumnName("groupofSchools_id");
             entity.Property(e => e.ActiveYn).HasColumnName("activeYN");
@@ -446,7 +521,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<MstRoleGroup>(entity =>
         {
-            entity.HasKey(e => e.RolegroupId).HasName("PK__MstRoleG__680F3A92E28EE0F7");
+            entity.HasKey(e => e.RolegroupId).HasName("PK__MstRoleG__680F3A92C8753B77");
 
             entity.Property(e => e.RolegroupId).HasColumnName("rolegroup_id");
             entity.Property(e => e.ActiveYn).HasColumnName("activeYN");
@@ -470,12 +545,12 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.MstRoleGroups)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__MstRoleGr__role___6A30C649");
+                .HasConstraintName("FK__MstRoleGr__role___0EF836A4");
         });
 
         modelBuilder.Entity<MstSchool>(entity =>
         {
-            entity.HasKey(e => e.SchoolId).HasName("PK__MstSchoo__27CA6CF488B83C6E");
+            entity.HasKey(e => e.SchoolId).HasName("PK__MstSchoo__27CA6CF4A7759CC2");
 
             entity.Property(e => e.SchoolId).HasColumnName("school_id");
             entity.Property(e => e.ActiveYn).HasColumnName("activeYN");
@@ -540,7 +615,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<MstSchoolGrade>(entity =>
         {
-            entity.HasKey(e => e.GradeId).HasName("PK__MstSchoo__3A8F732C2795F9C0");
+            entity.HasKey(e => e.GradeId).HasName("PK__MstSchoo__3A8F732C3487D037");
 
             entity.Property(e => e.GradeId).HasColumnName("grade_id");
             entity.Property(e => e.ActiveYn).HasColumnName("activeYN");
@@ -560,7 +635,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<MstSchoolStream>(entity =>
         {
-            entity.HasKey(e => e.StreamId).HasName("PK__MstSchoo__9DD95BAE1233DDB5");
+            entity.HasKey(e => e.StreamId).HasName("PK__MstSchoo__9DD95BAEC8FBB24B");
 
             entity.Property(e => e.StreamId).HasColumnName("stream_id");
             entity.Property(e => e.ActiveYn).HasColumnName("activeYN");
@@ -580,7 +655,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<MstUser>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__MstUsers__B9BE370F4364DEEF");
+            entity.HasKey(e => e.UserId).HasName("PK__MstUsers__B9BE370F849DE5AD");
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.CreatedAt)
@@ -618,12 +693,12 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.MstUsers)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__MstUsers__role_i__6B24EA82");
+                .HasConstraintName("FK__MstUsers__role_i__2E70E1FD");
         });
 
         modelBuilder.Entity<MstUserRole>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__MstUserR__760965CC414206B0");
+            entity.HasKey(e => e.RoleId).HasName("PK__MstUserR__760965CCBE8EE8E2");
 
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.ActiveYn).HasColumnName("activeYN");
@@ -643,7 +718,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<Parent>(entity =>
         {
-            entity.HasKey(e => e.ParentId).HasName("PK__Parents__F2A60819FAF717F3");
+            entity.HasKey(e => e.ParentId).HasName("PK__Parents__F2A6081933E7E8E8");
 
             entity.Property(e => e.ParentId).HasColumnName("parent_id");
             entity.Property(e => e.CreatedAt)
@@ -684,7 +759,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<ParentDocument>(entity =>
         {
-            entity.HasKey(e => e.DocumentId).HasName("PK__ParentDo__9666E8AC9965EE2E");
+            entity.HasKey(e => e.DocumentId).HasName("PK__ParentDo__9666E8AC33250FF1");
 
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.CreatedAt)
@@ -710,9 +785,57 @@ public partial class VvpsmsdbContext : DbContext
                 .HasConstraintName("FK_Documents_Parents");
         });
 
+        modelBuilder.Entity<PreviousSchoolDetail>(entity =>
+        {
+            entity.HasKey(e => e.PreviousschooldetailsId).HasName("PK__Previous__76F199641CB5FA08");
+
+            entity.Property(e => e.PreviousschooldetailsId).HasColumnName("previousschooldetails_id");
+            entity.Property(e => e.Address)
+                .HasMaxLength(255)
+                .HasColumnName("address");
+            entity.Property(e => e.ClassCompleted)
+                .HasMaxLength(255)
+                .HasColumnName("class_completed");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.Curriculum)
+                .HasMaxLength(255)
+                .HasColumnName("curriculum");
+            entity.Property(e => e.DateOfLeavingschool)
+                .HasColumnType("datetime")
+                .HasColumnName("dateOf_leavingschool");
+            entity.Property(e => e.FormId).HasColumnName("form_id");
+            entity.Property(e => e.HasapplicanteverExpelledorsuspended)
+                .HasMaxLength(25)
+                .HasColumnName("hasapplicantever_expelledorsuspended");
+            entity.Property(e => e.MediumofInstruction)
+                .HasMaxLength(255)
+                .HasColumnName("mediumof_instruction");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.NameSchool)
+                .HasMaxLength(255)
+                .HasColumnName("name_school");
+            entity.Property(e => e.ReasonForleaving)
+                .HasMaxLength(255)
+                .HasColumnName("reason_forleaving");
+            entity.Property(e => e.Reasonforsuspension)
+                .HasMaxLength(25)
+                .HasColumnName("reasonforsuspension");
+            entity.Property(e => e.YearsAttended)
+                .HasMaxLength(255)
+                .HasColumnName("years_attended");
+
+            entity.HasOne(d => d.Form).WithMany(p => p.PreviousSchoolDetails)
+                .HasForeignKey(d => d.FormId)
+                .HasConstraintName("FK__PreviousS__form___2F2FFC0C");
+        });
+
         modelBuilder.Entity<SiblingInfo>(entity =>
         {
-            entity.HasKey(e => e.SiblingId).HasName("PK__SiblingI__7A415E3F6451BC29");
+            entity.HasKey(e => e.SiblingId).HasName("PK__SiblingI__7A415E3F07FD6545");
 
             entity.ToTable("SiblingInfo");
 
@@ -743,12 +866,12 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasOne(d => d.Form).WithMany(p => p.SiblingInfos)
                 .HasForeignKey(d => d.FormId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__SiblingIn__form___6D0D32F4");
+                .HasConstraintName("FK__SiblingIn__form___297722B6");
         });
 
         modelBuilder.Entity<Student>(entity =>
         {
-            entity.HasKey(e => e.StudentId).HasName("PK__Students__2A33069AACB6E96D");
+            entity.HasKey(e => e.StudentId).HasName("PK__Students__2A33069A23A2C28A");
 
             entity.Property(e => e.StudentId).HasColumnName("student_id");
             entity.Property(e => e.CreatedAt)
@@ -789,7 +912,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<StudentDocument>(entity =>
         {
-            entity.HasKey(e => e.DocumentId).HasName("PK__StudentD__9666E8ACA7C8D594");
+            entity.HasKey(e => e.DocumentId).HasName("PK__StudentD__9666E8AC665C9150");
 
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.CreatedAt)
@@ -815,9 +938,180 @@ public partial class VvpsmsdbContext : DbContext
                 .HasConstraintName("FK_Documents_Students");
         });
 
+        modelBuilder.Entity<StudentHealthInfoDetail>(entity =>
+        {
+            entity.HasKey(e => e.StudenthealthinfodetailsId).HasName("PK__StudentH__CC8B9F53F25156A0");
+
+            entity.Property(e => e.StudenthealthinfodetailsId).HasColumnName("studenthealthinfodetails_id");
+            entity.Property(e => e.AllergiesIfAny)
+                .HasMaxLength(255)
+                .HasColumnName("allergies_ifAny");
+            entity.Property(e => e.BloodGroup)
+                .HasMaxLength(255)
+                .HasColumnName("blood_group");
+            entity.Property(e => e.ChildName)
+                .HasMaxLength(255)
+                .HasColumnName("child_name");
+            entity.Property(e => e.Class)
+                .HasMaxLength(255)
+                .HasColumnName("class");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.FormId).HasColumnName("form_id");
+            entity.Property(e => e.HealthHistory)
+                .HasMaxLength(255)
+                .HasColumnName("health_history");
+            entity.Property(e => e.Height)
+                .HasMaxLength(25)
+                .HasColumnName("height");
+            entity.Property(e => e.IdentificationMarks)
+                .HasMaxLength(255)
+                .HasColumnName("identification_marks");
+            entity.Property(e => e.ImmunizationStatus)
+                .HasMaxLength(255)
+                .HasColumnName("immunization_status");
+            entity.Property(e => e.LearningDisabilities)
+                .HasMaxLength(255)
+                .HasColumnName("learning_disabilities");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.RegularmedicineTakenbystudent)
+                .HasMaxLength(255)
+                .HasColumnName("regularmedicine_takenbystudent");
+            entity.Property(e => e.SpecialNeeds)
+                .HasMaxLength(255)
+                .HasColumnName("special_needs");
+            entity.Property(e => e.VisionLeft)
+                .HasMaxLength(255)
+                .HasColumnName("vision_left");
+            entity.Property(e => e.VisionRight)
+                .HasMaxLength(255)
+                .HasColumnName("vision_right");
+            entity.Property(e => e.Weight).HasColumnName("weight");
+
+            entity.HasOne(d => d.Form).WithMany(p => p.StudentHealthInfoDetails)
+                .HasForeignKey(d => d.FormId)
+                .HasConstraintName("FK__StudentHe__form___320C68B7");
+        });
+
+        modelBuilder.Entity<StudentIllnessDetail>(entity =>
+        {
+            entity.HasKey(e => e.StudentillnessdetailsId).HasName("PK__StudentI__AACB9DE0ABE33CBF");
+
+            entity.Property(e => e.StudentillnessdetailsId).HasColumnName("studentillnessdetails_id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.FormId).HasColumnName("form_id");
+            entity.Property(e => e.IllnessDate)
+                .HasMaxLength(255)
+                .HasColumnName("illness_date");
+            entity.Property(e => e.IllnessDetails)
+                .HasMaxLength(255)
+                .HasColumnName("illness_details");
+            entity.Property(e => e.IllnessName)
+                .HasMaxLength(255)
+                .HasColumnName("illness_name");
+            entity.Property(e => e.IllnessType)
+                .HasMaxLength(255)
+                .HasColumnName("illness_type");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+
+            entity.HasOne(d => d.Form).WithMany(p => p.StudentIllnessDetails)
+                .HasForeignKey(d => d.FormId)
+                .HasConstraintName("FK__StudentIl__form___34E8D562");
+        });
+
+        modelBuilder.Entity<StudentInfoDetail>(entity =>
+        {
+            entity.HasKey(e => e.StudentinfoId).HasName("PK__StudentI__C396B23F016CFDAB");
+
+            entity.Property(e => e.StudentinfoId).HasColumnName("studentinfo_id");
+            entity.Property(e => e.AadharNumber)
+                .HasMaxLength(100)
+                .HasColumnName("aadhar_number");
+            entity.Property(e => e.Age).HasColumnName("age");
+            entity.Property(e => e.Caste)
+                .HasMaxLength(100)
+                .HasColumnName("caste");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.DateOfExpiry)
+                .HasColumnType("datetime")
+                .HasColumnName("date_of_expiry");
+            entity.Property(e => e.DateOfIssue)
+                .HasColumnType("datetime")
+                .HasColumnName("date_of_issue");
+            entity.Property(e => e.Dob)
+                .HasMaxLength(255)
+                .HasColumnName("dob");
+            entity.Property(e => e.DobInWords)
+                .HasMaxLength(255)
+                .HasColumnName("dob_in_words");
+            entity.Property(e => e.FirstName)
+                .HasMaxLength(255)
+                .HasColumnName("first_name");
+            entity.Property(e => e.FormId).HasColumnName("form_id");
+            entity.Property(e => e.Gender)
+                .HasMaxLength(80)
+                .HasColumnName("gender");
+            entity.Property(e => e.LastName)
+                .HasMaxLength(255)
+                .HasColumnName("last_name");
+            entity.Property(e => e.MiddleName)
+                .HasMaxLength(255)
+                .HasColumnName("middle_name");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.MotherTongue)
+                .HasMaxLength(255)
+                .HasColumnName("mother_tongue");
+            entity.Property(e => e.Nationality)
+                .HasMaxLength(100)
+                .HasColumnName("nationality");
+            entity.Property(e => e.NoOfFamilymembers).HasColumnName("no_of_familymembers");
+            entity.Property(e => e.OtherKnownLanguages)
+                .HasMaxLength(255)
+                .HasColumnName("other_knownLanguages");
+            entity.Property(e => e.PassportNumber)
+                .HasMaxLength(100)
+                .HasColumnName("passport_number");
+            entity.Property(e => e.PermanentAddress)
+                .HasMaxLength(255)
+                .HasColumnName("permanent_address");
+            entity.Property(e => e.Religion)
+                .HasMaxLength(100)
+                .HasColumnName("religion");
+            entity.Property(e => e.SatsChildNumber)
+                .HasMaxLength(100)
+                .HasColumnName("sats_child_number");
+            entity.Property(e => e.StudentLivesWith)
+                .HasMaxLength(255)
+                .HasColumnName("student_lives_with");
+            entity.Property(e => e.TypeofFamily)
+                .HasMaxLength(255)
+                .HasColumnName("typeof_family");
+            entity.Property(e => e.UDiseCode)
+                .HasMaxLength(100)
+                .HasColumnName("u_dise_code");
+
+            entity.HasOne(d => d.Form).WithMany(p => p.StudentInfoDetails)
+                .HasForeignKey(d => d.FormId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__StudentIn__form___1EF99443");
+        });
+
         modelBuilder.Entity<Teacher>(entity =>
         {
-            entity.HasKey(e => e.TeacherId).HasName("PK__Teachers__03AE777E4B78CBCC");
+            entity.HasKey(e => e.TeacherId).HasName("PK__Teachers__03AE777E4FDDE195");
 
             entity.Property(e => e.TeacherId).HasColumnName("teacher_id");
             entity.Property(e => e.CreatedAt)
@@ -859,7 +1153,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<TeacherDocument>(entity =>
         {
-            entity.HasKey(e => e.DocumentId).HasName("PK__TeacherD__9666E8AC115DF82B");
+            entity.HasKey(e => e.DocumentId).HasName("PK__TeacherD__9666E8AC185AEAD7");
 
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.CreatedAt)
@@ -885,9 +1179,65 @@ public partial class VvpsmsdbContext : DbContext
                 .HasConstraintName("FK_Documents_Teachers");
         });
 
+        modelBuilder.Entity<TransportDetail>(entity =>
+        {
+            entity.HasKey(e => e.TransportdetailsId).HasName("PK__Transpor__68A767EB1ED978E4");
+
+            entity.Property(e => e.TransportdetailsId).HasColumnName("transportdetails_id");
+            entity.Property(e => e.AcademicYear)
+                .HasColumnType("datetime")
+                .HasColumnName("academic_year");
+            entity.Property(e => e.Address)
+                .HasMaxLength(255)
+                .HasColumnName("address");
+            entity.Property(e => e.AdmittedTo)
+                .HasMaxLength(255)
+                .HasColumnName("admitted_to");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.DateofApplication)
+                .HasColumnType("datetime")
+                .HasColumnName("dateof_application");
+            entity.Property(e => e.FatherEmail)
+                .HasMaxLength(100)
+                .HasColumnName("father_email");
+            entity.Property(e => e.FatherName)
+                .HasMaxLength(255)
+                .HasColumnName("father_name");
+            entity.Property(e => e.FatherPhone).HasColumnName("father_phone");
+            entity.Property(e => e.FormId).HasColumnName("form_id");
+            entity.Property(e => e.LandMark)
+                .HasMaxLength(255)
+                .HasColumnName("land_mark");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.MotherEmail)
+                .HasMaxLength(100)
+                .HasColumnName("mother_email");
+            entity.Property(e => e.MotherName)
+                .HasMaxLength(255)
+                .HasColumnName("mother_name");
+            entity.Property(e => e.MotherPhone).HasColumnName("mother_phone");
+            entity.Property(e => e.NameofStudent)
+                .HasMaxLength(255)
+                .HasColumnName("nameof_student");
+            entity.Property(e => e.PreferredDropPoint)
+                .HasMaxLength(255)
+                .HasColumnName("preferred_drop_point");
+            entity.Property(e => e.PreferredPickupPoint)
+                .HasMaxLength(255)
+                .HasColumnName("preferred_pickup_point");
+
+            entity.HasOne(d => d.Form).WithMany(p => p.TransportDetails)
+                .HasForeignKey(d => d.FormId)
+                .HasConstraintName("FK__Transport__form___3D7E1B63");
+        });
+
         modelBuilder.Entity<UserRegistration>(entity =>
         {
-            entity.HasKey(e => e.RegisterId).HasName("PK__UserRegi__1418262FA6C17AA9");
+            entity.HasKey(e => e.RegisterId).HasName("PK__UserRegi__1418262F505BE758");
 
             entity.ToTable("UserRegistration");
 

@@ -17,51 +17,7 @@ public partial class AdmissionForm
 
     public int ClassId { get; set; }
 
-    public string StudentGivenName { get; set; } = null!;
-
-    public string StudentSurname { get; set; } = null!;
-
-    public DateTime StudentDob { get; set; }
-
-    public string StudentGender { get; set; } = null!;
-
-    public int StudentAge { get; set; }
-
-    public string ParentName1 { get; set; } = null!;
-
-    public string? HighestQualification1 { get; set; }
-
-    public string ParentContact1 { get; set; } = null!;
-
-    public string? ParentEmail1 { get; set; }
-
-    public string? ParentName2 { get; set; }
-
-    public string? HighestQualification2 { get; set; }
-
-    public string? ParentContact2 { get; set; }
-
-    public string? ParentEmail2 { get; set; }
-
-    public string? PreferredContact { get; set; }
-
-    public int Declaration { get; set; }
-
-    public string SiblingsYn { get; set; } = null!;
-
-    public int? SpecialNeeds { get; set; }
-
-    public int? LearningDisabilities { get; set; }
-
-    public string? PreviousSchool { get; set; }
-
-    public string? ReasonDescription { get; set; }
-
-    public int? StudentExpelled { get; set; }
-
-    public string? DetailsExpulsion { get; set; }
-
-    public int? AdmissionStatus { get; set; }
+    public string? AdmissionStatus { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -71,17 +27,23 @@ public partial class AdmissionForm
 
     public int? ModifiedBy { get; set; }
 
-    public virtual MstAcademicYear Academic { get; set; } = null!;
-
     public virtual ICollection<AdmissionDocument> AdmissionDocuments { get; set; } = new List<AdmissionDocument>();
 
-    public virtual MstClass Class { get; set; } = null!;
+    public virtual ICollection<AdmissionEnquiryDetail> AdmissionEnquiryDetails { get; set; } = new List<AdmissionEnquiryDetail>();
 
-    public virtual MstSchoolGrade Grade { get; set; } = null!;
+    public virtual ICollection<EmergencyContactDetail> EmergencyContactDetails { get; set; } = new List<EmergencyContactDetail>();
 
-    public virtual MstSchool School { get; set; } = null!;
+    public virtual ICollection<FamilyOrGuardianInfoDetail> FamilyOrGuardianInfoDetails { get; set; } = new List<FamilyOrGuardianInfoDetail>();
+
+    public virtual ICollection<PreviousSchoolDetail> PreviousSchoolDetails { get; set; } = new List<PreviousSchoolDetail>();
 
     public virtual ICollection<SiblingInfo> SiblingInfos { get; set; } = new List<SiblingInfo>();
 
-    public virtual MstSchoolStream Stream { get; set; } = null!;
+    public virtual ICollection<StudentHealthInfoDetail> StudentHealthInfoDetails { get; set; } = new List<StudentHealthInfoDetail>();
+
+    public virtual ICollection<StudentIllnessDetail> StudentIllnessDetails { get; set; } = new List<StudentIllnessDetail>();
+
+    public virtual ICollection<StudentInfoDetail> StudentInfoDetails { get; set; } = new List<StudentInfoDetail>();
+
+    public virtual ICollection<TransportDetail> TransportDetails { get; set; } = new List<TransportDetail>();
 }

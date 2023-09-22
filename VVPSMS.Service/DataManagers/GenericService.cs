@@ -46,7 +46,6 @@ namespace VVPSMS.Service.DataManagers
             if (!dbSet.Local.Any(e => e == entity))
             {
                 await dbSet.AddAsync(entity);
-               // context.SaveChangesAsync();
                 return true;
             }
             return false;

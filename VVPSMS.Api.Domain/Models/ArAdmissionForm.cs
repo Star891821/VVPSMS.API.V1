@@ -5,7 +5,7 @@ namespace VVPSMS.Domain.Models;
 
 public partial class ArAdmissionForm
 {
-    public int FormId { get; set; }
+    public int ArformId { get; set; }
 
     public int AcademicId { get; set; }
 

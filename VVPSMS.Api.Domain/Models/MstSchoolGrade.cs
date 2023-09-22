@@ -18,6 +18,4 @@ public partial class MstSchoolGrade
     public DateTime? ModifiedAt { get; set; }
 
     public int? ModifiedBy { get; set; }
-
-    public virtual ICollection<AdmissionForm> AdmissionForms { get; set; } = new List<AdmissionForm>();
 }
