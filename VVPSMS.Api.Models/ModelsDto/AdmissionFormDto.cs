@@ -18,7 +18,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int ClassId { get; set; }
 
-        public int? AdmissionStatus { get; set; }
+        public string? AdmissionStatus { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
@@ -28,33 +28,25 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int? ModifiedBy { get; set; }
 
-        public StudentInfoDetailDto? StudentInfoDetails { get; set; }
+        public virtual List<AdmissionDocumentDto> listOfAdmissionDocuments { get; set; }
 
-        public List<FamilyOrGuardianInfoDetailDto>? listOfFamilyOrGuardianInfoDetails { get; set; }
+        public virtual List<AdmissionEnquiryDetailDto> AdmissionEnquiryDetails { get; set; } 
 
-        public List<SiblingInfoDto>? listofSiblingInfos { get; set; }
+        public virtual List<EmergencyContactDetailDto> EmergencyContactDetails { get; set; }
 
-        public EmergencyContactDetailDto? EmergencyContactDetails { get; set; }
+        public virtual List<FamilyOrGuardianInfoDetailDto> FamilyOrGuardianInfoDetails { get; set; }
 
-        public List<PreviousSchoolDetailDto>? listOfPreviousSchoolDetails { get; set; }
+        public virtual List<PreviousSchoolDetailDto> PreviousSchoolDetails { get; set; } 
 
-        public StudentHealthInfoDetailDto? StudentHealthInfoDetails { get; set; }
+        public virtual List<SiblingInfoDto> SiblingInfos { get; set; } 
 
-        public StudentIllnessDetailDto? StudentIllnessDetails { get; set; }
+        public virtual List<StudentHealthInfoDetailDto> StudentHealthInfoDetails { get; set; }
 
-        public List<AdmissionEnquiryDetailDto>? listOfAdmissionEnquiryDetails { get; set; }
+        public virtual List<StudentIllnessDetailDto> StudentIllnessDetails { get; set; } 
 
-        public List<AdmissionDocumentDto>? listOfAdmissionDocuments { get; set; }
+        public virtual List<StudentInfoDetailDto> StudentInfoDetails { get; set; } 
 
-        public TransportDetailDto? TransportDetails { get; set; }
-
-        public MstClassDto? ClassDetails { get; set; }
-
-        public MstSchoolGradeDto? GradeDetails { get; set; }
-
-        public MstSchoolStreamDto? StreamDetails { get; set; }
-
-        public MstSchoolDto? SchoolDetails { get; set; }
+        public virtual List<TransportDetailDto> TransportDetails { get; set; } 
 
     }
 }

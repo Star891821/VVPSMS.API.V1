@@ -31,7 +31,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 
         public Task CompleteAsync()
         {
-            throw new NotImplementedException();
+            return vvpsmsdbContext.SaveChangesAsync();
         }
     }
 }
