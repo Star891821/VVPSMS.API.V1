@@ -7,5 +7,7 @@
         public string Password { get; set; }
 
         public string LoginUser { get; set; }
+
+        public int RoleId { get; set; }
     }
 }

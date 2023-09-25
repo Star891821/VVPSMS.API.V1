@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository;
-using VVPSMS.Service.Shared;
 
 namespace VVPSMS.Service.DataManagers
 {
@@ -66,6 +65,7 @@ namespace VVPSMS.Service.DataManagers
             {
                 if (entity != null)
                 {
+                   
                     if (entity.UserId != 0)
                     {
                         var dbentity = dbContext.MstUsers.FirstOrDefault(e => e.UserId == entity.UserId);
@@ -76,12 +76,20 @@ namespace VVPSMS.Service.DataManagers
                         else
                         {
                             throw new Exception("Record miss-match");
-                        }
-                            
+                        }                            
                     }
                     else
                     {
-                       dbContext.MstUsers.Add(_mapper.Map<MstUser>(entity));                       
+                        var existingUser = dbContext.MstUsers.FirstOrDefault(x=>x.Username.Equals(entity.Username));
+                        if (existingUser != null)
+                        {
+                            throw new Exception("User already exists!");
+                        }
+                        else
+                        {
+                            dbContext.MstUsers.Add(_mapper.Map<MstUser>(entity));
+                        }
+                                            
                     }
                     dbContext.SaveChanges();
                 }

@@ -20,7 +20,7 @@ namespace VVPSMS.Service.DataManagers
             {
                 switch (loginRequest.LoginUser.ToUpper())
                 {
-                    case "STUDENT" or "S":
+                    case "STUDENT":
                         var student = await _vvpsmsdbContext.Students.FirstOrDefaultAsync(x => x.StudentUsername == loginRequest.UserId && x.StudentPassword == loginRequest.Password);
                         if (student != null)
                         {
@@ -35,7 +35,7 @@ namespace VVPSMS.Service.DataManagers
                             };
                         }
                         break;
-                    case "TEACHER" or "T":
+                    case "TEACHER":
                         var teacher = await _vvpsmsdbContext.Teachers.FirstOrDefaultAsync(x => x.TeacherUsername == loginRequest.UserId 
                         && x.TeacherPassword == loginRequest.Password);
                         if (teacher != null)
@@ -53,7 +53,7 @@ namespace VVPSMS.Service.DataManagers
                         break;
                     default:
                         var user = await _vvpsmsdbContext.MstUsers.FirstOrDefaultAsync(x => x.Username == loginRequest.UserId
-                        && x.Userpassword == loginRequest.Password);
+                        && x.Userpassword == loginRequest.Password && x.RoleId==loginRequest.RoleId);
                         if (user != null)
                         {
                             var loggedInRole= await _vvpsmsdbContext.MstUserRoles.FirstOrDefaultAsync(x=>x.RoleId==user.RoleId);
