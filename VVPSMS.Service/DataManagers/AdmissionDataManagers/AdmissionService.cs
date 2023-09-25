@@ -1,6 +1,7 @@
 ﻿using VVPSMS.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using VVPSMS.Service.Repository.Admissions;
+using VVPSMS.Api.Models.ModelsDto;
 
 namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 {
@@ -58,5 +59,31 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             return entityToUpdate;
         }
 
+        public override async Task<AdmissionForm?> GetById(int id)
+        {
+            try
+            {
+                var admissionForm = await dbSet.Where(x => x.FormId == id)
+                                       .FirstOrDefaultAsync();
+                if (admissionForm != null)
+                {
+                    dbSet.Entry(admissionForm).Reference(adm => adm.StudentInfoDetails).Load();
+                    dbSet.Entry(admissionForm).Reference(adm => adm.AdmissionDocuments).Load();
+                    dbSet.Entry(admissionForm).Reference(adm => adm.AdmissionEnquiryDetails).Load();
+                    dbSet.Entry(admissionForm).Reference(adm => adm.SiblingInfos).Load();
+                    dbSet.Entry(admissionForm).Reference(adm => adm.StudentHealthInfoDetails).Load();
+                    dbSet.Entry(admissionForm).Reference(adm => adm.FamilyOrGuardianInfoDetails).Load();
+                    dbSet.Entry(admissionForm).Reference(adm => adm.PreviousSchoolDetails).Load();
+                    dbSet.Entry(admissionForm).Reference(adm => adm.EmergencyContactDetails).Load();
+                    dbSet.Entry(admissionForm).Reference(adm => adm.TransportDetails).Load();
+                    dbSet.Entry(admissionForm).Reference(adm => adm.StudentIllnessDetails).Load();
+                }
+                return admissionForm;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }
