@@ -57,12 +57,12 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
 
                         if (dbentity != null)
                         {
-                            dbContext.MstAcademicYears.Update(ConvertFromDto(dbentity, entity));
+                            dbContext.Entry(dbentity).CurrentValues.SetValues(_mapper.Map<MstAcademicYear>(entity));
                         }
                     }
                     else
                     {
-                        dbContext.MstAcademicYears.Add(ConvertFromDto(new MstAcademicYear(), entity));
+                        dbContext.MstAcademicYears.Add(_mapper.Map<MstAcademicYear>(entity));
                     }
                     dbContext.SaveChanges();
                 }
@@ -72,20 +72,5 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
             }
         }
 
-
-        private static MstAcademicYear ConvertFromDto(MstAcademicYear mstAcademicYear, MstAcademicYearDto mstAcademicYearDto)
-        {
-            mstAcademicYear.AcademicyearName = mstAcademicYearDto.AcademicyearName;
-            mstAcademicYear.AcademicyearFrom = mstAcademicYearDto.AcademicyearFrom;
-            mstAcademicYear.AcademicyearTo = mstAcademicYearDto.AcademicyearTo;
-            mstAcademicYear.AcademictermNo = mstAcademicYearDto.AcademictermNo;
-            mstAcademicYear.AcademicStartdate = mstAcademicYearDto.AcademicStartdate;
-            mstAcademicYear.AcademicEnddate = mstAcademicYearDto.AcademicEnddate;
-            mstAcademicYear.CreatedBy = mstAcademicYearDto.CreatedBy;
-            mstAcademicYear.CreatedAt = mstAcademicYearDto.CreatedAt;
-            mstAcademicYear.ModifiedBy = mstAcademicYearDto.ModifiedBy;
-            mstAcademicYear.ModifiedAt = mstAcademicYearDto.ModifiedAt;
-            return mstAcademicYear;
-        }
     }
 }

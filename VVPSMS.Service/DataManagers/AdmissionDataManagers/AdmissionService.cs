@@ -67,16 +67,16 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                                        .FirstOrDefaultAsync();
                 if (admissionForm != null)
                 {
-                    dbSet.Entry(admissionForm).Reference(adm => adm.StudentInfoDetails).Load();
-                    dbSet.Entry(admissionForm).Reference(adm => adm.AdmissionDocuments).Load();
-                    dbSet.Entry(admissionForm).Reference(adm => adm.AdmissionEnquiryDetails).Load();
-                    dbSet.Entry(admissionForm).Reference(adm => adm.SiblingInfos).Load();
-                    dbSet.Entry(admissionForm).Reference(adm => adm.StudentHealthInfoDetails).Load();
-                    dbSet.Entry(admissionForm).Reference(adm => adm.FamilyOrGuardianInfoDetails).Load();
-                    dbSet.Entry(admissionForm).Reference(adm => adm.PreviousSchoolDetails).Load();
-                    dbSet.Entry(admissionForm).Reference(adm => adm.EmergencyContactDetails).Load();
-                    dbSet.Entry(admissionForm).Reference(adm => adm.TransportDetails).Load();
-                    dbSet.Entry(admissionForm).Reference(adm => adm.StudentIllnessDetails).Load();
+                    dbSet.Entry(admissionForm).Collection(adm => adm.StudentInfoDetails).Load();
+                    dbSet.Entry(admissionForm).Collection(adm => adm.AdmissionDocuments).Load();
+                    dbSet.Entry(admissionForm).Collection(adm => adm.AdmissionEnquiryDetails).Load();
+                    dbSet.Entry(admissionForm).Collection(adm => adm.SiblingInfos).Load();
+                    dbSet.Entry(admissionForm).Collection(adm => adm.StudentHealthInfoDetails).Load();
+                    dbSet.Entry(admissionForm).Collection(adm => adm.FamilyOrGuardianInfoDetails).Load();
+                    dbSet.Entry(admissionForm).Collection(adm => adm.PreviousSchoolDetails).Load();
+                    dbSet.Entry(admissionForm).Collection(adm => adm.EmergencyContactDetails).Load();
+                    dbSet.Entry(admissionForm).Collection(adm => adm.TransportDetails).Load();
+                    dbSet.Entry(admissionForm).Collection(adm => adm.StudentIllnessDetails).Load();
                 }
                 return admissionForm;
             }

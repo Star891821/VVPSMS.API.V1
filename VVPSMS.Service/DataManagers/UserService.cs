@@ -71,7 +71,8 @@ namespace VVPSMS.Service.DataManagers
                         var dbentity = dbContext.MstUsers.FirstOrDefault(e => e.UserId == entity.UserId);
                         if (dbentity != null && dbentity.Userpassword == entity.Userpassword)
                         {
-                            dbContext.MstUsers.Update(_mapper.Map<MstUser>(entity));
+
+                            dbContext.Entry(dbentity).CurrentValues.SetValues(_mapper.Map<MstUser>(entity));
                         }
                         else
                         {

@@ -60,45 +60,18 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
 
                         if (dbentity != null)
                         {
-                            dbContext.MstSchools.Update(ConvertFromDto(dbentity, entity));
+                            dbContext.Entry(dbentity).CurrentValues.SetValues(_mapper.Map<MstSchool>(entity));
                         }
                     }
                     else
                     {
-                        dbContext.MstSchools.Add(ConvertFromDto(new MstSchool(), entity));
+                        dbContext.MstSchools.Add(_mapper.Map<MstSchool>(entity));
                     }
                     dbContext.SaveChanges();
                 }
                 var result = dbContext.MstSchools.ToList();
                 return _mapper.Map<List<MstSchoolDto>>(result);
             }
-        }
-
-
-        private static MstSchool ConvertFromDto(MstSchool mstSchool, MstSchoolDto mstSchoolDto)
-        {
-            mstSchool.SchoolName = mstSchoolDto.SchoolName;
-            mstSchool.SchoolCode = mstSchoolDto.SchoolCode;
-            mstSchool.SchoolDescription = mstSchoolDto.SchoolDescription;
-            mstSchool.SchoolAddress1 = mstSchoolDto.SchoolAddress1;
-            mstSchool.SchoolAddress2 = mstSchoolDto.SchoolAddress2;
-            mstSchool.SchoolLogopath = mstSchoolDto.SchoolLogopath;
-            mstSchool.SchoolPhone = mstSchoolDto.SchoolPhone;
-            mstSchool.SchoolWebsite = mstSchoolDto.SchoolWebsite;
-            mstSchool.SchoolCoordinates = mstSchoolDto.SchoolCoordinates;
-            mstSchool.SchoolLandmark = mstSchoolDto.SchoolLandmark;
-            mstSchool.SchoolDistrict = mstSchoolDto.SchoolDistrict;
-            mstSchool.SchoolState = mstSchoolDto.SchoolState;
-            mstSchool.SchoolCountry = mstSchoolDto.SchoolCountry;
-            mstSchool.StreamsAvailable = mstSchoolDto.StreamsAvailable;
-            mstSchool.GradesAvailable = mstSchoolDto.GradesAvailable;
-            mstSchool.ClassesAvailable = mstSchoolDto.ClassesAvailable;
-            mstSchool.ActiveYn = mstSchoolDto.ActiveYn;
-            mstSchool.CreatedBy = mstSchoolDto.CreatedBy;
-            mstSchool.CreatedAt = mstSchoolDto.CreatedAt;
-            mstSchool.ModifiedAt = mstSchoolDto.ModifiedAt;
-            mstSchool.ModifiedBy = mstSchoolDto.ModifiedBy;
-            return mstSchool;
         }
 
     }

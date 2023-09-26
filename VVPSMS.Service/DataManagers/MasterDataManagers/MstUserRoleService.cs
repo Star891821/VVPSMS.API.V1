@@ -61,30 +61,18 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
 
                         if (dbentity != null)
                         {
-                            dbContext.MstUserRoles.Update(ConvertFromDto(dbentity, entity));
+                            dbContext.Entry(dbentity).CurrentValues.SetValues(_mapper.Map<MstUserRole>(entity));
                         }
                     }
                     else
                     {
-                        dbContext.MstUserRoles.Add(ConvertFromDto(new MstUserRole(), entity));
+                        dbContext.MstUserRoles.Add(_mapper.Map<MstUserRole>(entity));
                     }
                     dbContext.SaveChanges();
                 }
                 var result = dbContext.MstUserRoles.ToList();
                 return _mapper.Map<List<MstUserRoleDto>>(result);
             }
-        }
-
-
-        private static MstUserRole ConvertFromDto(MstUserRole mstUserRole, MstUserRoleDto mstUserRoleDto)
-        {
-            mstUserRole.RoleName = mstUserRoleDto.RoleName;
-            mstUserRole.ActiveYn = mstUserRoleDto.ActiveYn;
-            mstUserRole.CreatedBy = mstUserRoleDto.CreatedBy;
-            mstUserRole.CreatedAt = mstUserRoleDto.CreatedAt;
-            mstUserRole.ModifiedBy = mstUserRoleDto.ModifiedBy;
-            mstUserRole.ModifiedAt = mstUserRoleDto.ModifiedAt;
-            return mstUserRole;
         }
     }
 }

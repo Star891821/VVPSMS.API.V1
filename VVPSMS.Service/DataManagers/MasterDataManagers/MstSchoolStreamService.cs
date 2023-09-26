@@ -60,30 +60,18 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
 
                         if (dbentity != null)
                         {
-                            dbContext.MstSchoolStreams.Update(ConvertFromDto(dbentity, entity));
+                            dbContext.Entry(dbentity).CurrentValues.SetValues(_mapper.Map<MstSchoolStream>(entity));
                         }
                     }
                     else
                     {
-                        dbContext.MstSchoolStreams.Add(ConvertFromDto(new MstSchoolStream(), entity));
+                        dbContext.MstSchoolStreams.Add(_mapper.Map<MstSchoolStream>(entity));
                     }
                     dbContext.SaveChanges();
                 }
                 var result = dbContext.MstSchoolStreams.ToList();
                 return _mapper.Map<List<MstSchoolStreamDto>>(result);
             }
-        }
-
-
-        private static MstSchoolStream ConvertFromDto(MstSchoolStream mstSchoolStream, MstSchoolStreamDto mstSchoolStreamDto)
-        {
-            mstSchoolStream.StreamName = mstSchoolStreamDto.StreamName;
-            mstSchoolStream.ActiveYn = mstSchoolStreamDto.ActiveYn;
-            mstSchoolStream.CreatedBy = mstSchoolStreamDto.CreatedBy;
-            mstSchoolStream.CreatedAt = mstSchoolStreamDto.CreatedAt;
-            mstSchoolStream.ModifiedBy = mstSchoolStreamDto.ModifiedBy;
-            mstSchoolStream.ModifiedAt = mstSchoolStreamDto.ModifiedAt;
-            return mstSchoolStream;
         }
 
     }

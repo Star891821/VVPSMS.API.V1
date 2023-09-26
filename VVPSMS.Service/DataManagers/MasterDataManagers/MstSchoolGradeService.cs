@@ -58,12 +58,12 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
 
                         if (dbentity != null)
                         {
-                            dbContext.MstSchoolGrades.Update(ConvertFromDto(dbentity, entity));
+                            dbContext.Entry(dbentity).CurrentValues.SetValues(_mapper.Map<MstSchoolGrade>(entity));
                         }
                     }
                     else
                     {
-                        dbContext.MstSchoolGrades.Add(ConvertFromDto(new MstSchoolGrade(), entity));
+                        dbContext.MstSchoolGrades.Add(_mapper.Map<MstSchoolGrade>(entity));
                     }
                     dbContext.SaveChanges();
                 }
@@ -72,15 +72,5 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
             }
         }
 
-        private static MstSchoolGrade ConvertFromDto(MstSchoolGrade mstSchoolGrade, MstSchoolGradeDto mstSchoolGradeDto)
-        {
-            mstSchoolGrade.GradeName = mstSchoolGradeDto.GradeName;
-            mstSchoolGrade.ActiveYn = mstSchoolGradeDto.ActiveYn;
-            mstSchoolGrade.CreatedBy = mstSchoolGradeDto.CreatedBy;
-            mstSchoolGrade.CreatedAt = mstSchoolGradeDto.CreatedAt;
-            mstSchoolGrade.ModifiedBy = mstSchoolGradeDto.ModifiedBy;
-            mstSchoolGrade.ModifiedAt = mstSchoolGradeDto.ModifiedAt;
-            return mstSchoolGrade;
-        }
     }
 }

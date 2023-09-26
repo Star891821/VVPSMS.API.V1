@@ -35,4 +35,8 @@
     <ProjectReference Include="..\VVPSMS.Service\VVPSMS.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Upload\Files\" />
+  </ItemGroup>
+
 </Project>
