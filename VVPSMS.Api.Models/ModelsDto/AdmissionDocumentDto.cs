@@ -17,5 +17,7 @@
         public DateTime? ModifiedAt { get; set; }
 
         public int? ModifiedBy { get; set; }
+
+        public byte[] ImageDetails { get; set; }
     }
 }
