@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Text;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository.Admissions;
@@ -12,11 +14,13 @@ namespace VVPSMS.API.Controllers
 
     public class AdmissionController : ControllerBase
     {
+        private IConfiguration _configuration;
         private readonly IAdmissionUnitOfWork _unitOfWork;
         private IMapper _mapper;
-        public AdmissionController(IAdmissionUnitOfWork unitOfWork, IMapper mapper)
+        public AdmissionController(IAdmissionUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _configuration = configuration;
             _mapper = mapper;
         }
 
@@ -52,30 +56,38 @@ namespace VVPSMS.API.Controllers
         [HttpPost]
         public async Task<IActionResult> InsertOrUpdate(AdmissionFormDto admissionFormDto)
         {
-          
-            if (admissionFormDto.ListOfFileContentsAsBase64 != null)
+            var isUploadtoAzure =  _configuration["Upoad:IsUpoadtoAzure"];
+            var filePath = _configuration["Upoad:SaveFilePath"];
+            if (isUploadtoAzure == "Yes")
             {
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files");
-                if (!Directory.Exists(filePath))
-                {
-                    Directory.CreateDirectory(filePath);
-                }
-                foreach (var file in admissionFormDto.ListOfFileContentsAsBase64)
-                {
-                    var index = file.IndexOf(',');
-                    var base64stringwithoutsignature = admissionFormDto.ListOfFileContentsAsBase64[0].Substring(index + 1);
-                    index = admissionFormDto.ListOfFileContentsAsBase64[0].IndexOf(';');
-                    var base64signature = admissionFormDto.ListOfFileContentsAsBase64[0].Substring(0, index);
-                    index = base64signature.IndexOf("/");
-                    var extension = base64signature.Substring(index + 1);
 
-                    var filename1 =  DateTime.Now.Ticks.ToString() +"." +extension;
-                    byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
-                    System.IO.File.WriteAllBytes(filePath + "\\"+filename1, bytes);
-                    filenamepathmapping[filename1] = filePath;
-                }
             }
+            else
+            {
+                if (admissionFormDto.ListOfFileContentsAsBase64 != null)
+                {
+                    if (!Directory.Exists(filePath))
+                    {
+                        Directory.CreateDirectory(filePath);
+                    }
+                    foreach (var file in admissionFormDto.ListOfFileContentsAsBase64)
+                    {
+                        var index = file.IndexOf(',');
+                        var base64stringwithoutsignature = admissionFormDto.ListOfFileContentsAsBase64[0].Substring(index + 1);
+                        index = admissionFormDto.ListOfFileContentsAsBase64[0].IndexOf(';');
+                        var base64signature = admissionFormDto.ListOfFileContentsAsBase64[0].Substring(0, index);
+                        index = base64signature.IndexOf("/");
+                        var extension = base64signature.Substring(index + 1);
 
+                        var filename1 = DateTime.Now.Ticks.ToString() + "." + extension;
+                        byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
+                        System.IO.File.WriteAllBytes(filePath + "\\" + filename1, bytes);
+                        filenamepathmapping[filename1] = filePath;
+                    }
+                }
+
+            }
+          
             var result = _mapper.Map<AdmissionForm>(admissionFormDto);
             foreach(var a in filenamepathmapping)
             {
