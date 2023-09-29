@@ -465,7 +465,13 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
+SET IDENTITY_INSERT [dbo].[MstDocumentTypes] ON 
 
+INSERT [dbo].[MstDocumentTypes] ([mstdocumenttypes_id], [mstdocumenttypes_description], [created_at], [created_by], [modified_at], [modified_by]) VALUES (1, N'PDF', NULL, NULL, NULL, NULL)
+INSERT [dbo].[MstDocumentTypes] ([mstdocumenttypes_id], [mstdocumenttypes_description], [created_at], [created_by], [modified_at], [modified_by]) VALUES (2, N'Text', NULL, NULL, NULL, NULL)
+INSERT [dbo].[MstDocumentTypes] ([mstdocumenttypes_id], [mstdocumenttypes_description], [created_at], [created_by], [modified_at], [modified_by]) VALUES (3, N'Word', NULL, NULL, NULL, NULL)
+SET IDENTITY_INSERT [dbo].[MstDocumentTypes] OFF
+GO
 
 /****** Object:  Table [dbo].[AdmissionDocuments]    Script Date: 21-09-2023 22:31:59 ******/
 SET ANSI_NULLS ON
