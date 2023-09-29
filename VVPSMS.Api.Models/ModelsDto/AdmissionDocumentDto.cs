@@ -1,10 +1,14 @@
-﻿namespace VVPSMS.Api.Models.ModelsDto
+﻿using System.Collections.ObjectModel;
+
+namespace VVPSMS.Api.Models.ModelsDto
 {
     public class AdmissionDocumentDto
     {
         public int DocumentId { get; set; }
 
         public int FormId { get; set; }
+
+        public int MstdocumenttypesId { get; set; }
 
         public string DocumentName { get; set; } = null!;
 
@@ -18,6 +22,6 @@
 
         public int? ModifiedBy { get; set; }
 
-        public byte[] ImageDetails { get; set; }
+        public string? FileContentsAsBase64 { get; set; } = null!;
     }
 }

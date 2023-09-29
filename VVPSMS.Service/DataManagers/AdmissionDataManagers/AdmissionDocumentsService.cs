@@ -12,11 +12,11 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 
         public async void RemoveRangeofDocuments(int formid)
         {
-            var admissionForm =  dbSet.Where(x => x.FormId == formid).ToList();
+            var admissionFormdocuments =  dbSet.Where(x => x.FormId == formid).ToList();
 
-            if (admissionForm != null)
+            if (admissionFormdocuments.Count > 0)
             {
-                base.RemoveRange(admissionForm);
+                base.RemoveRange(admissionFormdocuments);
             }
         }
 

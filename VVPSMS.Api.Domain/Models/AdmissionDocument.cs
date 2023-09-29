@@ -9,6 +9,8 @@ public partial class AdmissionDocument
 
     public int FormId { get; set; }
 
+    public int? MstdocumenttypesId { get; set; }
+
     public string DocumentName { get; set; } = null!;
 
     public string DocumentPath { get; set; } = null!;
@@ -22,4 +24,6 @@ public partial class AdmissionDocument
     public int? ModifiedBy { get; set; }
 
     public virtual AdmissionForm Form { get; set; } = null!;
+
+    public virtual MstDocumentType? Mstdocumenttypes { get; set; }
 }

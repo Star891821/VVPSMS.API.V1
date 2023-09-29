@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.SqlServer.Server;
 using System.Text;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
@@ -52,56 +53,52 @@ namespace VVPSMS.API.Controllers
 
             return Ok(item);
         }
-        private Dictionary<string,string> filenamepathmapping = new Dictionary<string,string>();
+
         [HttpPost]
         public async Task<IActionResult> InsertOrUpdate(AdmissionFormDto admissionFormDto)
         {
             var isUploadtoAzure =  _configuration["Upoad:IsUpoadtoAzure"];
             var filePath = _configuration["Upoad:SaveFilePath"];
+            var result = _mapper.Map<AdmissionForm>(admissionFormDto);
             if (isUploadtoAzure == "Yes")
             {
 
             }
             else
             {
-                if (admissionFormDto.ListOfFileContentsAsBase64 != null)
+                if (admissionFormDto.listOfAdmissionDocuments != null)
                 {
                     if (!Directory.Exists(filePath))
                     {
                         Directory.CreateDirectory(filePath);
                     }
-                    foreach (var file in admissionFormDto.ListOfFileContentsAsBase64)
-                    {
-                        var index = file.IndexOf(',');
-                        var base64stringwithoutsignature = admissionFormDto.ListOfFileContentsAsBase64[0].Substring(index + 1);
-                        index = admissionFormDto.ListOfFileContentsAsBase64[0].IndexOf(';');
-                        var base64signature = admissionFormDto.ListOfFileContentsAsBase64[0].Substring(0, index);
-                        index = base64signature.IndexOf("/");
-                        var extension = base64signature.Substring(index + 1);
 
-                        var filename1 = DateTime.Now.Ticks.ToString() + "." + extension;
-                        byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
-                        System.IO.File.WriteAllBytes(filePath + "\\" + filename1, bytes);
-                        filenamepathmapping[filename1] = filePath;
+                    for (var i = 0; i < admissionFormDto.listOfAdmissionDocuments.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64))
+                        {
+                            var Base64FileContent = admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64;
+                            var index = Base64FileContent.IndexOf(',');
+                            var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
+                            byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
+                            System.IO.File.WriteAllBytes(filePath + "\\" + admissionFormDto.listOfAdmissionDocuments[i].DocumentName, bytes);
+                            AdmissionDocument admissionDocument = new()
+                            {
+                                DocumentName = admissionFormDto.listOfAdmissionDocuments[i].DocumentName,
+                                DocumentPath = filePath,
+                                FormId = admissionFormDto.listOfAdmissionDocuments[i].FormId,
+                                MstdocumenttypesId = admissionFormDto.listOfAdmissionDocuments[i].MstdocumenttypesId,
+                                CreatedAt = DateTime.Now,
+                                ModifiedAt = DateTime.Now,
+                            };
+                            result.AdmissionDocuments.Add(admissionDocument);
+                        }
+
                     }
                 }
 
             }
           
-            var result = _mapper.Map<AdmissionForm>(admissionFormDto);
-            foreach(var a in filenamepathmapping)
-            {
-                AdmissionDocument admissionDocument = new AdmissionDocument()
-                {
-                    DocumentName = a.Key,
-                    DocumentPath = a.Value,
-                    CreatedAt = DateTime.Now,
-                    ModifiedAt = DateTime.Now,
-                    FormId = result.FormId,
-                };
-                result.AdmissionDocuments.Add(admissionDocument);
-            }
-            
              _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
             await _unitOfWork.AdmissionService.InsertOrUpdate(result);
             

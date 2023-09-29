@@ -15,12 +15,10 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             try
             {
-                var exist = await dbSet.Where(x => x.FormId == entity.FormId)
-                                       .FirstOrDefaultAsync();
-              var abc = getbyID(entity.FormId); ;
+                var exist = getbyID(entity.FormId);
                 if (exist != null)
                 {
-                    await base.Update(abc, UpdatedAdmissionEntity(abc, entity));
+                    await base.Update(exist, UpdatedAdmissionEntity(exist, entity));
                 }
                 else
                 {
@@ -64,7 +62,6 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             try
             {
                 return getbyID(id);
-               // return admissionForm;
             }
             catch (Exception ex)
             {
@@ -74,7 +71,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 
         private AdmissionForm getbyID(int id)
         {
-            var admissionForm =  dbSet.Where(x => x.FormId == id)
+            var admissionForm = dbSet.Where(x => x.FormId == id)
                                        .FirstOrDefault();
             if (admissionForm != null)
             {

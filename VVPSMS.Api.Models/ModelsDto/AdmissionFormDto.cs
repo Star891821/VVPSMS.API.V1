@@ -31,10 +31,6 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int? ModifiedBy { get; set; }
 
-        //  [JsonConverter(typeof(JsonToByteArrayConverter))]
-
-        public Collection<string>? ListOfFileContentsAsBase64 { get; set; }
-
         public virtual List<AdmissionDocumentDto> listOfAdmissionDocuments { get; set; }
 
         public virtual List<AdmissionEnquiryDetailDto> AdmissionEnquiryDetails { get; set; } 
