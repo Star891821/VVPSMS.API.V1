@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.AutoMapper;
+using VVPSMS.API.Filters;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Business;
 using VVPSMS.Service.DataManagers;
@@ -104,7 +106,9 @@ builder.Services.AddTransient<IJwtAuthManager,JwtAuthManager>();
 builder.Services.AddTransient<IStorageService, StorageService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+builder.Services.AddScoped<ValidationFilterAttribute>();
+builder.Services.Configure<ApiBehaviorOptions>(options
+    => options.SuppressModelStateInvalidFilter = true);
 var mappingConfiguration = new MapperConfiguration(config => config.AddProfile(new AutoMapperProfile()));
 IMapper mapper = mappingConfiguration.CreateMapper();
 builder.Services.AddSingleton(mapper);

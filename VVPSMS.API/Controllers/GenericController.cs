@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VVPSMS.API.Filters;
 using VVPSMS.Service.Repository;
 
 namespace VVPSMS.API.Controllers
@@ -19,7 +20,6 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
-      
         public T Get( int id)
         {
             return service.GetById(id);
@@ -27,7 +27,7 @@ namespace VVPSMS.API.Controllers
 
 
         [HttpPost, ActionName("InsertOrUpdate")]
-        
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public List<T> Post([FromBody] T value) 
         {
             return service.InsertOrUpdate(value);
