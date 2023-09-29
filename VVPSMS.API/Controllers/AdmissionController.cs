@@ -48,14 +48,49 @@ namespace VVPSMS.API.Controllers
 
             return Ok(item);
         }
-
+        private Dictionary<string,string> filenamepathmapping = new Dictionary<string,string>();
         [HttpPost]
         public async Task<IActionResult> InsertOrUpdate(AdmissionFormDto admissionFormDto)
         {
+          
+            if (admissionFormDto.ListOfFileContentsAsBase64 != null)
+            {
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files");
+                if (!Directory.Exists(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                }
+                foreach (var file in admissionFormDto.ListOfFileContentsAsBase64)
+                {
+                    var index = file.IndexOf(',');
+                    var base64stringwithoutsignature = admissionFormDto.ListOfFileContentsAsBase64[0].Substring(index + 1);
+                    index = admissionFormDto.ListOfFileContentsAsBase64[0].IndexOf(';');
+                    var base64signature = admissionFormDto.ListOfFileContentsAsBase64[0].Substring(0, index);
+                    index = base64signature.IndexOf("/");
+                    var extension = base64signature.Substring(index + 1);
+
+                    var filename1 =  DateTime.Now.Ticks.ToString() +"." +extension;
+                    byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
+                    System.IO.File.WriteAllBytes(filePath + "\\"+filename1, bytes);
+                    filenamepathmapping[filename1] = filePath;
+                }
+            }
 
             var result = _mapper.Map<AdmissionForm>(admissionFormDto);
-            var documents = _mapper.Map<List<AdmissionDocument>>(admissionFormDto.listOfAdmissionDocuments);
-            await _unitOfWork.AdmissionDocumentService.RemoveRange(documents);
+            foreach(var a in filenamepathmapping)
+            {
+                AdmissionDocument admissionDocument = new AdmissionDocument()
+                {
+                    DocumentName = a.Key,
+                    DocumentPath = a.Value,
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now,
+                    FormId = result.FormId,
+                };
+                result.AdmissionDocuments.Add(admissionDocument);
+            }
+            
+             _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
             await _unitOfWork.AdmissionService.InsertOrUpdate(result);
             
             await _unitOfWork.CompleteAsync();
@@ -63,8 +98,8 @@ namespace VVPSMS.API.Controllers
             return Ok();
 
         }
+       
 
-      
 
         [HttpDelete]
         public async Task<IActionResult> Delete(AdmissionFormDto admissionFormDto)

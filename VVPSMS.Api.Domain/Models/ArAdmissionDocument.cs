@@ -7,7 +7,7 @@ public partial class ArAdmissionDocument
 {
     public int DocumentId { get; set; }
 
-    public int ArformId { get; set; }
+    public int? ArformId { get; set; }
 
     public string DocumentName { get; set; } = null!;
 

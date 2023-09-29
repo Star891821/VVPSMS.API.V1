@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using VVPSMS.Api.Models.CustomValidation;
 
 namespace VVPSMS.Api.Models.ModelsDto
@@ -27,6 +30,10 @@ namespace VVPSMS.Api.Models.ModelsDto
         public DateTime? ModifiedAt { get; set; }
 
         public int? ModifiedBy { get; set; }
+
+        //  [JsonConverter(typeof(JsonToByteArrayConverter))]
+
+        public Collection<string>? ListOfFileContentsAsBase64 { get; set; }
 
         public virtual List<AdmissionDocumentDto> listOfAdmissionDocuments { get; set; }
 

@@ -34,23 +34,20 @@ namespace VVPSMS.Service.DataManagers
 
         public virtual async Task<bool> InsertOrUpdateRange(List<T> entity)
         {
-            if (!dbSet.Local.Any(e => e == entity))
-            {
-                await dbSet.AddRangeAsync(entity);
-                return true;
-            }
-            return false;
+            await dbSet.AddRangeAsync(entity);
+            return true;
         }
         public virtual async Task<bool> InsertOrUpdate(T entity)
         {
-            if (!dbSet.Local.Any(e => e == entity))
-            {
-                await dbSet.AddAsync(entity);
-                return true;
-            }
-            return false;
+            await dbSet.AddAsync(entity);
+            return true;
         }
 
+        public virtual async Task<bool> Update(T orginalentity, T entity)
+        {
+            dbSet.Entry(orginalentity).CurrentValues.SetValues(entity);
+            return true;
+        }
         public virtual async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
         {
             return await dbSet.Where(predicate).ToListAsync();
@@ -58,23 +55,14 @@ namespace VVPSMS.Service.DataManagers
 
         public virtual async Task<bool> Remove(T entity)
         {
-            if (dbSet.Local.Any(e => e == entity))
-            {
-                dbSet.Remove(entity);
-                return true;
-            }
-            return false;
+            dbSet.Remove(entity);
+            return true;
         }
 
         public virtual async Task<bool> RemoveRange(List<T> entity)
         {
-            if (dbSet.Local.Any(e => e == entity))
-            {
-                dbSet.RemoveRange(entity);
-                return true;
-            }
-           return false;
-           
+            dbSet.RemoveRange(entity);
+            return true;
         }
     }
 }

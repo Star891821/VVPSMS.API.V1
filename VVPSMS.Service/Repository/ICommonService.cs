@@ -14,6 +14,7 @@ namespace VVPSMS.Service.Repository
         Task<T> GetById(int id);
         Task<bool> InsertOrUpdateRange(List<T> entity);
         Task<bool> InsertOrUpdate(T entity);
+        Task<bool> Update(T entity1,T entity);
         Task<bool> Remove(T entity);
         Task<bool> RemoveRange(List<T> entity);
 

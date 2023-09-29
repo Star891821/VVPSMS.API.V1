@@ -7,7 +7,7 @@ public partial class EmergencyContactDetail
 {
     public int EmergencycontactdetailsId { get; set; }
 
-    public int FormId { get; set; }
+    public int? FormId { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -25,5 +25,5 @@ public partial class EmergencyContactDetail
 
     public int? ModifiedBy { get; set; }
 
-    public virtual AdmissionForm Form { get; set; } = null!;
+    public virtual AdmissionForm? Form { get; set; }
 }

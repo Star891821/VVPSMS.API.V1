@@ -7,7 +7,7 @@ public partial class ArAdmissionForm
 {
     public int ArformId { get; set; }
 
-    public int AcademicId { get; set; }
+    public int? AcademicId { get; set; }
 
     public int SchoolCode { get; set; }
 

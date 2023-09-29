@@ -48,7 +48,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[StudentInfoDetails](
 	[studentinfo_id] [int] IDENTITY(1,1) NOT NULL,
-	[form_id] [int] NOT NULL,
+	[form_id] [int] NULL,
 	[first_name] [nvarchar](255) NOT NULL,
 	[middle_name] [nvarchar](255) NOT NULL,
 	[last_name] [nvarchar](255) NOT NULL,
@@ -92,7 +92,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[ArAdmissionForms](
 	[Arform_id] [int] IDENTITY(1,1) NOT NULL,
-	[academic_id] [int] NOT NULL,
+	[academic_id] [int]  NULL,
 	[school_code] [int] NOT NULL,
 	[stream_id] [int] NOT NULL,
 	[grade_id] [int] NOT NULL,
@@ -137,7 +137,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[ArAdmissionDocuments](
 	[document_id] [int] IDENTITY(1,1) NOT NULL,
-	[Arform_id] [int] NOT NULL,
+	[Arform_id] [int]  NULL,
 	[document_name] [nvarchar](255) NOT NULL,
 	[document_path] [nvarchar](255) NOT NULL,
 	[created_at] [datetime] NULL,
@@ -157,7 +157,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[FamilyOrGuardianInfoDetails](
 	[familyorguardianinfodetails_id] [int] IDENTITY(1,1) NOT NULL,
-	[form_id] [int] NOT NULL,
+	[form_id] [int]  NULL,
 	[name] [nvarchar](255) NOT NULL,
 	[dob] [nvarchar](255) NOT NULL,
 	[highest_qualification] [nvarchar](255)  NULL,
@@ -197,7 +197,7 @@ GO
 
 CREATE TABLE [dbo].[SiblingInfo](
 	[sibling_id] [int] IDENTITY(1,1) NOT NULL,
-	[form_id] [int] NOT NULL,
+	[form_id] [int] NULL,
 	[sibling_name] [nvarchar](255) NULL,
 	[sibling_dob] [datetime] NULL,
 	[sibling_gender] [nvarchar](255) NULL,
@@ -227,7 +227,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[EmergencyContactDetails](
 	[emergencycontactdetails_id] [int] IDENTITY(1,1) NOT NULL,
-	[form_id] [int] NOT NULL,
+	[form_id] [int]  NULL,
 	[name] [nvarchar](255) NOT NULL,
 	[contact_number] [int] NOT NULL,
 	[relationship] [nvarchar](100) NOT NULL,

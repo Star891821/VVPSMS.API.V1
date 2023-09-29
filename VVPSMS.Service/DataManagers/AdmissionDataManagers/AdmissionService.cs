@@ -17,10 +17,10 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             {
                 var exist = await dbSet.Where(x => x.FormId == entity.FormId)
                                        .FirstOrDefaultAsync();
-
+              var abc = getbyID(entity.FormId); ;
                 if (exist != null)
                 {
-                    await base.InsertOrUpdate(UpdatedAdmissionEntity(exist, entity));
+                    await base.Update(abc, UpdatedAdmissionEntity(abc, entity));
                 }
                 else
                 {
@@ -52,9 +52,9 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             entityToUpdate.StudentIllnessDetails = entity.StudentIllnessDetails;
             entityToUpdate.StudentInfoDetails = entity.StudentInfoDetails;
             entityToUpdate.TransportDetails = entity.TransportDetails;
-            entityToUpdate.CreatedAt = entity.CreatedAt;
+            entityToUpdate.CreatedAt = DateTime.Now;
             entityToUpdate.CreatedBy = entity.CreatedBy;
-            entityToUpdate.ModifiedAt = entity.ModifiedAt;
+            entityToUpdate.ModifiedAt = DateTime.Now;
             entityToUpdate.ModifiedBy = entity.ModifiedBy;
             return entityToUpdate;
         }
@@ -63,27 +63,48 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             try
             {
-                var admissionForm = await dbSet.Where(x => x.FormId == id)
-                                       .FirstOrDefaultAsync();
-                if (admissionForm != null)
-                {
-                    dbSet.Entry(admissionForm).Collection(adm => adm.StudentInfoDetails).Load();
-                    dbSet.Entry(admissionForm).Collection(adm => adm.AdmissionDocuments).Load();
-                    dbSet.Entry(admissionForm).Collection(adm => adm.AdmissionEnquiryDetails).Load();
-                    dbSet.Entry(admissionForm).Collection(adm => adm.SiblingInfos).Load();
-                    dbSet.Entry(admissionForm).Collection(adm => adm.StudentHealthInfoDetails).Load();
-                    dbSet.Entry(admissionForm).Collection(adm => adm.FamilyOrGuardianInfoDetails).Load();
-                    dbSet.Entry(admissionForm).Collection(adm => adm.PreviousSchoolDetails).Load();
-                    dbSet.Entry(admissionForm).Collection(adm => adm.EmergencyContactDetails).Load();
-                    dbSet.Entry(admissionForm).Collection(adm => adm.TransportDetails).Load();
-                    dbSet.Entry(admissionForm).Collection(adm => adm.StudentIllnessDetails).Load();
-                }
-                return admissionForm;
+                return getbyID(id);
+               // return admissionForm;
             }
             catch (Exception ex)
             {
                 return null;
             }
+        }
+
+        private AdmissionForm getbyID(int id)
+        {
+            var admissionForm =  dbSet.Where(x => x.FormId == id)
+                                       .FirstOrDefault();
+            if (admissionForm != null)
+            {
+                dbSet.Entry(admissionForm).Collection(adm => adm.StudentInfoDetails).Load();
+                dbSet.Entry(admissionForm).Collection(adm => adm.AdmissionDocuments).Load();
+                dbSet.Entry(admissionForm).Collection(adm => adm.AdmissionEnquiryDetails).Load();
+                dbSet.Entry(admissionForm).Collection(adm => adm.SiblingInfos).Load();
+                dbSet.Entry(admissionForm).Collection(adm => adm.StudentHealthInfoDetails).Load();
+                dbSet.Entry(admissionForm).Collection(adm => adm.FamilyOrGuardianInfoDetails).Load();
+                dbSet.Entry(admissionForm).Collection(adm => adm.PreviousSchoolDetails).Load();
+                dbSet.Entry(admissionForm).Collection(adm => adm.EmergencyContactDetails).Load();
+                dbSet.Entry(admissionForm).Collection(adm => adm.TransportDetails).Load();
+                dbSet.Entry(admissionForm).Collection(adm => adm.StudentIllnessDetails).Load();
+            }
+            return admissionForm;
+        }
+        public override async Task<List<AdmissionForm>> GetAll()
+        {
+            return await dbSet.Include(a => a.StudentInfoDetails)
+                .Include(a => a.StudentInfoDetails)
+                .Include(a => a.AdmissionDocuments)
+                .Include(a => a.AdmissionEnquiryDetails)
+                .Include(a => a.SiblingInfos)
+                .Include(a => a.StudentHealthInfoDetails)
+                .Include(a => a.FamilyOrGuardianInfoDetails)
+                .Include(a => a.PreviousSchoolDetails)
+                .Include(a => a.EmergencyContactDetails)
+                .Include(a => a.TransportDetails)
+                .Include(a => a.StudentIllnessDetails)
+                .ToListAsync();
         }
     }
 }
