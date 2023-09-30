@@ -27,7 +27,7 @@ namespace VVPSMS.Service.DataManagers
             return await dbSet.Where(e => e.Equals(id)).ToListAsync();
         }
 
-        public virtual async Task<T?> GetById(int id)
+        public virtual async Task<T> GetById(int id)
         {
             return await dbSet.FindAsync(id);
         }

@@ -16,7 +16,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 
             if (admissionFormdocuments.Count > 0)
             {
-                base.RemoveRange(admissionFormdocuments);
+                await base.RemoveRange(admissionFormdocuments);
             }
         }
 
