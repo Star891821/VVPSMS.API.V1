@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using System.Threading.Tasks;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
@@ -19,6 +20,7 @@ namespace VVPSMS.API.Controllers
         private readonly ITeacherUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         //private readonly IStorageService _storageService;
+        private static Logger logger = LogManager.GetLogger("TeacherController");
         public TeacherController(IMapper mapper, ITeacherUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;

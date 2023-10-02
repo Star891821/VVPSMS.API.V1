@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,6 +16,7 @@ namespace VVPSMS.API.Controllers
     {
         private IConfiguration _configuration;
         private readonly ILoginService _dataRepository;
+        private static Logger logger = LogManager.GetLogger("AuthController");
         public AuthController(IConfiguration configuration, ILoginService dataRepository)
         {
             _dataRepository = dataRepository;

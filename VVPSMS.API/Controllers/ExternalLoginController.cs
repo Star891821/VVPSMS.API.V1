@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NLog;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Service.Models;
 using VVPSMS.Service.Repository;
@@ -10,6 +11,7 @@ namespace VVPSMS.API.Controllers
     public class ExternalLoginController : ControllerBase
     {
         private readonly IExternalLoginAppService _appSvc;
+        private static Logger logger = LogManager.GetLogger("ExternalLoginController");
         public ExternalLoginController(IExternalLoginAppService appSvc)
         {
             _appSvc = appSvc;

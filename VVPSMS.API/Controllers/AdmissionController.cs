@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository.Admissions;
@@ -14,6 +15,9 @@ namespace VVPSMS.API.Controllers
         private IConfiguration _configuration;
         private readonly IAdmissionUnitOfWork _unitOfWork;
         private IMapper _mapper;
+        private static Logger logger = LogManager.GetLogger("AdmissionController");
+
+
         public AdmissionController(IAdmissionUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -24,7 +28,15 @@ namespace VVPSMS.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAdmissionDetails()
         {
-            var users = await _unitOfWork.AdmissionService.GetAll();
+            //try
+            //{
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.Error(ex);
+            //}
+            var users = await _unitOfWork.AdmissionService.GetAll();               
+           
             return Ok(users);
         }
 

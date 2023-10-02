@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository.Parents;
@@ -16,6 +17,7 @@ namespace VVPSMS.API.Controllers
         private readonly IParentUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         //private readonly IStorageService _storageService;
+        private static Logger logger = LogManager.GetLogger("ParentController");
         public ParentController(IMapper mapper, IParentUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;

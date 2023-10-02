@@ -12,7 +12,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
         {
             _mapper = mapper;
         }
-        public List<MstDocumentTypesDto> Delete(int id)
+        public bool Delete(int id)
         {
             using (var dbContext = new VvpsmsdbContext())
             {
@@ -22,9 +22,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
                     dbContext.MstDocumentTypes.Remove(entity);
                     dbContext.SaveChanges();
                 }
-
-                var result = dbContext.MstDocumentTypes.ToList();
-                return _mapper.Map<List<MstDocumentTypesDto>>(result);
+                return true;
             }
 
         }
@@ -47,7 +45,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
             }
         }
 
-        public List<MstDocumentTypesDto> InsertOrUpdate(MstDocumentTypesDto entity)
+        public bool InsertOrUpdate(MstDocumentTypesDto entity)
         {
             using (var dbContext = new VvpsmsdbContext())
             {
@@ -68,8 +66,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
                     }
                     dbContext.SaveChanges();
                 }
-                var result = dbContext.MstDocumentTypes.ToList();
-                return _mapper.Map<List<MstDocumentTypesDto>>(result);
+                return true;
             }
         }
     }

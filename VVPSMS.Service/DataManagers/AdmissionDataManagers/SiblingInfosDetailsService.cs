@@ -8,13 +8,22 @@ using VVPSMS.Service.Repository.Admissions;
 
 namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 {
+    /// <summary>
+    /// SiblingInfosDetailsService
+    /// </summary>
     public class SiblingInfosDetailsService : GenericService<SiblingInfo>, ISiblingInfosDetails
     {
+        /// <summary>
+        /// SiblingInfosDetailsService
+        /// </summary>
+        /// <param name="context"></param>
         public SiblingInfosDetailsService(VvpsmsdbContext context) : base(context)
         {
         }
-
-
+        #region public methods
+        /// <summary>
+        /// RemoveRangeofDetails
+        /// </summary>
         public async void RemoveRangeofDetails()
         {
             var admissionFormdocuments = dbSet.Where(x => x.FormId == null).ToList();
@@ -24,5 +33,8 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 base.RemoveRange(admissionFormdocuments);
             }
         }
+        #endregion
+
+
     }
 }

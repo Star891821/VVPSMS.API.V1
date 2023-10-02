@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using System.Threading.Tasks;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
@@ -17,6 +18,7 @@ namespace VVPSMS.API.Controllers
     {
         private readonly IStudentUnitOfWork _unitOfWork;
         private IMapper _mapper;
+        private static Logger logger = LogManager.GetLogger("StudentController");
         public StudentController(IStudentUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;

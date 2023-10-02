@@ -4,10 +4,17 @@ using VVPSMS.Service.Repository.Admissions;
 
 namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 {
+    /// <summary>
+    /// AdmissionUnitOfWork
+    /// </summary>
     public class AdmissionUnitOfWork : IAdmissionUnitOfWork
     {
+        #region Private Declarations
         private readonly VvpsmsdbContext vvpsmsdbContext;
         private readonly IMapper mapper;
+        #endregion
+
+        #region public Declarations
         public IAdmissionDocumentService AdmissionDocumentService { get; private set; }
         public IAdmissionService AdmissionService { get; private set; }
         public IAdmissionEnquiryDetails AdmissionEnquiryDetailsService { get; private set; }
@@ -21,8 +28,10 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         public ISiblingInfosDetails SiblingInfosDetailsService { get; private set; }
         public IEmergencyContactDetails EmergencyContactDetailsService { get; private set; }
         public IFamilyOrGuardianInfoDetails FamilyOrGuardianInfoDetailsService { get; private set; }
+        #endregion
 
 
+        #region public methods
         public AdmissionUnitOfWork(VvpsmsdbContext vvpsmsdbContext, IMapper mapper)
         {
             this.vvpsmsdbContext = vvpsmsdbContext;
@@ -51,19 +60,21 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         }
         public void RemoveNullableEntitiesFromDb()
         {
-             AdmissionEnquiryDetailsService.RemoveRangeofDetails();
-             StudentHealthInfoDetailsService.RemoveRangeofDetails();
-             StudentInfoDetailsService.RemoveRangeofDetails();
-             StudentIllnessDetailsService.RemoveRangeofDetails();
-             TransportDetailsService.RemoveRangeofDetails();
-             SiblingInfosDetailsService.RemoveRangeofDetails();
-             PreviousSchoolDetailsService.RemoveRangeofDetails();
-             FamilyOrGuardianInfoDetailsService.RemoveRangeofDetails();
-             EmergencyContactDetailsService.RemoveRangeofDetails();
+            AdmissionEnquiryDetailsService.RemoveRangeofDetails();
+            StudentHealthInfoDetailsService.RemoveRangeofDetails();
+            StudentInfoDetailsService.RemoveRangeofDetails();
+            StudentIllnessDetailsService.RemoveRangeofDetails();
+            TransportDetailsService.RemoveRangeofDetails();
+            SiblingInfosDetailsService.RemoveRangeofDetails();
+            PreviousSchoolDetailsService.RemoveRangeofDetails();
+            FamilyOrGuardianInfoDetailsService.RemoveRangeofDetails();
+            EmergencyContactDetailsService.RemoveRangeofDetails();
         }
         public Task CompleteAsync()
         {
             return vvpsmsdbContext.SaveChangesAsync();
         }
+        #endregion
+
     }
 }

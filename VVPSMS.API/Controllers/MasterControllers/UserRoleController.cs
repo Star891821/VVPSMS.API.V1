@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NLog;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Service.Repository;
 
@@ -9,6 +10,7 @@ namespace VVPSMS.API.Controllers.MasterControllers
 
     public class UserRoleController : GenericController<MstUserRoleDto>
     {
+        private static Logger logger = LogManager.GetLogger("UserRoleController");
         public UserRoleController(IGenericService<MstUserRoleDto> genericService)
             : base(genericService)
         {
