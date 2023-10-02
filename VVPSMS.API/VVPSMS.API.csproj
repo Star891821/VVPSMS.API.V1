@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Upload\**" />
+    <Content Remove="Upload\**" />
+    <EmbeddedResource Remove="Upload\**" />
+    <None Remove="Upload\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions" Version="2.1.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
@@ -33,10 +40,6 @@
     <ProjectReference Include="..\VVPSMS.Api.Domain\VVPSMS.Domain.csproj" />
     <ProjectReference Include="..\VVPSMS.Api.Models\VVPSMS.Api.Models.csproj" />
     <ProjectReference Include="..\VVPSMS.Service\VVPSMS.Service.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Upload\Files\" />
   </ItemGroup>
 
 </Project>

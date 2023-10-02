@@ -19,14 +19,12 @@ namespace VVPSMS.API.AutoMapper
             CreateMap<AdmissionEnquiryDetail, AdmissionEnquiryDetailDto>().ReverseMap();
             CreateMap<AdmissionDocument, AdmissionDocumentDto>().ReverseMap();
             CreateMap<TransportDetail, TransportDetailDto>().ReverseMap();
-
             CreateMap<MstSchool, MstSchoolDto>().ReverseMap();
             CreateMap<MstSchoolGrade, MstSchoolGradeDto>().ReverseMap();
             CreateMap<MstClass, MstClassDto>().ReverseMap();
             CreateMap<MstAcademicYear, MstAcademicYearDto>().ReverseMap();
             CreateMap<MstSchoolStream, MstSchoolStreamDto>().ReverseMap();
             CreateMap<MstUserRole, MstUserRoleDto>().ReverseMap();
-
             CreateMap<MstUser, MstUserDto>().ReverseMap();
             CreateMap<Student, StudentDto>().ReverseMap();
             CreateMap<StudentDocument, StudentDocumentDto>().ReverseMap();
@@ -34,6 +32,7 @@ namespace VVPSMS.API.AutoMapper
             CreateMap<TeacherDocument, TeacherDocumentDto>().ReverseMap();
             CreateMap<Parent, ParentDto>().ReverseMap();
             CreateMap<ParentDocument, ParentDocumentDto>().ReverseMap();
+            CreateMap<MstDocumentType,MstDocumentTypesDto>().ReverseMap();
         }
     }
 }
