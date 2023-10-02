@@ -1,9 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.SqlServer.Server;
-using System.Text;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository.Admissions;
@@ -81,10 +77,14 @@ namespace VVPSMS.API.Controllers
                             var index = Base64FileContent.IndexOf(',');
                             var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
                             byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
-                            System.IO.File.WriteAllBytes(filePath + "\\" + admissionFormDto.listOfAdmissionDocuments[i].DocumentName, bytes);
+                            var fileDetails = admissionFormDto.listOfAdmissionDocuments[i].DocumentName;
+                            var temp = fileDetails.Split('.');
+
+                            var fileName = temp[0] +"_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy");
+                            System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
                             AdmissionDocument admissionDocument = new()
                             {
-                                DocumentName = admissionFormDto.listOfAdmissionDocuments[i].DocumentName,
+                                DocumentName = fileName,
                                 DocumentPath = filePath,
                                 FormId = admissionFormDto.listOfAdmissionDocuments[i].FormId,
                                 MstdocumenttypesId = admissionFormDto.listOfAdmissionDocuments[i].MstdocumenttypesId,
@@ -98,12 +98,15 @@ namespace VVPSMS.API.Controllers
                 }
 
             }
-          
-             _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
-            await _unitOfWork.AdmissionService.InsertOrUpdate(result);
             
+            _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
+            await _unitOfWork.AdmissionService.InsertOrUpdate(result);
             await _unitOfWork.CompleteAsync();
 
+            #region Remove Null Entries
+            _unitOfWork.RemoveNullableEntitiesFromDb();
+            #endregion
+            
             return Ok();
 
         }

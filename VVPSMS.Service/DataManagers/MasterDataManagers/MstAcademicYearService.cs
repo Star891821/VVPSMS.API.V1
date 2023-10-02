@@ -12,7 +12,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
         {
             _mapper = mapper;
         }
-        public List<MstAcademicYearDto> Delete(int id)
+        public bool Delete(int id)
         {
             using (var dbContext = new VvpsmsdbContext())
             {
@@ -22,8 +22,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
                     dbContext.MstAcademicYears.Remove(entity);
                     dbContext.SaveChanges();
                 }
-                var result = dbContext.MstAcademicYears.ToList();
-                return _mapper.Map<List<MstAcademicYearDto>>(result);
+                return true;
             }
         }
 
@@ -45,7 +44,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
             }
         }
 
-        public List<MstAcademicYearDto> InsertOrUpdate(MstAcademicYearDto entity)
+        public bool InsertOrUpdate(MstAcademicYearDto entity)
         {
             using (var dbContext = new VvpsmsdbContext())
             {
@@ -67,8 +66,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
                     dbContext.SaveChanges();
                 }
 
-                var result = dbContext.MstAcademicYears.ToList();
-                return _mapper.Map<List<MstAcademicYearDto>>(result);
+                return true;
             }
         }
 

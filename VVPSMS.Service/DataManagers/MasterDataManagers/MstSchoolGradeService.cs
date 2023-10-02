@@ -12,7 +12,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
         {
             _mapper = mapper;
         }
-        public List<MstSchoolGradeDto> Delete(int id)
+        public bool Delete(int id)
         {
             using (var dbContext = new VvpsmsdbContext())
             {
@@ -22,8 +22,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
                     dbContext.MstSchoolGrades.Remove(entity);
                     dbContext.SaveChanges();
                 }
-                var result = dbContext.MstSchoolGrades.ToList();
-                return _mapper.Map<List<MstSchoolGradeDto>>(result);
+                return true;
             }
 
         }
@@ -46,7 +45,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
             }
         }
 
-        public List<MstSchoolGradeDto> InsertOrUpdate(MstSchoolGradeDto entity)
+        public bool InsertOrUpdate(MstSchoolGradeDto entity)
         {
             using (var dbContext = new VvpsmsdbContext())
             {
@@ -67,8 +66,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
                     }
                     dbContext.SaveChanges();
                 }
-                var result = dbContext.MstSchoolGrades.ToList();
-                return _mapper.Map<List<MstSchoolGradeDto>>(result);
+                return true;
             }
         }
 

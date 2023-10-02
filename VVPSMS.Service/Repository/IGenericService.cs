@@ -4,8 +4,8 @@
     {
         List<T> GetAll();
         T? GetById(int id);  
-        List<T> InsertOrUpdate(T entity);
-        List<T> Delete(int id);
+        bool InsertOrUpdate(T entity);
+        bool Delete(int id);
 
     }
 }

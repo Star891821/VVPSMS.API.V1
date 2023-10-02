@@ -28,7 +28,7 @@ namespace VVPSMS.API.Controllers
 
         [HttpPost, ActionName("InsertOrUpdate")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public List<T> Post([FromBody] T value) 
+        public bool Post([FromBody] T value) 
         {
             return service.InsertOrUpdate(value);
         
@@ -36,7 +36,7 @@ namespace VVPSMS.API.Controllers
 
         [HttpDelete]
         
-        public List<T> Delete(int id)
+        public bool Delete(int id)
         {
             return service.Delete(id);
 

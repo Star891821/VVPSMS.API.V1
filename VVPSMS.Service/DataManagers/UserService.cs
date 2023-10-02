@@ -17,7 +17,7 @@ namespace VVPSMS.Service.DataManagers
             _configuration = configuration;
             _storageService = storageService;
         }
-        public List<MstUserDto> Delete(int id)
+        public bool Delete(int id)
         {
             using (var dbContext = new VvpsmsdbContext())
             {
@@ -27,8 +27,7 @@ namespace VVPSMS.Service.DataManagers
                     dbContext.MstUsers.Remove(entity);
                     dbContext.SaveChanges();
                 }
-                var result = dbContext.MstUsers.ToList();
-                return _mapper.Map<List<MstUserDto>>(result);
+                return true;
             }
         }
 
@@ -59,7 +58,7 @@ namespace VVPSMS.Service.DataManagers
             }
         }
 
-        public List<MstUserDto> InsertOrUpdate(MstUserDto entity)
+        public bool InsertOrUpdate(MstUserDto entity)
         {
             using (var dbContext = new VvpsmsdbContext())
             {
@@ -94,8 +93,7 @@ namespace VVPSMS.Service.DataManagers
                     }
                     dbContext.SaveChanges();
                 }
-                var result = dbContext.MstUsers.ToList();
-                return _mapper.Map<List<MstUserDto>>(result);
+                return true;
             }
         }
     }

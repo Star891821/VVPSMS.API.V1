@@ -14,7 +14,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
         }
 
 
-        public List<MstUserRoleDto> Delete(int id)
+        public bool Delete(int id)
         {
             using (var dbContext = new VvpsmsdbContext())
             {
@@ -25,8 +25,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
                     dbContext.SaveChanges();
                 }
 
-                var result = dbContext.MstUserRoles.ToList();
-                return _mapper.Map<List<MstUserRoleDto>>(result);
+                return true;
             }
 
         }
@@ -49,7 +48,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
             }
         }
 
-        public List<MstUserRoleDto> InsertOrUpdate(MstUserRoleDto entity)
+        public bool InsertOrUpdate(MstUserRoleDto entity)
         {
             using (var dbContext = new VvpsmsdbContext())
             {
@@ -70,8 +69,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
                     }
                     dbContext.SaveChanges();
                 }
-                var result = dbContext.MstUserRoles.ToList();
-                return _mapper.Map<List<MstUserRoleDto>>(result);
+                return true;
             }
         }
     }

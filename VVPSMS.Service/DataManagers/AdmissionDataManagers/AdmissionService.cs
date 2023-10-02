@@ -7,8 +7,10 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 {
     public class AdmissionService : GenericService<AdmissionForm>, IAdmissionService
     {
+        protected VvpsmsdbContext context;
         public AdmissionService(VvpsmsdbContext context) : base(context)
         {
+            this.context = context;
         }
 
         public override async Task<bool> InsertOrUpdate(AdmissionForm entity)
@@ -18,7 +20,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 var exist = getbyID(entity.FormId);
                 if (exist != null)
                 {
-                    await base.Update(exist, UpdatedAdmissionEntity(exist, entity));
+                    await base.Update(exist, UpdatedAdmissionEntity(exist, entity));// UpdatedAdmissionEntity(exist, entity));
                 }
                 else
                 {
