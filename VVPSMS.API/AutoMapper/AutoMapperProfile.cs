@@ -33,6 +33,7 @@ namespace VVPSMS.API.AutoMapper
             CreateMap<Parent, ParentDto>().ReverseMap();
             CreateMap<ParentDocument, ParentDocumentDto>().ReverseMap();
             CreateMap<MstDocumentType,MstDocumentTypesDto>().ReverseMap();
+            CreateMap<MstEnquiryQuestionDetail, MstEnquiryQuestionDetailDto>().ReverseMap();
         }
     }
 }

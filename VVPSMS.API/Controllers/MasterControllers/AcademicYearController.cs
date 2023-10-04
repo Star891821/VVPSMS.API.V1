@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using VVPSMS.Api.Models.ModelsDto;
+using VVPSMS.API.NLog;
 using VVPSMS.Service.Repository;
 
 namespace VVPSMS.API.Controllers.MasterControllers
@@ -11,11 +12,9 @@ namespace VVPSMS.API.Controllers.MasterControllers
 
     public class AcademicYearController : GenericController<MstAcademicYearDto>
     {
-        private static Logger logger = LogManager.GetLogger("AcademicYearController");
-        public AcademicYearController(IGenericService<MstAcademicYearDto> genericService)
-            : base(genericService)
+        public AcademicYearController(IGenericService<MstAcademicYearDto> genericService, ILog logger)
+            : base(genericService, logger)
         {
-
         }
     }
 }

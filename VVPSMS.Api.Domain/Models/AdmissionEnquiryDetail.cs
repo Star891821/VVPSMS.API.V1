@@ -9,11 +9,11 @@ public partial class AdmissionEnquiryDetail
 
     public int? FormId { get; set; }
 
-    public int MstenquiryquestiondetailsId { get; set; }
+    public int? MstenquiryquestiondetailsId { get; set; }
 
     public string? EnquiryResponse { get; set; }
 
-    public int CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }
 
@@ -23,5 +23,5 @@ public partial class AdmissionEnquiryDetail
 
     public virtual AdmissionForm? Form { get; set; }
 
-    public virtual MstEnquiryQuestionDetail Mstenquiryquestiondetails { get; set; } = null!;
+    public virtual MstEnquiryQuestionDetail? Mstenquiryquestiondetails { get; set; }
 }

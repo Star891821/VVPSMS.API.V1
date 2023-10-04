@@ -6,7 +6,7 @@ using VVPSMS.Service.Repository;
 
 namespace VVPSMS.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ExternalLoginController : ControllerBase
     {

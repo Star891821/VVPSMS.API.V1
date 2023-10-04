@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NLog;
 using VVPSMS.Api.Models.ModelsDto;
+using VVPSMS.API.NLog;
 using VVPSMS.Service.Repository;
 
 namespace VVPSMS.API.Controllers.MasterControllers
@@ -10,9 +11,8 @@ namespace VVPSMS.API.Controllers.MasterControllers
 
     public class SchoolStreamController : GenericController<MstSchoolStreamDto>
     {
-        private static Logger logger = LogManager.GetLogger("SchoolStreamController");
-        public SchoolStreamController(IGenericService<MstSchoolStreamDto> genericService)
-            : base(genericService)
+        public SchoolStreamController(IGenericService<MstSchoolStreamDto> genericService, ILog logger)
+            : base(genericService, logger)
         {
 
         }

@@ -9,7 +9,9 @@ public partial class MstEnquiryQuestionDetail
 
     public string? EnquiryQuestion { get; set; }
 
-    public int? CreatedAt { get; set; }
+    public int? MstenquiryquestiontypedetailsId { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }
 
@@ -18,4 +20,8 @@ public partial class MstEnquiryQuestionDetail
     public int? ModifiedBy { get; set; }
 
     public virtual ICollection<AdmissionEnquiryDetail> AdmissionEnquiryDetails { get; set; } = new List<AdmissionEnquiryDetail>();
+
+    public virtual ICollection<MstEnquiryAnswerDetail> MstEnquiryAnswerDetails { get; set; } = new List<MstEnquiryAnswerDetail>();
+
+    public virtual MstEnquiryQuestionTypeDetail? Mstenquiryquestiontypedetails { get; set; }
 }

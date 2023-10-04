@@ -23,57 +23,65 @@ using VVPSMS.Service.Repository.Parents;
 using VVPSMS.Service.Repository.Students;
 using VVPSMS.Service.Repository.Teachers;
 using VVPSMS.Service.Shared;
+using NLog.Web;
+using NLog;
+using VVPSMS.API.NLog;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-//JWT Tocken region
-
-builder.Services.AddAuthentication(options =>
+try
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(o =>
-{
-    o.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = false,
-        ValidateIssuerSigningKey = true
-    };
-});
-builder.Services.AddAuthorization();
-// Add configuration from appsettings.json
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddEnvironmentVariables();
+    var builder = WebApplication.CreateBuilder(args);
+    LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/NLog.config"));
 
-// End region
+    builder.Services.AddSingleton<ILog, LogNLog>();
+    // Add services to the container.
 
-builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
-builder.Services.AddSwaggerGen(c => {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    builder.Services.AddControllers();
+    //JWT Tocken region
+
+    builder.Services.AddAuthentication(options =>
     {
-        Title = "JWTToken_Auth_API",
-        Version = "v1"
-    });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(o =>
     {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = false,
+            ValidateIssuerSigningKey = true
+        };
     });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+    builder.Services.AddAuthorization();
+    // Add configuration from appsettings.json
+    builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddEnvironmentVariables();
+
+    // End region
+
+    builder.Services.AddEndpointsApiExplorer();
+    //builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "JWTToken_Auth_API",
+            Version = "v1"
+        });
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+        });
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement {
         {
             new OpenApiSecurityScheme {
                 Reference = new OpenApiReference {
@@ -84,92 +92,103 @@ builder.Services.AddSwaggerGen(c => {
             new string[] {}
         }
     });
-});
-builder.Services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-builder.Services.AddDbContext<VvpsmsdbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMS")));
-builder.Services.AddTransient<ILoginService, LoginService>();
-builder.Services.AddScoped<IAdmissionUnitOfWork, AdmissionUnitOfWork>();
-builder.Services.AddScoped<IStudentUnitOfWork, StudentUnitOfWork>();
-builder.Services.AddScoped<ITeacherUnitOfWork, TeacherUnitOfWork>();
-builder.Services.AddScoped<IParentUnitOfWork, ParentUnitOfWork>();
-builder.Services.AddTransient<IGenericService<MstSchoolGradeDto>, MstSchoolGradeService>();
-builder.Services.AddTransient<IGenericService<MstSchoolDto>, MstSchoolService>();
-builder.Services.AddTransient<IGenericService<MstClassDto>, MstClassService>();
-builder.Services.AddTransient<IGenericService<MstAcademicYearDto>, MstAcademicYearService>();
-builder.Services.AddTransient<IGenericService<MstSchoolStreamDto>, MstSchoolStreamService>();
-builder.Services.AddTransient<IGenericService<MstUserRoleDto>, MstUserRoleService>();
-builder.Services.AddTransient<IUserService<MstUserDto>, UserService>();
-builder.Services.AddTransient<IGenericService<MstDocumentTypesDto>, MstDocumentTypeService>();
-builder.Services.AddTransient<IExternalLoginAppService,ExternalLoginAppService>();
-builder.Services.AddTransient<IJwtAuthManager,JwtAuthManager>();
-builder.Services.AddTransient<IStorageService, StorageService>();
-
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<ValidationFilterAttribute>();
-builder.Services.Configure<ApiBehaviorOptions>(options
-    => options.SuppressModelStateInvalidFilter = true);
-var mappingConfiguration = new MapperConfiguration(config => config.AddProfile(new AutoMapperProfile()));
-IMapper mapper = mappingConfiguration.CreateMapper();
-builder.Services.AddSingleton(mapper);
-
-var devCorsPolicy = "devCorsPolicy";
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(devCorsPolicy, builder =>
-    {
-        //builder.WithOrigins("http://localhost:4200",
-        //    "https://localhost:4200", 
-        //    "http://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/", 
-        //    "https://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-        builder.WithOrigins("*").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-        builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
-        //builder.SetIsOriginAllowed(origin => true);
     });
-});
-var prodCorsPolicy = "prodCorsPolicy";
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(devCorsPolicy, builder =>
-    {
-        //builder.WithOrigins("http://localhost:4200",
-        //    "https://localhost:4200", 
-        //    "http://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/", 
-        //    "https://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-        builder.WithOrigins("*").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-        builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
-    });
-});
+    builder.Services.AddControllers().AddJsonOptions(x =>
+                    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+    builder.Services.AddDbContext<VvpsmsdbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMS")));
+    builder.Services.AddTransient<ILoginService, LoginService>();
+    builder.Services.AddScoped<IAdmissionUnitOfWork, AdmissionUnitOfWork>();
+    builder.Services.AddScoped<IStudentUnitOfWork, StudentUnitOfWork>();
+    builder.Services.AddScoped<ITeacherUnitOfWork, TeacherUnitOfWork>();
+    builder.Services.AddScoped<IParentUnitOfWork, ParentUnitOfWork>();
+    builder.Services.AddTransient<IGenericService<MstSchoolGradeDto>, MstSchoolGradeService>();
+    builder.Services.AddTransient<IGenericService<MstSchoolDto>, MstSchoolService>();
+    builder.Services.AddTransient<IGenericService<MstClassDto>, MstClassService>();
+    builder.Services.AddTransient<IGenericService<MstAcademicYearDto>, MstAcademicYearService>();
+    builder.Services.AddTransient<IGenericService<MstSchoolStreamDto>, MstSchoolStreamService>();
+    builder.Services.AddTransient<IGenericService<MstUserRoleDto>, MstUserRoleService>();
+    builder.Services.AddTransient<IUserService<MstUserDto>, UserService>();
+    builder.Services.AddTransient<IGenericService<MstDocumentTypesDto>, MstDocumentTypeService>();
+    builder.Services.AddTransient<IGenericService<MstEnquiryQuestionDetailDto>, MstEnquiryQuestionDetailService>();
+    builder.Services.AddTransient<IExternalLoginAppService, ExternalLoginAppService>();
+    builder.Services.AddTransient<IJwtAuthManager, JwtAuthManager>();
+    builder.Services.AddTransient<IStorageService, StorageService>();
 
-var app = builder.Build();
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors(x => x
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
-   // app.UseCors(devCorsPolicy);
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+    
+    builder.Services.AddScoped<ValidationFilterAttribute>();
+    builder.Services.Configure<ApiBehaviorOptions>(options
+        => options.SuppressModelStateInvalidFilter = true);
+    var mappingConfiguration = new MapperConfiguration(config => config.AddProfile(new AutoMapperProfile()));
+    IMapper mapper = mappingConfiguration.CreateMapper();
+    builder.Services.AddSingleton(mapper);
+
+    var devCorsPolicy = "devCorsPolicy";
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(devCorsPolicy, builder =>
+        {
+            //builder.WithOrigins("http://localhost:4200",
+            //    "https://localhost:4200", 
+            //    "http://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/", 
+            //    "https://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            builder.WithOrigins("*").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+            //builder.SetIsOriginAllowed(origin => true);
+        });
+    });
+    var prodCorsPolicy = "prodCorsPolicy";
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(devCorsPolicy, builder =>
+        {
+            //builder.WithOrigins("http://localhost:4200",
+            //    "https://localhost:4200", 
+            //    "http://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/", 
+            //    "https://projects.sustainedgeconsulting.com/VVPSMS/V0/VVPSMSUI/").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            builder.WithOrigins("*").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+        });
+    });
+
+    builder.Logging.ClearProviders();
+    builder.Host.UseNLog();
+    var app = builder.Build();
+
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+        // app.UseCors(devCorsPolicy);
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+    else if (app.Environment.IsProduction())
+    {
+        app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+        // app.UseCors(prodCorsPolicy);
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+    app.UseHttpsRedirection();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    IConfiguration configuration = app.Configuration;
+    IWebHostEnvironment environment = app.Environment;
+    app.MapControllers();
+    app.Run();
 }
-else if (app.Environment.IsProduction())
+catch(Exception ex)
 {
-    app.UseCors(x => x
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
-   // app.UseCors(prodCorsPolicy);
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    //throw (ex);
 }
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-IConfiguration configuration = app.Configuration;
-IWebHostEnvironment environment = app.Environment;
-app.MapControllers();
-app.Run();

@@ -39,7 +39,11 @@ public partial class VvpsmsdbContext : DbContext
 
     public virtual DbSet<MstDocumentType> MstDocumentTypes { get; set; }
 
+    public virtual DbSet<MstEnquiryAnswerDetail> MstEnquiryAnswerDetails { get; set; }
+
     public virtual DbSet<MstEnquiryQuestionDetail> MstEnquiryQuestionDetails { get; set; }
+
+    public virtual DbSet<MstEnquiryQuestionTypeDetail> MstEnquiryQuestionTypeDetails { get; set; }
 
     public virtual DbSet<MstGroupOfSchool> MstGroupOfSchools { get; set; }
 
@@ -83,13 +87,13 @@ public partial class VvpsmsdbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=192.168.59.3;Initial Catalog=VVPSMSDB;User Id=sa;Password=D#$q2023P@s;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Integrated Security=false;");
+        => optionsBuilder.UseSqlServer("Server=MSI;Initial Catalog=VVPSMSDB;User Id=sa;Password=1992;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Integrated Security=false;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AdmissionDocument>(entity =>
         {
-            entity.HasKey(e => e.DocumentId).HasName("PK__Admissio__9666E8AC87229293");
+            entity.HasKey(e => e.DocumentId).HasName("PK__Admissio__9666E8AC42E8B3BC");
 
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.CreatedAt)
@@ -112,20 +116,21 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Form).WithMany(p => p.AdmissionDocuments)
                 .HasForeignKey(d => d.FormId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Admission__form___113584D1");
+                .HasConstraintName("FK__Admission__form___62108194");
 
             entity.HasOne(d => d.Mstdocumenttypes).WithMany(p => p.AdmissionDocuments)
                 .HasForeignKey(d => d.MstdocumenttypesId)
-                .HasConstraintName("FK__Admission__mstdo__1229A90A");
+                .HasConstraintName("FK__Admission__mstdo__6304A5CD");
         });
 
         modelBuilder.Entity<AdmissionEnquiryDetail>(entity =>
         {
-            entity.HasKey(e => e.AdmissionenquirydetailsId).HasName("PK__Admissio__88CE46A26EA4F5F5");
+            entity.HasKey(e => e.AdmissionenquirydetailsId).HasName("PK__Admissio__88CE46A2B0F55E87");
 
             entity.Property(e => e.AdmissionenquirydetailsId).HasColumnName("admissionenquirydetails_id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.EnquiryResponse)
                 .HasMaxLength(255)
@@ -139,17 +144,16 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Form).WithMany(p => p.AdmissionEnquiryDetails)
                 .HasForeignKey(d => d.FormId)
-                .HasConstraintName("FK__Admission__form___07AC1A97");
+                .HasConstraintName("FK__Admission__form___322C6448");
 
             entity.HasOne(d => d.Mstenquiryquestiondetails).WithMany(p => p.AdmissionEnquiryDetails)
                 .HasForeignKey(d => d.MstenquiryquestiondetailsId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Admission__msten__08A03ED0");
+                .HasConstraintName("FK__Admission__msten__33208881");
         });
 
         modelBuilder.Entity<AdmissionForm>(entity =>
         {
-            entity.HasKey(e => e.FormId).HasName("PK__Admissio__190E16C999C1A63D");
+            entity.HasKey(e => e.FormId).HasName("PK__Admissio__190E16C9435EC6CF");
 
             entity.Property(e => e.FormId).HasColumnName("form_id");
             entity.Property(e => e.AcademicId).HasColumnName("academic_id");
@@ -207,7 +211,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<ArAdmissionDocument>(entity =>
         {
-            entity.HasKey(e => e.DocumentId).HasName("PK__ArAdmiss__9666E8AC77112DF5");
+            entity.HasKey(e => e.DocumentId).HasName("PK__ArAdmiss__9666E8AC40BA1CE2");
 
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.ArformId).HasColumnName("Arform_id");
@@ -229,7 +233,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<ArAdmissionForm>(entity =>
         {
-            entity.HasKey(e => e.ArformId).HasName("PK__ArAdmiss__5F9370454E324378");
+            entity.HasKey(e => e.ArformId).HasName("PK__ArAdmiss__5F937045DDDDDA14");
 
             entity.Property(e => e.ArformId).HasColumnName("Arform_id");
             entity.Property(e => e.AcademicId).HasColumnName("academic_id");
@@ -309,7 +313,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<EmergencyContactDetail>(entity =>
         {
-            entity.HasKey(e => e.EmergencycontactdetailsId).HasName("PK__Emergenc__BFAEBFB9C6493567");
+            entity.HasKey(e => e.EmergencycontactdetailsId).HasName("PK__Emergenc__BFAEBFB9E682E27D");
 
             entity.Property(e => e.EmergencycontactdetailsId).HasColumnName("emergencycontactdetails_id");
             entity.Property(e => e.ContactNumber).HasColumnName("contact_number");
@@ -334,12 +338,12 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Form).WithMany(p => p.EmergencyContactDetails)
                 .HasForeignKey(d => d.FormId)
-                .HasConstraintName("FK__Emergency__form___7A521F79");
+                .HasConstraintName("FK__Emergency__form___4B2D1C3C");
         });
 
         modelBuilder.Entity<FamilyOrGuardianInfoDetail>(entity =>
         {
-            entity.HasKey(e => e.FamilyorguardianinfodetailsId).HasName("PK__FamilyOr__8B52AFBE0FD7752C");
+            entity.HasKey(e => e.FamilyorguardianinfodetailsId).HasName("PK__FamilyOr__8B52AFBEBCE1BFE3");
 
             entity.Property(e => e.FamilyorguardianinfodetailsId).HasColumnName("familyorguardianinfodetails_id");
             entity.Property(e => e.AadharNumber)
@@ -400,7 +404,7 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Form).WithMany(p => p.FamilyOrGuardianInfoDetails)
                 .HasForeignKey(d => d.FormId)
-                .HasConstraintName("FK__FamilyOrG__form___73A521EA");
+                .HasConstraintName("FK__FamilyOrG__form___44801EAD");
         });
 
         modelBuilder.Entity<MstAcademicYear>(entity =>
@@ -481,7 +485,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<MstDocumentType>(entity =>
         {
-            entity.HasKey(e => e.MstdocumenttypesId).HasName("PK__MstDocum__450011451CCCF466");
+            entity.HasKey(e => e.MstdocumenttypesId).HasName("PK__MstDocum__45001145B22C0A94");
 
             entity.Property(e => e.MstdocumenttypesId).HasColumnName("mstdocumenttypes_id");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
@@ -495,16 +499,65 @@ public partial class VvpsmsdbContext : DbContext
                 .HasColumnName("mstdocumenttypes_description");
         });
 
+        modelBuilder.Entity<MstEnquiryAnswerDetail>(entity =>
+        {
+            entity.HasKey(e => e.MstenquiryanswerdetailsId).HasName("PK__MstEnqui__E575C6F378BA3DAF");
+
+            entity.Property(e => e.MstenquiryanswerdetailsId).HasColumnName("mstenquiryanswerdetails_id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.EnquiryAnswerDetails)
+                .HasMaxLength(255)
+                .HasColumnName("enquiry_answer_details");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.MstenquiryquestiondetailsId).HasColumnName("mstenquiryquestiondetails_id");
+
+            entity.HasOne(d => d.Mstenquiryquestiondetails).WithMany(p => p.MstEnquiryAnswerDetails)
+                .HasForeignKey(d => d.MstenquiryquestiondetailsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__MstEnquir__msten__2F4FF79D");
+        });
+
         modelBuilder.Entity<MstEnquiryQuestionDetail>(entity =>
         {
-            entity.HasKey(e => e.MstenquiryquestiondetailsId).HasName("PK__MstEnqui__F6F5767714C2966B");
+            entity.HasKey(e => e.MstenquiryquestiondetailsId).HasName("PK__MstEnqui__F6F57677F3BF82AB");
 
             entity.Property(e => e.MstenquiryquestiondetailsId).HasColumnName("mstenquiryquestiondetails_id");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.EnquiryQuestion)
                 .HasMaxLength(255)
                 .HasColumnName("enquiry_question");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.MstenquiryquestiontypedetailsId).HasColumnName("mstenquiryquestiontypedetails_id");
+
+            entity.HasOne(d => d.Mstenquiryquestiontypedetails).WithMany(p => p.MstEnquiryQuestionDetails)
+                .HasForeignKey(d => d.MstenquiryquestiontypedetailsId)
+                .HasConstraintName("FK__MstEnquir__msten__2C738AF2");
+        });
+
+        modelBuilder.Entity<MstEnquiryQuestionTypeDetail>(entity =>
+        {
+            entity.HasKey(e => e.MstenquiryquestiontypedetailsId).HasName("PK__MstEnqui__EA5F015CFCAAF680");
+
+            entity.Property(e => e.MstenquiryquestiontypedetailsId).HasColumnName("mstenquiryquestiontypedetails_id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.EnquiryQuestionType)
+                .HasMaxLength(255)
+                .HasColumnName("enquiry_question_type");
             entity.Property(e => e.ModifiedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("modified_at");
@@ -808,7 +861,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<PreviousSchoolDetail>(entity =>
         {
-            entity.HasKey(e => e.PreviousschooldetailsId).HasName("PK__Previous__76F199647FF6D39F");
+            entity.HasKey(e => e.PreviousschooldetailsId).HasName("PK__Previous__76F199649B61EF5C");
 
             entity.Property(e => e.PreviousschooldetailsId).HasColumnName("previousschooldetails_id");
             entity.Property(e => e.Address)
@@ -851,12 +904,12 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Form).WithMany(p => p.PreviousSchoolDetails)
                 .HasForeignKey(d => d.FormId)
-                .HasConstraintName("FK__PreviousS__form___7D2E8C24");
+                .HasConstraintName("FK__PreviousS__form___4E0988E7");
         });
 
         modelBuilder.Entity<SiblingInfo>(entity =>
         {
-            entity.HasKey(e => e.SiblingId).HasName("PK__SiblingI__7A415E3F54695B30");
+            entity.HasKey(e => e.SiblingId).HasName("PK__SiblingI__7A415E3F36FB0AA8");
 
             entity.ToTable("SiblingInfo");
 
@@ -886,7 +939,7 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Form).WithMany(p => p.SiblingInfos)
                 .HasForeignKey(d => d.FormId)
-                .HasConstraintName("FK__SiblingIn__form___7775B2CE");
+                .HasConstraintName("FK__SiblingIn__form___4850AF91");
         });
 
         modelBuilder.Entity<Student>(entity =>
@@ -960,7 +1013,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<StudentHealthInfoDetail>(entity =>
         {
-            entity.HasKey(e => e.StudenthealthinfodetailsId).HasName("PK__StudentH__CC8B9F535CCD57D0");
+            entity.HasKey(e => e.StudenthealthinfodetailsId).HasName("PK__StudentH__CC8B9F531F14BD3C");
 
             entity.Property(e => e.StudenthealthinfodetailsId).HasColumnName("studenthealthinfodetails_id");
             entity.Property(e => e.AllergiesIfAny)
@@ -1013,12 +1066,12 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Form).WithMany(p => p.StudentHealthInfoDetails)
                 .HasForeignKey(d => d.FormId)
-                .HasConstraintName("FK__StudentHe__form___000AF8CF");
+                .HasConstraintName("FK__StudentHe__form___50E5F592");
         });
 
         modelBuilder.Entity<StudentIllnessDetail>(entity =>
         {
-            entity.HasKey(e => e.StudentillnessdetailsId).HasName("PK__StudentI__AACB9DE0E49E6325");
+            entity.HasKey(e => e.StudentillnessdetailsId).HasName("PK__StudentI__AACB9DE013A874CB");
 
             entity.Property(e => e.StudentillnessdetailsId).HasColumnName("studentillnessdetails_id");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
@@ -1043,12 +1096,12 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Form).WithMany(p => p.StudentIllnessDetails)
                 .HasForeignKey(d => d.FormId)
-                .HasConstraintName("FK__StudentIl__form___02E7657A");
+                .HasConstraintName("FK__StudentIl__form___53C2623D");
         });
 
         modelBuilder.Entity<StudentInfoDetail>(entity =>
         {
-            entity.HasKey(e => e.StudentinfoId).HasName("PK__StudentI__C396B23F15C1A6C7");
+            entity.HasKey(e => e.StudentinfoId).HasName("PK__StudentI__C396B23F845C6B3F");
 
             entity.Property(e => e.StudentinfoId).HasColumnName("studentinfo_id");
             entity.Property(e => e.AadharNumber)
@@ -1125,7 +1178,7 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Form).WithMany(p => p.StudentInfoDetails)
                 .HasForeignKey(d => d.FormId)
-                .HasConstraintName("FK__StudentIn__form___6CF8245B");
+                .HasConstraintName("FK__StudentIn__form___3DD3211E");
         });
 
         modelBuilder.Entity<Teacher>(entity =>
@@ -1200,7 +1253,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<TransportDetail>(entity =>
         {
-            entity.HasKey(e => e.TransportdetailsId).HasName("PK__Transpor__68A767EB9A4C679D");
+            entity.HasKey(e => e.TransportdetailsId).HasName("PK__Transpor__68A767EB8FDB9FED");
 
             entity.Property(e => e.TransportdetailsId).HasColumnName("transportdetails_id");
             entity.Property(e => e.AcademicYear)
@@ -1251,7 +1304,7 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Form).WithMany(p => p.TransportDetails)
                 .HasForeignKey(d => d.FormId)
-                .HasConstraintName("FK__Transport__form___0B7CAB7B");
+                .HasConstraintName("FK__Transport__form___5C57A83E");
         });
 
         modelBuilder.Entity<UserRegistration>(entity =>

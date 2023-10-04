@@ -7,7 +7,7 @@ public partial class AdmissionDocument
 {
     public int DocumentId { get; set; }
 
-    public int FormId { get; set; }
+    public int? FormId { get; set; }
 
     public int? MstdocumenttypesId { get; set; }
 
@@ -23,7 +23,7 @@ public partial class AdmissionDocument
 
     public int? ModifiedBy { get; set; }
 
-    public virtual AdmissionForm Form { get; set; } = null!;
+    public virtual AdmissionForm? Form { get; set; }
 
     public virtual MstDocumentType? Mstdocumenttypes { get; set; }
 }
