@@ -29,7 +29,7 @@ public partial class PreviousSchoolDetail
 
     public string? Reasonforsuspension { get; set; }
 
-    public int? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }
 

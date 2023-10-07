@@ -17,7 +17,7 @@ public partial class StudentIllnessDetail
 
     public string? IllnessDetails { get; set; }
 
-    public int CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }
 

@@ -85,9 +85,9 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             entityToUpdate.StudentIllnessDetails = entity.StudentIllnessDetails;
             entityToUpdate.StudentInfoDetails = entity.StudentInfoDetails;
             entityToUpdate.TransportDetails = entity.TransportDetails;
-            entityToUpdate.CreatedAt = DateTime.Now;
+            entityToUpdate.CreatedAt = entity.CreatedAt;
             entityToUpdate.CreatedBy = entity.CreatedBy;
-            entityToUpdate.ModifiedAt = DateTime.Now;
+            entityToUpdate.ModifiedAt = entity.ModifiedAt;
             entityToUpdate.ModifiedBy = entity.ModifiedBy;
             return entityToUpdate;
         }

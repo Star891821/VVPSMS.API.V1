@@ -13,7 +13,7 @@ public partial class AdmissionEnquiryDetail
 
     public string? EnquiryResponse { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }
 

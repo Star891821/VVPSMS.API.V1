@@ -7,7 +7,7 @@ public partial class MstEnquiryAnswerDetail
 {
     public int MstenquiryanswerdetailsId { get; set; }
 
-    public int MstenquiryquestiondetailsId { get; set; }
+    public int? MstenquiryquestiondetailsId { get; set; }
 
     public string? EnquiryAnswerDetails { get; set; }
 
@@ -19,5 +19,5 @@ public partial class MstEnquiryAnswerDetail
 
     public int? ModifiedBy { get; set; }
 
-    public virtual MstEnquiryQuestionDetail Mstenquiryquestiondetails { get; set; } = null!;
+    public virtual MstEnquiryQuestionDetail? Mstenquiryquestiondetails { get; set; }
 }

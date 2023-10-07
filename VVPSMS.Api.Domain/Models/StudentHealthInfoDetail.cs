@@ -37,7 +37,7 @@ public partial class StudentHealthInfoDetail
 
     public string? LearningDisabilities { get; set; }
 
-    public int CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }
 
