@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using NLog;
 using System.Threading.Tasks;
 using VVPSMS.Api.Models.ModelsDto;
+using VVPSMS.API.NLog;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository.Teachers;
 using VVPSMS.Service.Shared;
@@ -20,13 +21,14 @@ namespace VVPSMS.API.Controllers
         private readonly ITeacherUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         //private readonly IStorageService _storageService;
-        private static Logger logger = LogManager.GetLogger("TeacherController");
-        public TeacherController(IMapper mapper, ITeacherUnitOfWork unitOfWork, IConfiguration configuration)
+        private ILog _logger;
+        public TeacherController(IMapper mapper, ITeacherUnitOfWork unitOfWork, IConfiguration configuration, ILog logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _configuration = configuration;
             // _storageService = new StorageService(_configuration);
+            _logger = logger;
         }
 
         //[HttpPost("UpdateTeacherProfile")]
@@ -34,56 +36,119 @@ namespace VVPSMS.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllTeacherDetails()
         {
-            var users = await _unitOfWork.TeacherService.GetAll();
-            return Ok(users);
+            try
+            {
+                _logger.Information($"GetAllTeacherDetails API Started");
+                var users = await _unitOfWork.TeacherService.GetAll();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetAllTeacherDetails for" + typeof(TeacherController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetAllTeacherDetails API completed Successfully");
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTeacherDetailsById(int id)
         {
-            var item = await _unitOfWork.TeacherService.GetById(id);
+            try
+            {
+                _logger.Information($"GetTeacherDetailsById API Started");
+                var item = await _unitOfWork.TeacherService.GetById(id);
 
-            if (item == null)
-                return NotFound();
+                if (item == null)
+                    return NotFound();
 
-            return Ok(item);
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetTeacherDetailsById for" + typeof(TeacherController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetTeacherDetailsById API completed Successfully");
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAllDocumentsByTeacherId(int id)
         {
-            var item = await _unitOfWork.DocumentService.GetAll(id);
+            try
+            {
+                _logger.Information($"GetAllDocumentsByTeacherId API Started");
+                var item = await _unitOfWork.DocumentService.GetAll(id);
 
-            if (item == null)
-                return NotFound();
+                if (item == null)
+                    return NotFound();
 
-            return Ok(item);
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetAllDocumentsByTeacherId for" + typeof(TeacherController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetAllDocumentsByTeacherId API completed Successfully");
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> InsertOrUpdateStudent(TeacherDto teacherDto)
+        public async Task<IActionResult> InsertOrUpdateTeacher(TeacherDto teacherDto)
         {
+            try
+            {
+                _logger.Information($"InsertOrUpdateTeacher API Started");
+                var result = _mapper.Map<Teacher>(teacherDto);
+                var documents = _mapper.Map<List<TeacherDocument>>(teacherDto.Documents);
+                await _unitOfWork.DocumentService.RemoveRange(documents);
 
-            var result = _mapper.Map<Teacher>(teacherDto);
-            var documents = _mapper.Map<List<TeacherDocument>>(teacherDto.Documents);
-            await _unitOfWork.DocumentService.RemoveRange(documents);
+                await _unitOfWork.TeacherService.InsertOrUpdate(result);
 
-            await _unitOfWork.TeacherService.InsertOrUpdate(result);
+                await _unitOfWork.CompleteAsync();
 
-            await _unitOfWork.CompleteAsync();
-
-            return Ok();
-
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside InsertOrUpdateTeacher for" + typeof(TeacherController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"InsertOrUpdateTeacher API completed Successfully");
+            }
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteStudent(TeacherDto teacherDto)
+        public async Task<IActionResult> DeleteTeacher(TeacherDto teacherDto)
         {
-            var result = _mapper.Map<Teacher>(teacherDto);
-            var item = await _unitOfWork.TeacherService.Remove(result);
-            var documents = _mapper.Map<List<TeacherDocument>>(teacherDto.Documents);
-            await _unitOfWork.DocumentService.RemoveRange(documents);
-            return Ok(item);
+            try
+            {
+                _logger.Information($"DeleteTeacher API Started");
+                var result = _mapper.Map<Teacher>(teacherDto);
+                var item = await _unitOfWork.TeacherService.Remove(result);
+                var documents = _mapper.Map<List<TeacherDocument>>(teacherDto.Documents);
+                await _unitOfWork.DocumentService.RemoveRange(documents);
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside DeleteTeacher for" + typeof(TeacherController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"DeleteTeacher API completed Successfully");
+            }
         }
     }
 }

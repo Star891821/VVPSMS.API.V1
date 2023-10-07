@@ -30,12 +30,17 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
+                _logger.Information($"GetUserByName API Started");
                 return Ok(userService.GetByName(name));
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetUserByName for" + typeof(UserController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetUserByName API completed Successfully");
             }
         }
     }
