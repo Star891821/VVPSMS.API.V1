@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NLog;
 using VVPSMS.Api.Models.ModelsDto;
+using VVPSMS.API.NLog;
 using VVPSMS.Service.Models;
 using VVPSMS.Service.Repository;
 
@@ -11,10 +12,11 @@ namespace VVPSMS.API.Controllers
     public class ExternalLoginController : ControllerBase
     {
         private readonly IExternalLoginAppService _appSvc;
-        private static Logger logger = LogManager.GetLogger("ExternalLoginController");
-        public ExternalLoginController(IExternalLoginAppService appSvc)
+        private ILog _logger;
+        public ExternalLoginController(IExternalLoginAppService appSvc, ILog logger)
         {
             _appSvc = appSvc;
+            _logger = logger;
         }
         /// <summary>
         /// 
@@ -27,14 +29,40 @@ namespace VVPSMS.API.Controllers
         [HttpPost("google")]
         public async Task<LoginResponseDto> GoogleAuthenticationAsync([FromBody] GoogleRQ request)
         {
-            var ret = await _appSvc.GoogleAuthenticationAsync(request.userId);
-            return ret;
+            try
+            {
+                _logger.Information($"GoogleAuthenticationAsync API Started");
+                var ret = await _appSvc.GoogleAuthenticationAsync(request.userId);
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GoogleAuthenticationAsync for" + typeof(ExternalLoginController).FullName + "entity with exception" + ex.Message);
+                return null;
+            }
+            finally
+            {
+                _logger.Information($"GoogleAuthenticationAsync API completed Successfully");
+            }
         }
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("google/callback")]
         public async Task<bool> GoogleCallbackAsync()
         {
-            return await Task.FromResult(true);
+            try
+            {
+                _logger.Information($"GoogleCallbackAsync API Started");
+                return await Task.FromResult(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GoogleCallbackAsync for" + typeof(ExternalLoginController).FullName + "entity with exception" + ex.Message);
+                return false;
+            }
+            finally
+            {
+                _logger.Information($"GoogleCallbackAsync API completed Successfully");
+            }
         }
         /// <summary>
         /// Login by Microsoft credentials 
@@ -51,18 +79,22 @@ namespace VVPSMS.API.Controllers
         [HttpPost("microsoft")]
         public async Task<LoginResponseDto> MicrosoftAuthenticationAsync([FromBody] MicrosoftRQ request)
         {
-            LoginResponseDto LoginRS = null;
-
             try
             {
                 await _appSvc.LogErrorAsync("MicrosoftAuthenticationAsync-Start", request.userId, "request.userId");
-                LoginRS = await _appSvc.MicrosoftAuthenticationAsync(request);
+               var LoginRS = await _appSvc.MicrosoftAuthenticationAsync(request);
+                return LoginRS;
             }
             catch (Exception ex)
             {
                 await _appSvc.LogErrorAsync("MicrosoftAuthenticationAsync-Exception", ex.Message, ex.StackTrace);
+                return null;
             }
-            return LoginRS;
+            finally
+            {
+                _logger.Information($"MicrosoftAuthenticationAsync API completed Successfully");
+            }
+            
         }
         /// <summary>
         /// MicrosoftCallbackAsync
@@ -72,7 +104,20 @@ namespace VVPSMS.API.Controllers
         [HttpGet("microsoft/callback")]
         public async Task<bool> MicrosoftCallbackAsync()
         {
-            return await Task.FromResult(true);
+            try
+            {
+                _logger.Information($"MicrosoftCallbackAsync API Started");
+                return await Task.FromResult(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside MicrosoftCallbackAsync for" + typeof(ExternalLoginController).FullName + "entity with exception" + ex.Message);
+                return false;
+            }
+            finally
+            {
+                _logger.Information($"MicrosoftCallbackAsync API completed Successfully");
+            }
         }
         /// <summary>
 		/// Login by Apple credentials 
@@ -89,8 +134,21 @@ namespace VVPSMS.API.Controllers
         [HttpPost("apple")]
         public async Task<LoginResponseDto> AppleAuthenticationAsync([FromBody] AppleRQ request)
         {
-            var ret = await _appSvc.AppleAuthenticationAsync(request.IdToken);
-            return ret;
+            try
+            {
+                _logger.Information($"AppleAuthenticationAsync API Started");
+                var ret = await _appSvc.AppleAuthenticationAsync(request.IdToken);
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside AppleAuthenticationAsync for" + typeof(ExternalLoginController).FullName + "entity with exception" + ex.Message);
+                return null;
+            }
+            finally
+            {
+                _logger.Information($"AppleAuthenticationAsync API completed Successfully");
+            }
         }
     }
 }
