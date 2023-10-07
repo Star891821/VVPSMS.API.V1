@@ -22,7 +22,7 @@ namespace VVPSMS.Service.Repository.Admissions
         ISiblingInfosDetails SiblingInfosDetailsService { get; }
 
         void RemoveNullableEntitiesFromDb();
-
+        void RemoveEntitiesById(int id);
         Task CompleteAsync();
 
     }

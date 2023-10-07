@@ -10,5 +10,6 @@ namespace VVPSMS.Service.Repository.Admissions
     public interface IPreviousSchoolDetails : ICommonService<PreviousSchoolDetail>
     {
         void RemoveRangeofDetails();
+        void RemoveRangeofDetailsById(int id);
     }
 }

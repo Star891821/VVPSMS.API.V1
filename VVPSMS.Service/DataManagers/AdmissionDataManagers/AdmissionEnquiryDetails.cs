@@ -23,11 +23,32 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             try
             {
-                var admissionFormdocuments = dbSet.Where(x => x.FormId == null).ToList();
+                var admissionEnquiryDetails = dbSet.Where(x => x.FormId == null).ToList();
 
-                if (admissionFormdocuments.Count > 0)
+                if (admissionEnquiryDetails.Count > 0)
                 {
-                    base.RemoveRange(admissionFormdocuments);
+                    base.RemoveRange(admissionEnquiryDetails);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        /// <summary>
+        /// RemoveRangeofDetails
+        /// </summary>
+        public async void RemoveRangeofDetailsById(int id)
+        {
+            try
+            {
+                var admissionEnquiryDetails = dbSet.Where(x => x.FormId == id).ToList();
+
+                if (admissionEnquiryDetails.Count > 0)
+                {
+                    base.RemoveRange(admissionEnquiryDetails);
                 }
             }
             catch (Exception ex)

@@ -70,6 +70,19 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             FamilyOrGuardianInfoDetailsService.RemoveRangeofDetails();
             EmergencyContactDetailsService.RemoveRangeofDetails();
         }
+
+        public void RemoveEntitiesById(int id)
+        {
+            AdmissionEnquiryDetailsService.RemoveRangeofDetailsById(id);
+            StudentHealthInfoDetailsService.RemoveRangeofDetailsById(id);
+            StudentInfoDetailsService.RemoveRangeofDetailsById(id);
+            StudentIllnessDetailsService.RemoveRangeofDetailsById(id);
+            TransportDetailsService.RemoveRangeofDetailsById(id);
+            SiblingInfosDetailsService.RemoveRangeofDetailsById(id);
+            PreviousSchoolDetailsService.RemoveRangeofDetailsById(id);
+            FamilyOrGuardianInfoDetailsService.RemoveRangeofDetailsById(id);
+            EmergencyContactDetailsService.RemoveRangeofDetailsById(id);
+        }
         public Task CompleteAsync()
         {
             return vvpsmsdbContext.SaveChangesAsync();

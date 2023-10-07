@@ -10,5 +10,6 @@ namespace VVPSMS.Service.Repository.Admissions
     public interface IEmergencyContactDetails : ICommonService<EmergencyContactDetail>
     {
         void RemoveRangeofDetails();
+        void RemoveRangeofDetailsById(int id);
     }
 }

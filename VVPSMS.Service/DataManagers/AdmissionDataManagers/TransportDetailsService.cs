@@ -23,5 +23,19 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 base.RemoveRange(admissionFormdocuments);
             }
         }
+
+
+        /// <summary>
+        /// RemoveRangeofDetails by id
+        /// </summary>
+        public async void RemoveRangeofDetailsById(int id)
+        {
+            var transportDetails = dbSet.Where(x => x.FormId == id).ToList();
+
+            if (transportDetails.Count > 0)
+            {
+                base.RemoveRange(transportDetails);
+            }
+        }
     }
 }

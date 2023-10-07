@@ -10,5 +10,6 @@ namespace VVPSMS.Service.Repository.Admissions
     public interface IFamilyOrGuardianInfoDetails : ICommonService<FamilyOrGuardianInfoDetail>
     {
         void RemoveRangeofDetails();
+        void RemoveRangeofDetailsById(int id);
     }
 }

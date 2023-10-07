@@ -182,8 +182,11 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"Delete API Started");
                 var result = _mapper.Map<AdmissionForm>(admissionFormDto);
                 var item = await _unitOfWork.AdmissionService.Remove(result);
-                var documents = _mapper.Map<List<AdmissionDocument>>(admissionFormDto.listOfAdmissionDocuments);
-                await _unitOfWork.AdmissionDocumentService.RemoveRange(documents);
+                //var documents = _mapper.Map<List<AdmissionDocument>>(admissionFormDto.listOfAdmissionDocuments);
+                //await _unitOfWork.AdmissionDocumentService.RemoveRange(documents);
+                _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
+                _unitOfWork.RemoveEntitiesById(result.FormId);
+                await _unitOfWork.CompleteAsync();
                 return Ok(item);
             }
             catch (Exception ex)

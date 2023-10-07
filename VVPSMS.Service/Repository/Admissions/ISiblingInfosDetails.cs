@@ -10,5 +10,6 @@ namespace VVPSMS.Service.Repository.Admissions
     public interface ISiblingInfosDetails : ICommonService<SiblingInfo>
     {
         void RemoveRangeofDetails();
+        void RemoveRangeofDetailsById(int id);
     }
 }

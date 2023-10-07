@@ -10,5 +10,6 @@ namespace VVPSMS.Service.Repository.Admissions
     public interface IStudentIllnessDetails : ICommonService<StudentIllnessDetail>
     {
         void RemoveRangeofDetails();
+        void RemoveRangeofDetailsById(int id);
     }
 }

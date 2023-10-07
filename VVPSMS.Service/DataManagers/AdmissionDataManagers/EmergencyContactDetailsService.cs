@@ -21,11 +21,24 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         /// </summary>
         public async void RemoveRangeofDetails()
         {
-            var admissionFormdocuments = dbSet.Where(x => x.FormId == null).ToList();
+            var emergencyContactDetails = dbSet.Where(x => x.FormId == null).ToList();
 
-            if (admissionFormdocuments.Count > 0)
+            if (emergencyContactDetails.Count > 0)
             {
-                base.RemoveRange(admissionFormdocuments);
+                base.RemoveRange(emergencyContactDetails);
+            }
+        }
+
+        /// <summary>
+        /// RemoveRangeofDetails by id
+        /// </summary>
+        public async void RemoveRangeofDetailsById(int id)
+        {
+            var emergencyContactDetails = dbSet.Where(x => x.FormId == id).ToList();
+
+            if (emergencyContactDetails.Count > 0)
+            {
+                base.RemoveRange(emergencyContactDetails);
             }
         }
         #endregion
