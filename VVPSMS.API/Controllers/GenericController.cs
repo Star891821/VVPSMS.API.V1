@@ -20,12 +20,18 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
+                _logger.Information($"GetAll API Started");
+
                 return Ok(service.GetAll());
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAll for" + typeof(T).FullName + "entity with exception"+ ex.Message);
+                _logger.Error($"Something went wrong inside GetAll API for" + typeof(T).FullName + "entity with exception"+ ex.Message);
                 return StatusCode(500);
+            }
+            finally 
+            {
+                _logger.Information($"GetAll API Completed");
             }
         }
 
@@ -34,12 +40,17 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
+                _logger.Information($"GetById API Started");
                 return Ok(service.GetById(id));
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetById for" + typeof(T).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside GetById API for" + typeof(T).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetById API Completed");
             }
         }
 
@@ -50,14 +61,18 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
+                _logger.Information($"InsertOrUpdate API Started");
                 return Ok(service.InsertOrUpdate(value));
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside InsertOrUpdate for" + typeof(T).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside InsertOrUpdate API for" + typeof(T).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
-
+            finally
+            {
+                _logger.Information($"InsertOrUpdate API Completed");
+            }
         }
 
         [HttpDelete]
@@ -66,12 +81,17 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
+                _logger.Information($"Delete API Started");
                 return Ok(service.Delete(id));
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside Delete for" + typeof(T).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside Delete API for" + typeof(T).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"Delete API Completed");
             }
         }
     }
