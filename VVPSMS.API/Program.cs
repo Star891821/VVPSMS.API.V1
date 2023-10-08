@@ -33,6 +33,8 @@ try
     LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/NLog.config"));
 
     builder.Services.AddSingleton<ILog, LogNLog>();
+    LogManager.Configuration.Variables["mydir"] = builder.Configuration["Logs:InternalLogPath"];
+    NLog.Common.InternalLogger.LogFile = builder.Configuration["Logs:ApplicationLogPath"];
     // Add services to the container.
 
     builder.Services.AddControllers();
