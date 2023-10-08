@@ -26,6 +26,9 @@ using VVPSMS.Service.Shared;
 using NLog.Web;
 using NLog;
 using VVPSMS.API.NLog;
+using VVPSMS.Service.DataManagers.EmailDataManagers;
+using VVPSMS.Service.Repository.Email;
+using Microsoft.AspNetCore.Http.Features;
 
 try
 {
@@ -36,7 +39,15 @@ try
     LogManager.Configuration.Variables["mydir"] = builder.Configuration["Logs:InternalLogPath"];
     NLog.Common.InternalLogger.LogFile = builder.Configuration["Logs:ApplicationLogPath"];
     // Add services to the container.
-
+    var emailConfig = builder.Configuration
+        .GetSection("EmailConfiguration")
+        .Get<EmailConfiguration>();
+    builder.Services.AddSingleton(emailConfig);
+    builder.Services.Configure<FormOptions>(o => {
+        o.ValueLengthLimit = int.MaxValue;
+        o.MultipartBodyLengthLimit = int.MaxValue;
+        o.MemoryBufferThreshold = int.MaxValue;
+    });
     builder.Services.AddControllers();
     //JWT Tocken region
 
@@ -116,7 +127,7 @@ try
     builder.Services.AddTransient<IExternalLoginAppService, ExternalLoginAppService>();
     builder.Services.AddTransient<IJwtAuthManager, JwtAuthManager>();
     builder.Services.AddTransient<IStorageService, StorageService>();
-
+    builder.Services.AddScoped<IEmailSender, EmailSender>();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     
     builder.Services.AddScoped<ValidationFilterAttribute>();
