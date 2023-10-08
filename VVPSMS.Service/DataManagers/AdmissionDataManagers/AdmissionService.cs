@@ -91,7 +91,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             entityToUpdate.ModifiedBy = entity.ModifiedBy;
             return entityToUpdate;
         }
-        private AdmissionForm getbyID(int id)
+        public AdmissionForm getbyID(int id)
         {
             var admissionForm = new AdmissionForm();
             try

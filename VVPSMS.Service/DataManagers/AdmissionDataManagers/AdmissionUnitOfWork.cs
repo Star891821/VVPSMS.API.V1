@@ -60,6 +60,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         }
         public void RemoveNullableEntitiesFromDb()
         {
+            AdmissionDocumentService.RemoveRangeofDetails();
             AdmissionEnquiryDetailsService.RemoveRangeofDetails();
             StudentHealthInfoDetailsService.RemoveRangeofDetails();
             StudentInfoDetailsService.RemoveRangeofDetails();
@@ -71,8 +72,10 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             EmergencyContactDetailsService.RemoveRangeofDetails();
         }
 
+       
         public void RemoveEntitiesById(int id)
         {
+            AdmissionDocumentService.RemoveRangeofDocuments(id);
             AdmissionEnquiryDetailsService.RemoveRangeofDetailsById(id);
             StudentHealthInfoDetailsService.RemoveRangeofDetailsById(id);
             StudentInfoDetailsService.RemoveRangeofDetailsById(id);
@@ -86,6 +89,11 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         public Task CompleteAsync()
         {
             return vvpsmsdbContext.SaveChangesAsync();
+        }
+
+        public bool Complete()
+        {
+            return vvpsmsdbContext.SaveChanges() > 0;
         }
         #endregion
 

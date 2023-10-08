@@ -20,10 +20,11 @@ namespace VVPSMS.Service.Repository.Admissions
         IFamilyOrGuardianInfoDetails FamilyOrGuardianInfoDetailsService { get; }
         IPreviousSchoolDetails PreviousSchoolDetailsService { get; }
         ISiblingInfosDetails SiblingInfosDetailsService { get; }
-
+        
         void RemoveNullableEntitiesFromDb();
         void RemoveEntitiesById(int id);
         Task CompleteAsync();
 
+        bool Complete();
     }
 }

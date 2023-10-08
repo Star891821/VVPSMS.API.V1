@@ -101,65 +101,86 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _logger.Information($"InsertOrUpdate API Started");
-                var isUploadtoAzure = _configuration["Upoad:IsUpoadtoAzure"];
-                var filePath = _configuration["Upoad:SaveFilePath"];
-                var result = _mapper.Map<AdmissionForm>(admissionFormDto);
-                #region Upload File
-                if (isUploadtoAzure == "Yes")
+                if (admissionFormDto != null)
                 {
+                    _logger.Information($"InsertOrUpdate API Started");
+                   
+                    var result = _mapper.Map<AdmissionForm>(admissionFormDto);
+                    result.AdmissionDocuments.Clear();
+                    
+                    #region Admission transaction
+                    await _unitOfWork.AdmissionService.InsertOrUpdate(result);
+                    await _unitOfWork.CompleteAsync();
+                    #endregion
+
+                    #region Upload File
+                    var isUploadtoAzure = _configuration["Upoad:IsUpoadtoAzure"];
+                    var filePath = _configuration["Upoad:SaveFilePath"];
+                    if (isUploadtoAzure == "Yes")
+                    {
+
+                    }
+                    else
+                    {
+                        _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
+                        await _unitOfWork.CompleteAsync();
+
+                        if (admissionFormDto.listOfAdmissionDocuments != null)
+                        {
+                            filePath += "\\"+result.FormId;
+
+                            _unitOfWork.AdmissionDocumentService.createDirectory(filePath);
+
+                            for (var i = 0; i < admissionFormDto.listOfAdmissionDocuments.Count; i++)
+                            {
+                                if (!string.IsNullOrEmpty(admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64))
+                                {
+                                    var Base64FileContent = admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64;
+                                    var index = Base64FileContent.IndexOf(',');
+                                    var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
+                                    byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
+                                    var fileDetails = admissionFormDto.listOfAdmissionDocuments[i].DocumentName;
+                                    var temp = fileDetails.Split('.');
+
+                                    var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy")+"." +temp[1];
+                                    System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
+                                    AdmissionDocument admissionDocument = new()
+                                    {
+                                        DocumentName = fileName,
+                                        DocumentPath = filePath,
+                                        FormId = result.FormId,
+                                        MstdocumenttypesId = admissionFormDto.listOfAdmissionDocuments[i].MstdocumenttypesId,
+                                        CreatedAt = DateTime.Now,
+                                        ModifiedAt = DateTime.Now,
+                                    };
+                                    result.AdmissionDocuments.Add(admissionDocument);
+                                }
+
+                            }
+                        }
+
+                    }
+                    #endregion
+
+                    #region Admission Document Transaction
+
+                    var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
+                    _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
+                    _unitOfWork.Complete();
+                    //foreach (var admissionDocument in result.AdmissionDocuments)
+                    //{
+                    //    _unitOfWork.AdmissionDocumentService.InsertOrUpdate(admissionDocument);
+                    //     _unitOfWork.Complete();
+                    //}
+                    #endregion
+                    
+                    return Ok();
 
                 }
                 else
                 {
-                    if (admissionFormDto.listOfAdmissionDocuments != null)
-                    {
-                        if (!Directory.Exists(filePath))
-                        {
-                            Directory.CreateDirectory(filePath);
-                        }
-
-                        for (var i = 0; i < admissionFormDto.listOfAdmissionDocuments.Count; i++)
-                        {
-                            if (!string.IsNullOrEmpty(admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64))
-                            {
-                                var Base64FileContent = admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64;
-                                var index = Base64FileContent.IndexOf(',');
-                                var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
-                                byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
-                                var fileDetails = admissionFormDto.listOfAdmissionDocuments[i].DocumentName;
-                                var temp = fileDetails.Split('.');
-
-                                var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy");
-                                System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
-                                AdmissionDocument admissionDocument = new()
-                                {
-                                    DocumentName = fileName,
-                                    DocumentPath = filePath,
-                                    FormId = admissionFormDto.listOfAdmissionDocuments[i].FormId,
-                                    MstdocumenttypesId = admissionFormDto.listOfAdmissionDocuments[i].MstdocumenttypesId,
-                                    CreatedAt = DateTime.Now,
-                                    ModifiedAt = DateTime.Now,
-                                };
-                                result.AdmissionDocuments.Add(admissionDocument);
-                            }
-
-                        }
-                    }
-
+                    return StatusCode(500);
                 }
-                #endregion
-                #region Admission transaction
-                _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
-                await _unitOfWork.AdmissionService.InsertOrUpdate(result);
-                await _unitOfWork.CompleteAsync();
-                #endregion
-                #region Remove Null Entries
-                _unitOfWork.RemoveNullableEntitiesFromDb();
-                await _unitOfWork.CompleteAsync();
-                #endregion
-
-                return Ok();
             }
             catch (Exception ex)
             {
@@ -168,9 +189,15 @@ namespace VVPSMS.API.Controllers
             }
             finally
             {
+                #region Remove Null Entries
+                _unitOfWork.RemoveNullableEntitiesFromDb();
+                await _unitOfWork.CompleteAsync();
+                #endregion
+
                 _logger.Information($"InsertOrUpdate API completed Successfully");
             }
         }
+       
        
 
 
@@ -180,14 +207,21 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"Delete API Started");
-                var result = _mapper.Map<AdmissionForm>(admissionFormDto);
-                var item = await _unitOfWork.AdmissionService.Remove(result);
-                //var documents = _mapper.Map<List<AdmissionDocument>>(admissionFormDto.listOfAdmissionDocuments);
-                //await _unitOfWork.AdmissionDocumentService.RemoveRange(documents);
-                _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
-                _unitOfWork.RemoveEntitiesById(result.FormId);
-                await _unitOfWork.CompleteAsync();
-                return Ok(item);
+                var result = _unitOfWork.AdmissionService.GetById(admissionFormDto.FormId);
+                if(result.Result != null)
+                {
+                    var item = await _unitOfWork.AdmissionService.Remove(result.Result);
+
+                    var documents = result.Result.AdmissionDocuments;
+                    foreach (var document in documents)
+                    {
+                        _unitOfWork.AdmissionDocumentService.createDirectory(document.DocumentPath);
+                    }
+
+                    await _unitOfWork.CompleteAsync();
+                    return Ok(item);
+                }
+               else { return StatusCode(500); }
             }
             catch (Exception ex)
             {
@@ -196,6 +230,10 @@ namespace VVPSMS.API.Controllers
             }
             finally
             {
+                #region Remove Null Entries
+                _unitOfWork.RemoveNullableEntitiesFromDb();
+                await _unitOfWork.CompleteAsync();
+                #endregion
                 _logger.Information($"Delete API completed Successfully");
             }
         }

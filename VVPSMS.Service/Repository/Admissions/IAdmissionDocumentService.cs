@@ -5,6 +5,8 @@ namespace VVPSMS.Service.Repository.Admissions
 {
     public interface IAdmissionDocumentService : ICommonService<AdmissionDocument>
     {
+        void createDirectory(string directoryPath);
+        void RemoveRangeofDetails();
         void RemoveRangeofDocuments(int formid);
 
     }

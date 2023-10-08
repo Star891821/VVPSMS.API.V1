@@ -10,6 +10,21 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
     {
         public AdmissionDocumentsService(VvpsmsdbContext context) : base(context) { }
 
+        public void createDirectory(string directory)
+        {
+            if (Directory.Exists(directory))
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+
+                // Delete the files
+                foreach (FileInfo fileInfo in directoryInfo.GetFiles())
+                    fileInfo.Delete();
+                // Delete the directories here if you need to.
+                directoryInfo.Delete();
+            }
+            else
+                Directory.CreateDirectory(directory);
+        }
         public async void RemoveRangeofDocuments(int formid)
         {
             try
@@ -18,6 +33,10 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 
                 if (admissionFormdocuments.Count > 0)
                 {
+                    foreach (var document in admissionFormdocuments)
+                    {
+                        createDirectory(document.DocumentPath);
+                    }
                     await base.RemoveRange(admissionFormdocuments);
                 }
             }
@@ -26,6 +45,27 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 throw ex;
             }
             
+        }
+
+        /// <summary>
+        /// RemoveRangeofDetails
+        /// </summary>
+        public async void RemoveRangeofDetails()
+        {
+            try
+            {
+                var admissionDocuments = dbSet.Where(x => x.FormId == null).ToList();
+
+                if (admissionDocuments.Count > 0)
+                {
+                    base.RemoveRange(admissionDocuments);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
     }
