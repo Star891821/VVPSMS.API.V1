@@ -18,7 +18,7 @@ namespace VVPSMS.API.Controllers
         private readonly IAdmissionUnitOfWork _unitOfWork;
         private IMapper _mapper;
         private ILog _logger;
- 
+
         public AdmissionController(IAdmissionUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper, ILog logger)
         {
             _unitOfWork = unitOfWork;
@@ -104,16 +104,16 @@ namespace VVPSMS.API.Controllers
                 if (admissionFormDto != null)
                 {
                     _logger.Information($"InsertOrUpdate API Started");
-                   
+
                     var result = _mapper.Map<AdmissionForm>(admissionFormDto);
                     result.AdmissionDocuments.Clear();
-                    
-                    #region Admission transaction
+
+                    #region Admission Form transaction
                     await _unitOfWork.AdmissionService.InsertOrUpdate(result);
                     await _unitOfWork.CompleteAsync();
                     #endregion
 
-                    #region Upload File
+                    #region Upload File and Insert Admission Documents
                     var isUploadtoAzure = _configuration["Upoad:IsUpoadtoAzure"];
                     var filePath = _configuration["Upoad:SaveFilePath"];
                     if (isUploadtoAzure == "Yes")
@@ -125,9 +125,9 @@ namespace VVPSMS.API.Controllers
                         _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
                         await _unitOfWork.CompleteAsync();
 
-                        if (admissionFormDto.listOfAdmissionDocuments != null)
+                        if (admissionFormDto.listOfAdmissionDocuments != null && result.FormId != 0)
                         {
-                            filePath += "\\"+result.FormId;
+                            filePath += "\\" + result.FormId;
 
                             _unitOfWork.AdmissionDocumentService.createDirectory(filePath);
 
@@ -142,7 +142,7 @@ namespace VVPSMS.API.Controllers
                                     var fileDetails = admissionFormDto.listOfAdmissionDocuments[i].DocumentName;
                                     var temp = fileDetails.Split('.');
 
-                                    var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy")+"." +temp[1];
+                                    var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
                                     System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
                                     AdmissionDocument admissionDocument = new()
                                     {
@@ -157,29 +157,33 @@ namespace VVPSMS.API.Controllers
                                 }
 
                             }
+
+
+                            #region Admission Document Transaction
+                            var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
+                            if (resultDocuments.Count > 0)
+                            {
+                                await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
+                                _unitOfWork.Complete();
+                            }
+                            #endregion
+
+                        }
+                        else
+                        {
+                            _logger.Information($"listOfAdmissionDocuments or FormID is Null");
                         }
 
                     }
                     #endregion
 
-                    #region Admission Document Transaction
-
-                    var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
-                    _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
-                    _unitOfWork.Complete();
-                    //foreach (var admissionDocument in result.AdmissionDocuments)
-                    //{
-                    //    _unitOfWork.AdmissionDocumentService.InsertOrUpdate(admissionDocument);
-                    //     _unitOfWork.Complete();
-                    //}
-                    #endregion
-                    
                     return Ok();
 
                 }
                 else
                 {
-                    return StatusCode(500);
+                    _logger.Information($"Admission Form is null");
+                    return StatusCode(500, "Admission Form JSON is null");
                 }
             }
             catch (Exception ex)
@@ -197,8 +201,8 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"InsertOrUpdate API completed Successfully");
             }
         }
-       
-       
+
+
 
 
         [HttpDelete]
@@ -208,7 +212,7 @@ namespace VVPSMS.API.Controllers
             {
                 _logger.Information($"Delete API Started");
                 var result = _unitOfWork.AdmissionService.GetById(admissionFormDto.FormId);
-                if(result.Result != null)
+                if (result.Result != null)
                 {
                     var item = await _unitOfWork.AdmissionService.Remove(result.Result);
 
@@ -221,7 +225,11 @@ namespace VVPSMS.API.Controllers
                     await _unitOfWork.CompleteAsync();
                     return Ok(item);
                 }
-               else { return StatusCode(500); }
+                else
+                {
+                    _logger.Information($"Admission Form is not availablein Database");
+                    return StatusCode(404, "Admission Form is not available in Database");
+                }
             }
             catch (Exception ex)
             {
