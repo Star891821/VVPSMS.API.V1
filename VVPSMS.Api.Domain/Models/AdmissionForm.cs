@@ -17,7 +17,7 @@ public partial class AdmissionForm
 
     public int ClassId { get; set; }
 
-    public string? AdmissionStatus { get; set; }
+    public int? AdmissionStatus { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 

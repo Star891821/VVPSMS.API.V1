@@ -106,8 +106,14 @@ try
         }
     });
     });
-    builder.Services.AddControllers().AddJsonOptions(x =>
-                    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+    builder.Services.AddControllers().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+        options.JsonSerializerOptions.DefaultIgnoreCondition =
+            JsonIgnoreCondition.WhenWritingNull;
+    });
     builder.Services.AddDbContext<VvpsmsdbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMS")));
     builder.Services.AddTransient<ILoginService, LoginService>();

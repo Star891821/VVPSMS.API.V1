@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using VVPSMS.Api.Models.CustomValidation;
+using VVPSMS.Api.Models.Enums;
 
 namespace VVPSMS.Api.Models.ModelsDto
 {
@@ -21,7 +22,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int ClassId { get; set; }
 
-        public string? AdmissionStatus { get; set; }
+        public AdmissionStatusDto AdmissionStatus { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
@@ -49,7 +50,16 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public virtual List<StudentInfoDetailDto> StudentInfoDetails { get; set; } 
 
-        public virtual List<TransportDetailDto> TransportDetails { get; set; } 
+        public virtual List<TransportDetailDto> TransportDetails { get; set; }
 
+        //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        //{
+        //    if (!Enum.TryParse(typeof(AdmissionStatusDto), true, out AdmissionStatusDto result))
+        //    {
+        //        yield return new ValidationResult("Invalid address type", new[] { nameof(AdmissionStatusDto) });
+        //    }
+
+        //    AdmissionStatusDto = result.ToString(); //normalize Type
+        //}
     }
 }

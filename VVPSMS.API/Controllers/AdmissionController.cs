@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using VVPSMS.Api.Models.Enums;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.NLog;
 using VVPSMS.Domain.Models;
@@ -46,6 +47,28 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"GetAllAdmissionDetails API completed Successfully");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAdmissionStatusTypes()
+        {
+            try
+            {
+                _logger.Information($"GetAdmissionStatusTypes API Started");
+                var enumDTOs = Enum<AdmissionStatusDto>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
+                return Ok(enumDTOs);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetAdmissionStatusTypes for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetAdmissionStatusTypes API completed Successfully");
+            }
+        }
+
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAdmissionDetailsById(int id)
