@@ -3,17 +3,19 @@ using System.Collections.Generic;
 
 namespace VVPSMS.Domain.Models;
 
-public partial class ArAdmissionDocument
+public partial class ArSiblingInfo
 {
-    public int ArdocumentId { get; set; }
+    public int ArsiblingId { get; set; }
 
     public int? ArformId { get; set; }
 
-    public int? MstdocumenttypesId { get; set; }
+    public string? SiblingName { get; set; }
 
-    public string DocumentName { get; set; } = null!;
+    public DateTime? SiblingDob { get; set; }
 
-    public string DocumentPath { get; set; } = null!;
+    public string? SiblingGender { get; set; }
+
+    public string? SiblingSchool { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -24,6 +26,4 @@ public partial class ArAdmissionDocument
     public int? ModifiedBy { get; set; }
 
     public virtual ArAdmissionForm? Arform { get; set; }
-
-    public virtual MstDocumentType? Mstdocumenttypes { get; set; }
 }

@@ -3,17 +3,15 @@ using System.Collections.Generic;
 
 namespace VVPSMS.Domain.Models;
 
-public partial class ArAdmissionDocument
+public partial class ArAdmissionEnquiryDetail
 {
-    public int ArdocumentId { get; set; }
+    public int AradmissionenquirydetailsId { get; set; }
 
     public int? ArformId { get; set; }
 
-    public int? MstdocumenttypesId { get; set; }
+    public int? MstenquiryquestiondetailsId { get; set; }
 
-    public string DocumentName { get; set; } = null!;
-
-    public string DocumentPath { get; set; } = null!;
+    public string? EnquiryResponse { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -25,5 +23,5 @@ public partial class ArAdmissionDocument
 
     public virtual ArAdmissionForm? Arform { get; set; }
 
-    public virtual MstDocumentType? Mstdocumenttypes { get; set; }
+    public virtual MstEnquiryQuestionDetail? Mstenquiryquestiondetails { get; set; }
 }

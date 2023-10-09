@@ -3,17 +3,19 @@ using System.Collections.Generic;
 
 namespace VVPSMS.Domain.Models;
 
-public partial class ArAdmissionDocument
+public partial class ArEmergencyContactDetail
 {
-    public int ArdocumentId { get; set; }
+    public int AremergencycontactdetailsId { get; set; }
 
     public int? ArformId { get; set; }
 
-    public int? MstdocumenttypesId { get; set; }
+    public string Name { get; set; } = null!;
 
-    public string DocumentName { get; set; } = null!;
+    public int ContactNumber { get; set; }
 
-    public string DocumentPath { get; set; } = null!;
+    public string Relationship { get; set; } = null!;
+
+    public string? NameofparentIncaseofstaffWard { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -24,6 +26,4 @@ public partial class ArAdmissionDocument
     public int? ModifiedBy { get; set; }
 
     public virtual ArAdmissionForm? Arform { get; set; }
-
-    public virtual MstDocumentType? Mstdocumenttypes { get; set; }
 }
