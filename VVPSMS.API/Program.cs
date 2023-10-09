@@ -29,6 +29,7 @@ using VVPSMS.API.NLog;
 using VVPSMS.Service.DataManagers.EmailDataManagers;
 using VVPSMS.Service.Repository.Email;
 using Microsoft.AspNetCore.Http.Features;
+using VVPSMS.Service.DataManagers.ArAdmissionDataManagers;
 
 try
 {
@@ -118,6 +119,7 @@ try
                 options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMS")));
     builder.Services.AddTransient<ILoginService, LoginService>();
     builder.Services.AddScoped<IAdmissionUnitOfWork, AdmissionUnitOfWork>();
+    builder.Services.AddScoped<IArAdmissionUnitOfWork, ArAdmissionUnitOfWork>();
     builder.Services.AddScoped<IStudentUnitOfWork, StudentUnitOfWork>();
     builder.Services.AddScoped<ITeacherUnitOfWork, TeacherUnitOfWork>();
     builder.Services.AddScoped<IParentUnitOfWork, ParentUnitOfWork>();
