@@ -19,6 +19,19 @@ namespace VVPSMS.API.AutoMapper
             CreateMap<AdmissionEnquiryDetail, AdmissionEnquiryDetailDto>().ReverseMap();
             CreateMap<AdmissionDocument, AdmissionDocumentDto>().ReverseMap();
             CreateMap<TransportDetail, TransportDetailDto>().ReverseMap();
+            //Archival Mapping
+            CreateMap<ArAdmissionForm, ArAdmissionFormDto>().ReverseMap();
+            CreateMap<ArStudentInfoDetail, ArStudentInfoDetailDto>().ReverseMap();
+            CreateMap<ArFamilyOrGuardianInfoDetail, ArFamilyOrGuardianInfoDetailDto>().ReverseMap();
+            CreateMap<ArSiblingInfo, ArSiblingInfoDto>().ReverseMap();
+            CreateMap<ArEmergencyContactDetail, ArEmergencyContactDetailDto>().ReverseMap();
+            CreateMap<ArPreviousSchoolDetail, ArPreviousSchoolDetailDto>().ReverseMap();
+            CreateMap<ArStudentHealthInfoDetail, ArStudentHealthInfoDetailDto>().ReverseMap();
+            CreateMap<ArStudentIllnessDetail, ArStudentIllnessDetailDto>().ReverseMap();
+            CreateMap<ArAdmissionEnquiryDetail, ArAdmissionEnquiryDetailDto>().ReverseMap();
+            CreateMap<ArAdmissionDocument, ArAdmissionDocumentDto>().ReverseMap();
+            CreateMap<ArTransportDetail, ArTransportDetailDto>().ReverseMap();
+
             CreateMap<MstSchool, MstSchoolDto>().ReverseMap();
             CreateMap<MstSchoolGrade, MstSchoolGradeDto>().ReverseMap();
             CreateMap<MstClass, MstClassDto>().ReverseMap();
