@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Configuration;
+using VVPSMS.Api.Models.Enums;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository;
@@ -75,7 +76,7 @@ namespace VVPSMS.Service.DataManagers
                         }
                         else
                         {
-                            throw new Exception("Record miss-match");
+                            throw new Exception(ErrorCode.MissingData.ToString());
                         }                            
                     }
                     else
@@ -83,7 +84,7 @@ namespace VVPSMS.Service.DataManagers
                         var existingUser = dbContext.MstUsers.FirstOrDefault(x=>x.Username.Equals(entity.Username));
                         if (existingUser != null)
                         {
-                            throw new Exception("User already exists!");
+                            throw new Exception(ErrorCode.AlreadyExist.ToString());
                         }
                         else
                         {

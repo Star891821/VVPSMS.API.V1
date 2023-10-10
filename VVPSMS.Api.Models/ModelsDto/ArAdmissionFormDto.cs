@@ -12,8 +12,6 @@ namespace VVPSMS.Api.Models.ModelsDto
         [Key]
         public int ArformId { get; set; }
 
-        public int? FormId { get; set; }
-
         public int AcademicId { get; set; }
 
         public int SchoolId { get; set; }
