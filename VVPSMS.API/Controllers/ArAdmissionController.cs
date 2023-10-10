@@ -127,9 +127,9 @@ namespace VVPSMS.API.Controllers
                         _unitOfWork.ArAdmissionDocumentService.RemoveRangeofDocuments(result.ArformId);
                         await _unitOfWork.CompleteAsync();
 
-                        if (aradmissionFormDto.listOfArAdmissionDocuments != null && result.FormId != 0)
+                        if (aradmissionFormDto.listOfArAdmissionDocuments != null && result.ArformId != 0)
                         {
-                            filePath += "\\" + result.FormId;
+                            filePath += "\\Archival\\" + result.ArformId;
 
                             _unitOfWork.ArAdmissionDocumentService.createDirectory(filePath);
 
