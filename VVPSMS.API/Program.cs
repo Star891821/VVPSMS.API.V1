@@ -120,6 +120,7 @@ try
     builder.Services.AddTransient<ILoginService, LoginService>();
     builder.Services.AddScoped<IAdmissionUnitOfWork, AdmissionUnitOfWork>();
     builder.Services.AddScoped<IArAdmissionUnitOfWork, ArAdmissionUnitOfWork>();
+    builder.Services.AddScoped<IEnquiryUnitOfWork, EnquiryUnitOfWork>();
     builder.Services.AddScoped<IStudentUnitOfWork, StudentUnitOfWork>();
     builder.Services.AddScoped<ITeacherUnitOfWork, TeacherUnitOfWork>();
     builder.Services.AddScoped<IParentUnitOfWork, ParentUnitOfWork>();
@@ -131,7 +132,7 @@ try
     builder.Services.AddTransient<IGenericService<MstUserRoleDto>, MstUserRoleService>();
     builder.Services.AddTransient<IUserService<MstUserDto>, UserService>();
     builder.Services.AddTransient<IGenericService<MstDocumentTypesDto>, MstDocumentTypeService>();
-    builder.Services.AddTransient<IGenericService<MstEnquiryQuestionDetailDto>, MstEnquiryQuestionDetailService>();
+    //builder.Services.AddTransient<IGenericService<MstEnquiryQuestionDetailDto>, MstEnquiryQuestionDetailService>();
     builder.Services.AddTransient<IExternalLoginAppService, ExternalLoginAppService>();
     builder.Services.AddTransient<IJwtAuthManager, JwtAuthManager>();
     builder.Services.AddTransient<IStorageService, StorageService>();

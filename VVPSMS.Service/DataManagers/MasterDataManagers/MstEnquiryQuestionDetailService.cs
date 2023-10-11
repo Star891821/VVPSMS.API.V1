@@ -1,75 +1,94 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository;
 
 namespace VVPSMS.Service.DataManagers.MasterDataManagers
 {
-    public class MstEnquiryQuestionDetailService : IGenericService<MstEnquiryQuestionDetailDto>
+    public class MstEnquiryQuestionDetailService : GenericService<MstEnquiryQuestionDetail>, IMstEnquiryQuestionDetails
     {
-        private IMapper _mapper;
-        public MstEnquiryQuestionDetailService(IMapper mapper)
+        #region Declarations
+        protected VvpsmsdbContext context;
+        #endregion
+
+        #region
+        public MstEnquiryQuestionDetailService(VvpsmsdbContext context) : base(context)
         {
-            _mapper = mapper;
+            this.context = context;
         }
-        public bool Delete(int id)
+        public override async Task<bool> InsertOrUpdate(MstEnquiryQuestionDetail entity)
         {
-            using (var dbContext = new VvpsmsdbContext())
+            try
             {
-                var entity = dbContext.MstEnquiryQuestionDetails.FirstOrDefault(e => e.MstenquiryquestiondetailsId == id);
-                if (entity != null)
+                var exist = getbyID(entity.MstenquiryquestiondetailsId);
+                if (exist != null)
                 {
-                    dbContext.MstEnquiryQuestionDetails.Remove(entity);
-                    dbContext.SaveChanges();
+                    await base.Update(exist, UpdatedEnquiryEntity(exist, entity));// UpdatedAdmissionEntity(exist, entity));
                 }
+                else
+                {
+                    await base.InsertOrUpdate(entity);
+                }
+
                 return true;
             }
-
-        }
-
-        public List<MstEnquiryQuestionDetailDto> GetAll()
-        {
-            using (var dbContext = new VvpsmsdbContext())
+            catch
             {
-                var result = dbContext.MstEnquiryQuestionDetails.ToList();
-                return _mapper.Map<List<MstEnquiryQuestionDetailDto>>(result);
+                return false;
             }
         }
-
-        public MstEnquiryQuestionDetailDto? GetById(int id)
+        public override async Task<MstEnquiryQuestionDetail?> GetById(int id)
         {
-            using (var dbContext = new VvpsmsdbContext())
+            try
             {
-                var result = dbContext.MstEnquiryQuestionDetails?.FirstOrDefault(e => e.MstenquiryquestiondetailsId.Equals(id));
-                return _mapper.Map<MstEnquiryQuestionDetailDto>(result);
+                return getbyID(id);
+            }
+            catch
+            {
+                return null;
             }
         }
-
-        public bool InsertOrUpdate(MstEnquiryQuestionDetailDto entity)
+        public override async Task<List<MstEnquiryQuestionDetail>> GetAll()
         {
-            using (var dbContext = new VvpsmsdbContext())
+            return await dbSet.Include(a => a.MstEnquiryAnswerDetails)
+                .ToListAsync();
+        }
+        #endregion
+
+        #region Private Methods
+        private MstEnquiryQuestionDetail UpdatedEnquiryEntity(MstEnquiryQuestionDetail entityToUpdate, MstEnquiryQuestionDetail entity)
+        {
+            entityToUpdate.MstenquiryquestiondetailsId = entity.MstenquiryquestiondetailsId;
+            entityToUpdate.EnquiryQuestion = entity.EnquiryQuestion;
+            entityToUpdate.MstenquiryquestiontypedetailsId = entity.MstenquiryquestiontypedetailsId;
+            entityToUpdate.MstEnquiryAnswerDetails = entity.MstEnquiryAnswerDetails;
+            entityToUpdate.CreatedAt = entity.CreatedAt;
+            entityToUpdate.CreatedBy = entity.CreatedBy;
+            entityToUpdate.ModifiedAt = entity.ModifiedAt;
+            entityToUpdate.ModifiedBy = entity.ModifiedBy;
+            return entityToUpdate;
+        }
+        public MstEnquiryQuestionDetail getbyID(int id)
+        {
+            var enquiryForm = new MstEnquiryQuestionDetail();
+            try
             {
-                if (entity != null)
+                enquiryForm = dbSet.Where(x => x.MstenquiryquestiondetailsId == id)
+                                      .FirstOrDefault();
+                if (enquiryForm != null)
                 {
-                    if (entity.MstenquiryquestiondetailsId != 0)
-                    {
-                        var dbentity = dbContext.MstEnquiryQuestionDetails.FirstOrDefault(e => e.MstenquiryquestiondetailsId == entity.MstenquiryquestiondetailsId);
-
-                        if (dbentity != null)
-                        {
-                            dbContext.Entry(dbentity).CurrentValues.SetValues(_mapper.Map<MstEnquiryQuestionDetail>(entity));
-                        }
-                    }
-                    else
-                    {                    
-                        dbContext.MstEnquiryQuestionDetails.Add(_mapper.Map<MstEnquiryQuestionDetail>(entity));
-                    }
-                    dbContext.SaveChanges();
+                    dbSet.Entry(enquiryForm).Collection(adm => adm.MstEnquiryAnswerDetails).Load();
                 }
-                return true;
-            }
-        }
 
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return enquiryForm;
+        }
+        #endregion 
 
     }
 }
