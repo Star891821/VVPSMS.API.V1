@@ -45,5 +45,7 @@ public partial class TransportDetail
 
     public int? ModifiedBy { get; set; }
 
+    public int? AcademicyearId { get; set; }
+
     public virtual AdmissionForm? Form { get; set; }
 }

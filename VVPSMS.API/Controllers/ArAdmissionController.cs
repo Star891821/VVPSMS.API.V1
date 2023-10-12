@@ -151,7 +151,7 @@ namespace VVPSMS.API.Controllers
                                         DocumentName = fileName,
                                         DocumentPath = filePath,
                                         ArformId = result.ArformId,
-                                        MstdocumenttypesId = aradmissionFormDto.listOfArAdmissionDocuments[i].MstdocumenttypesId,
+                                        //MstdocumenttypesId = aradmissionFormDto.listOfArAdmissionDocuments[i].MstdocumenttypesId,
                                         CreatedAt = DateTime.Now,
                                         ModifiedAt = DateTime.Now,
                                     };

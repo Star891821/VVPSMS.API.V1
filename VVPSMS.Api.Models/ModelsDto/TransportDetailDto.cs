@@ -41,6 +41,8 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public DateTime? ModifiedAt { get; set; }
 
+        public int? AcademicYearId { get; set; }
+
         public int? ModifiedBy { get; set; }
 
     }
