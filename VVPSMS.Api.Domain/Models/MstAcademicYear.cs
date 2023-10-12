@@ -26,4 +26,8 @@ public partial class MstAcademicYear
     public DateTime? ModifiedAt { get; set; }
 
     public int? ModifiedBy { get; set; }
+
+    public virtual ICollection<ArTransportDetail> ArTransportDetails { get; set; } = new List<ArTransportDetail>();
+
+    public virtual ICollection<TransportDetail> TransportDetails { get; set; } = new List<TransportDetail>();
 }

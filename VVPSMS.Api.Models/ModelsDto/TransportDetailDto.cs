@@ -7,8 +7,6 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int? FormId { get; set; }
 
-        public DateTime? AcademicYear { get; set; }
-
         public DateTime? DateofApplication { get; set; }
 
         public string? NameofStudent { get; set; }
@@ -41,7 +39,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public DateTime? ModifiedAt { get; set; }
 
-        public int? AcademicYearId { get; set; }
+        public int? Academicid { get; set; }
 
         public int? ModifiedBy { get; set; }
 

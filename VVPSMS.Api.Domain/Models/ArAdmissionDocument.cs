@@ -5,9 +5,11 @@ namespace VVPSMS.Domain.Models;
 
 public partial class ArAdmissionDocument
 {
-    public int DocumentId { get; set; }
+    public int ArdocumentId { get; set; }
 
     public int? ArformId { get; set; }
+
+    public int? MstdocumenttypesId { get; set; }
 
     public string DocumentName { get; set; } = null!;
 
@@ -22,4 +24,6 @@ public partial class ArAdmissionDocument
     public int? ModifiedBy { get; set; }
 
     public virtual ArAdmissionForm? Arform { get; set; }
+
+    public virtual MstDocumentType? Mstdocumenttypes { get; set; }
 }

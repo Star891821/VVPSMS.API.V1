@@ -9,8 +9,6 @@ public partial class TransportDetail
 
     public int? FormId { get; set; }
 
-    public DateTime? AcademicYear { get; set; }
-
     public DateTime? DateofApplication { get; set; }
 
     public string? NameofStudent { get; set; }
@@ -45,7 +43,9 @@ public partial class TransportDetail
 
     public int? ModifiedBy { get; set; }
 
-    public int? AcademicyearId { get; set; }
+    public int? Academicid { get; set; }
+
+    public virtual MstAcademicYear? Academic { get; set; }
 
     public virtual AdmissionForm? Form { get; set; }
 }
