@@ -74,6 +74,55 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        public async Task<IActionResult> GetArAdmissionDetailsByUserId(int id)
+        {
+            try
+            {
+                _logger.Information($"GetArAdmissionDetailsByUserId API Started");
+                var item = await _unitOfWork.ArAdmissionService.GetArAdmissionDetailsByUserId(id);
+
+                if (item == null)
+                    return NotFound();
+
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetArAdmissionDetailsByUserId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetArAdmissionDetailsByUserId API completed Successfully");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetArAdmissionDetailsByUserIdAndArFormId(int id,int userid)
+        {
+            try
+            {
+                _logger.Information($"GetArAdmissionDetailsByUserId API Started");
+                var item = await _unitOfWork.ArAdmissionService.GetArAdmissionDetailsByUserIdAndArformId(id, userid);
+
+                if (item == null)
+                    return NotFound();
+
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetArAdmissionDetailsByUserId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetArAdmissionDetailsByUserId API completed Successfully");
+            }
+        }
+
+
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetAllDocumentsByArAdmissionId(int id)
         {
             try

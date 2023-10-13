@@ -21,7 +21,7 @@ namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
         {
             try
             {
-                var exist = getbyID(entity.ArformId);
+                var exist = getbyID(entity.ArformId, null);
                 if (exist != null)
                 {
                     await base.Update(exist, UpdatedAdmissionEntity(exist, entity));// UpdatedAdmissionEntity(exist, entity));
@@ -42,7 +42,7 @@ namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
         {
             try
             {
-                return getbyID(id);
+                return getbyID(id, null);
             }
             catch
             {
@@ -91,13 +91,19 @@ namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
             entityToUpdate.ModifiedBy = entity.ModifiedBy;
             return entityToUpdate;
         }
-        public ArAdmissionForm getbyID(int id)
+        public ArAdmissionForm getbyID(int? id, int? UserId, bool userWise = false)
         {
             var aradmissionForm = new ArAdmissionForm();
             try
             {
-                aradmissionForm = dbSet.Where(x => x.ArformId == id)
-                                      .FirstOrDefault();
+                if (userWise)
+                {
+                    aradmissionForm = dbSet.Where(x => x.CreatedBy == UserId && x.ArformId == id).FirstOrDefault();
+                }
+                else
+                {
+                    aradmissionForm = dbSet.Where(x => x.ArformId == id).FirstOrDefault();
+                }
                 if (aradmissionForm != null)
                 {
                     dbSet.Entry(aradmissionForm).Collection(adm => adm.ArStudentInfoDetails).Load();
@@ -119,6 +125,63 @@ namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
             }
             return aradmissionForm;
         }
-        #endregion      
+
+        public List<ArAdmissionForm> getArAdmissionsbyID(int? UserId)
+        {
+            var listOfAradmissionForm = new List<ArAdmissionForm>();
+            try
+            {
+                listOfAradmissionForm = dbSet.Where(x => x.CreatedBy == UserId).ToList();
+
+                foreach (var item in listOfAradmissionForm)
+                {
+                    dbSet.Entry(item).Collection(adm => adm.ArStudentInfoDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.ArAdmissionDocuments).Load();
+                    dbSet.Entry(item).Collection(adm => adm.ArAdmissionEnquiryDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.ArSiblingInfos).Load();
+                    dbSet.Entry(item).Collection(adm => adm.ArStudentHealthInfoDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.ArFamilyOrGuardianInfoDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.ArPreviousSchoolDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.ArEmergencyContactDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.ArTransportDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.ArStudentIllnessDetails).Load();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return listOfAradmissionForm;
+        }
+
+
+
+        public async Task<List<ArAdmissionForm>> GetArAdmissionDetailsByUserId(int userId)
+        {
+
+            try
+            {
+                return getArAdmissionsbyID(userId);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<ArAdmissionForm> GetArAdmissionDetailsByUserIdAndArformId(int id, int UserId)
+        {
+
+            try
+            {
+                return getbyID(id, UserId,true);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        #endregion
     }
 }
