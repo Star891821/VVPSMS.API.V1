@@ -102,7 +102,7 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _logger.Information($"GetArAdmissionDetailsByUserId API Started");
+                _logger.Information($"GetArAdmissionDetailsByUserIdAndArFormId API Started");
                 var item = await _unitOfWork.ArAdmissionService.GetArAdmissionDetailsByUserIdAndArformId(id, userid);
 
                 if (item == null)
@@ -112,12 +112,12 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetArAdmissionDetailsByUserId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside GetArAdmissionDetailsByUserIdAndArFormId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetArAdmissionDetailsByUserId API completed Successfully");
+                _logger.Information($"GetArAdmissionDetailsByUserIdAndArFormId API completed Successfully");
             }
         }
 

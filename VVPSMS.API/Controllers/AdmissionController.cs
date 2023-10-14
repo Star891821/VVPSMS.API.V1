@@ -68,7 +68,53 @@ namespace VVPSMS.API.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAdmissionDetailsByUserId(int id)
+        {
+            try
+            {
+                _logger.Information($"GetAdmissionDetailsByUserId API Started");
+                var item = await _unitOfWork.AdmissionService.GetAdmissionDetailsByUserId(id);
 
+                if (item == null)
+                    return NotFound();
+
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetAdmissionDetailsByUserId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetAdmissionDetailsByUserId API completed Successfully");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAdmissionDetailsByUserIdAndFormId(int id, int userid)
+        {
+            try
+            {
+                _logger.Information($"GetAdmissionDetailsByUserIdAndFormId API Started");
+                var item = await _unitOfWork.AdmissionService.GetAdmissionDetailsByUserIdAndFormId(id, userid);
+
+                if (item == null)
+                    return NotFound();
+
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetAdmissionDetailsByUserIdAndFormId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetAdmissionDetailsByUserIdAndFormId API completed Successfully");
+            }
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAdmissionDetailsById(int id)

@@ -21,7 +21,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             try
             {
-                var exist = getbyID(entity.FormId);
+                var exist = getbyID(entity.FormId,null);
                 if (exist != null)
                 {
                     await base.Update(exist, UpdatedAdmissionEntity(exist, entity));// UpdatedAdmissionEntity(exist, entity));
@@ -42,7 +42,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             try
             {
-                return getbyID(id);
+                return getbyID(id,null);
             }
             catch
             {
@@ -64,6 +64,33 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 .Include(a => a.StudentIllnessDetails)
                 .ToListAsync();
         }
+
+        public async Task<List<AdmissionForm>> GetAdmissionDetailsByUserId(int userId)
+        {
+
+            try
+            {
+                return getAdmissionsbyID(userId);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<AdmissionForm> GetAdmissionDetailsByUserIdAndFormId(int id, int UserId)
+        {
+
+            try
+            {
+                return getbyID(id, UserId, true);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -91,13 +118,19 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             entityToUpdate.ModifiedBy = entity.ModifiedBy;
             return entityToUpdate;
         }
-        public AdmissionForm getbyID(int id)
+        private AdmissionForm getbyID(int? id, int? UserId, bool userWise = false)
         {
             var admissionForm = new AdmissionForm();
             try
             {
-                admissionForm = dbSet.Where(x => x.FormId == id)
-                                      .FirstOrDefault();
+                if (userWise)
+                {
+                    admissionForm = dbSet.Where(x => x.CreatedBy == UserId && x.FormId == id).FirstOrDefault();
+                }
+                else
+                {
+                    admissionForm = dbSet.Where(x => x.FormId == id).FirstOrDefault();
+                }
                 if (admissionForm != null)
                 {
                     dbSet.Entry(admissionForm).Collection(adm => adm.StudentInfoDetails).Load();
@@ -119,6 +152,36 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             }
             return admissionForm;
         }
-        #endregion      
+
+        private List<AdmissionForm> getAdmissionsbyID(int? UserId)
+        {
+            var listOfAdmissionForm = new List<AdmissionForm>();
+            try
+            {
+                listOfAdmissionForm = dbSet.Where(x => x.CreatedBy == UserId).ToList();
+
+                foreach (var item in listOfAdmissionForm)
+                {
+                    dbSet.Entry(item).Collection(adm => adm.StudentInfoDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.AdmissionDocuments).Load();
+                    dbSet.Entry(item).Collection(adm => adm.AdmissionEnquiryDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.SiblingInfos).Load();
+                    dbSet.Entry(item).Collection(adm => adm.StudentHealthInfoDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.FamilyOrGuardianInfoDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.PreviousSchoolDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.EmergencyContactDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.TransportDetails).Load();
+                    dbSet.Entry(item).Collection(adm => adm.StudentIllnessDetails).Load();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return listOfAdmissionForm;
+        }
+
+        #endregion
     }
 }
