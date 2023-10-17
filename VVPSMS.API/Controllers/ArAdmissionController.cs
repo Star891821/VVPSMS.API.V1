@@ -151,6 +151,7 @@ namespace VVPSMS.API.Controllers
         public async Task<IActionResult> InsertOrUpdate(ArAdmissionFormDto aradmissionFormDto)
         {
             var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             bool removeNullEntries = false;
             try
             {
@@ -223,7 +224,7 @@ namespace VVPSMS.API.Controllers
                                 catch(Exception ex)
                                 {
                                     statusCode = StatusCodes.Status404NotFound;
-                                    statusCode.MapPropertiesToInstance(ex.Message);
+                                    value = ex.Message;
                                 }
                             }
                         }
@@ -239,15 +240,15 @@ namespace VVPSMS.API.Controllers
                 else
                 {
                     _logger.Information($"ArAdmission Form is null");
-                    statusCode = StatusCodes.Status404NotFound;
-                    statusCode.MapPropertiesToInstance("ArAdmission Form is null");
+                    statusCode = StatusCodes.Status400BadRequest;
+                    value = "ArAdmission Form is null";
                 }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside InsertOrUpdate for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
                 statusCode = StatusCodes.Status500InternalServerError;
-                statusCode.MapPropertiesToInstance(ex.Message);
+                value = ex.Message;
             }
             finally
             {
@@ -261,7 +262,7 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"InsertOrUpdate API completed Successfully");
 
             }
-            return StatusCode(statusCode);
+            return StatusCode(statusCode, value);
         }
 
 
