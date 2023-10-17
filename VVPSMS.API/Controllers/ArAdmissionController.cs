@@ -98,7 +98,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetArAdmissionDetailsByUserIdAndArFormId(int id,int userid)
+        public async Task<IActionResult> GetArAdmissionDetailsByUserIdAndArFormId(int id, int userid)
         {
             try
             {
@@ -150,6 +150,8 @@ namespace VVPSMS.API.Controllers
         [HttpPost]
         public async Task<IActionResult> InsertOrUpdate(ArAdmissionFormDto aradmissionFormDto)
         {
+            var statusCode = StatusCodes.Status200OK;
+            bool removeNullEntries = false;
             try
             {
                 if (aradmissionFormDto != null)
@@ -162,103 +164,112 @@ namespace VVPSMS.API.Controllers
                     #region Admission Form transaction
                     await _unitOfWork.ArAdmissionService.InsertOrUpdate(result);
                     await _unitOfWork.CompleteAsync();
+                    removeNullEntries = true;
                     #endregion
 
                     #region Upload File and Insert Admission Documents
-                    var isUploadtoAzure = _configuration["Upoad:IsUpoadtoAzure"];
-                    var filePath = _configuration["Upoad:SaveFilePath"];
+                    var isUploadtoAzure = _configuration["Upload:IsUpoadtoAzure"];
+                    var filePath = _configuration["Upload:SaveFilePath"];
                     if (isUploadtoAzure == "Yes")
                     {
 
                     }
                     else
                     {
+
+                        #region Admission Document Transaction For FileSystemandDB
                         _unitOfWork.ArAdmissionDocumentService.RemoveRangeofDocuments(result.ArformId);
                         await _unitOfWork.CompleteAsync();
-
                         if (aradmissionFormDto.listOfArAdmissionDocuments != null && result.ArformId != 0)
                         {
                             filePath += "\\Archival\\" + result.ArformId;
-
                             _unitOfWork.ArAdmissionDocumentService.createDirectory(filePath);
 
                             for (var i = 0; i < aradmissionFormDto.listOfArAdmissionDocuments.Count; i++)
                             {
-                                if (!string.IsNullOrEmpty(aradmissionFormDto.listOfArAdmissionDocuments[i].FileContentsAsBase64))
+                                try
                                 {
-                                    var Base64FileContent = aradmissionFormDto.listOfArAdmissionDocuments[i].FileContentsAsBase64;
-                                    var index = Base64FileContent.IndexOf(',');
-                                    var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
-                                    byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
-                                    var fileDetails = aradmissionFormDto.listOfArAdmissionDocuments[i].DocumentName;
-                                    var temp = fileDetails.Split('.');
-
-                                    var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
-                                    System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
-                                    ArAdmissionDocument aradmissionDocument = new()
+                                    if (!string.IsNullOrEmpty(aradmissionFormDto.listOfArAdmissionDocuments[i].FileContentsAsBase64))
                                     {
-                                        DocumentName = fileName,
-                                        DocumentPath = filePath,
-                                        ArformId = result.ArformId,
-                                        MstdocumenttypesId = aradmissionFormDto.listOfArAdmissionDocuments[i].MstdocumenttypesId,
-                                        CreatedAt = DateTime.Now,
-                                        ModifiedAt = DateTime.Now,
-                                    };
-                                    result.ArAdmissionDocuments.Add(aradmissionDocument);
+                                        var Base64FileContent = aradmissionFormDto.listOfArAdmissionDocuments[i].FileContentsAsBase64;
+                                        var index = Base64FileContent.IndexOf(',');
+                                        var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
+                                        byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
+                                        var fileDetails = aradmissionFormDto.listOfArAdmissionDocuments[i].DocumentName;
+                                        var temp = fileDetails.Split('.');
+
+                                        var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
+                                        System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
+                                        ArAdmissionDocument aradmissionDocument = new()
+                                        {
+                                            DocumentName = fileName,
+                                            DocumentPath = filePath,
+                                            ArformId = result.ArformId,
+                                            MstdocumenttypesId = aradmissionFormDto.listOfArAdmissionDocuments[i].MstdocumenttypesId,
+                                            CreatedAt = DateTime.Now,
+                                            ModifiedAt = DateTime.Now,
+                                        };
+                                        result.ArAdmissionDocuments.Add(aradmissionDocument);
+                                    }
+
+                                    var resultDocuments = _mapper.Map<List<ArAdmissionDocument>>(result.ArAdmissionDocuments);
+                                    if (resultDocuments.Count > 0)
+                                    {
+                                        await _unitOfWork.ArAdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
+                                        _unitOfWork.Complete();
+                                    }
+
                                 }
-
+                                catch(Exception ex)
+                                {
+                                    statusCode = StatusCodes.Status404NotFound;
+                                    statusCode.MapPropertiesToInstance(ex.Message);
+                                }
                             }
-
-
-                            #region Admission Document Transaction
-                            var resultDocuments = _mapper.Map<List<ArAdmissionDocument>>(result.ArAdmissionDocuments);
-                            if (resultDocuments.Count > 0)
-                            {
-                                await _unitOfWork.ArAdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
-                                _unitOfWork.Complete();
-                            }
-                            #endregion
-
                         }
                         else
                         {
-                            _logger.Information($"listOfArAdmissionDocuments or ArFormID is Null");
+                            _logger.Information($"listOfArAdmissionDocuments or ArformID is Null");
                         }
+                        #endregion
 
                     }
                     #endregion
-
-                    return Ok();
-
                 }
                 else
                 {
                     _logger.Information($"ArAdmission Form is null");
-                    return StatusCode(500, "ArAdmission Form JSON is null");
+                    statusCode = StatusCodes.Status404NotFound;
+                    statusCode.MapPropertiesToInstance("ArAdmission Form is null");
                 }
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside ArInsertOrUpdate for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
-                return StatusCode(500);
+                _logger.Error($"Something went wrong inside InsertOrUpdate for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                statusCode = StatusCodes.Status500InternalServerError;
+                statusCode.MapPropertiesToInstance(ex.Message);
             }
             finally
             {
                 #region Remove Null Entries
-                _unitOfWork.RemoveNullableEntitiesFromDb();
-                await _unitOfWork.CompleteAsync();
+                if (removeNullEntries)
+                {
+                    _unitOfWork.RemoveNullableEntitiesFromDb();
+                    await _unitOfWork.CompleteAsync();
+                }
                 #endregion
+                _logger.Information($"InsertOrUpdate API completed Successfully");
 
-                _logger.Information($"ArInsertOrUpdate API completed Successfully");
             }
+            return StatusCode(statusCode);
         }
-
 
 
 
         [HttpDelete]
         public async Task<IActionResult> Delete(ArAdmissionFormDto admissionFormDto)
         {
+            bool removeNullEntries = false;
             try
             {
                 _logger.Information($"Delete API Started");
@@ -274,25 +285,29 @@ namespace VVPSMS.API.Controllers
                     }
 
                     await _unitOfWork.CompleteAsync();
+                    removeNullEntries = true;
                     return Ok(item);
                 }
                 else
                 {
                     _logger.Information($"ArAdmission Form is not availablein Database");
-                    return StatusCode(404, "ArAdmission Form is not available in Database");
+                    return StatusCode(StatusCodes.Status404NotFound, "ArAdmission Form is not available in Database");
                 }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside Delete for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
-                return StatusCode(500);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
             finally
             {
-                #region Remove Null Entries
-                _unitOfWork.RemoveNullableEntitiesFromDb();
-                await _unitOfWork.CompleteAsync();
-                #endregion
+                if (removeNullEntries)
+                {
+                    #region Remove Null Entries
+                    _unitOfWork.RemoveNullableEntitiesFromDb();
+                    await _unitOfWork.CompleteAsync();
+                    #endregion
+                }
                 _logger.Information($"ArDelete API completed Successfully");
             }
         }
