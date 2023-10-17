@@ -43,6 +43,8 @@ public partial class StudentInfoDetail
 
     public string? PermanentAddress { get; set; }
 
+    public string? PresentAddress { get; set; }
+
     public string? StudentLivesWith { get; set; }
 
     public string? TypeofFamily { get; set; }

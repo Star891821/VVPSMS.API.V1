@@ -9,6 +9,8 @@ public partial class ArFamilyOrGuardianInfoDetail
 
     public int? ArformId { get; set; }
 
+    public bool? Legalguardian { get; set; }
+
     public string Name { get; set; } = null!;
 
     public string Dob { get; set; } = null!;
