@@ -6,21 +6,21 @@ using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.NLog;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.DataManagers;
-using VVPSMS.Service.Repository.Admissions;
+using VVPSMS.Service.Repository.DraftAdmissions;
 
 namespace VVPSMS.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
 
-    public class ArAdmissionController : ControllerBase
+    public class DraftAdmissionController : ControllerBase
     {
         private IConfiguration _configuration;
-        private readonly IArAdmissionUnitOfWork _unitOfWork;
+        private readonly IDraftAdmissionUnitOfWork _unitOfWork;
         private IMapper _mapper;
         private ILog _logger;
 
-        public ArAdmissionController(IArAdmissionUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper, ILog logger)
+        public DraftAdmissionController(IDraftAdmissionUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper, ILog logger)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
@@ -29,33 +29,33 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllArAdmissionDetails()
+        public async Task<IActionResult> GetAllDraftAdmissionDetails()
         {
             try
             {
-                _logger.Information($"GetAllArAdmissionDetails API Started");
-                var result = await _unitOfWork.ArAdmissionService.GetAll();
+                _logger.Information($"GetAllDraftAdmissionDetails API Started");
+                var result = await _unitOfWork.DraftAdmissionService.GetAll();
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAllArAdmissionDetails for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside GetAllDraftAdmissionDetails for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetAllArAdmissionDetails API completed Successfully");
+                _logger.Information($"GetAllDraftAdmissionDetails API completed Successfully");
             }
         }
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetArAdmissionDetailsById(int id)
+        public async Task<IActionResult> GetDraftAdmissionDetailsById(int id)
         {
             try
             {
-                _logger.Information($"GetArAdmissionDetailsById API Started");
-                var item = await _unitOfWork.ArAdmissionService.GetById(id);
+                _logger.Information($"GetDraftAdmissionDetailsById API Started");
+                var item = await _unitOfWork.DraftAdmissionService.GetById(id);
 
                 if (item == null)
                     return NotFound();
@@ -64,22 +64,22 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetArAdmissionDetailsById for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside GetDraftAdmissionDetailsById for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetArAdmissionDetailsById API completed Successfully");
+                _logger.Information($"GetDraftAdmissionDetailsById API completed Successfully");
             }
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetArAdmissionDetailsByUserId(int id)
+        public async Task<IActionResult> GetDraftAdmissionDetailsByUserId(int id)
         {
             try
             {
-                _logger.Information($"GetArAdmissionDetailsByUserId API Started");
-                var item = await _unitOfWork.ArAdmissionService.GetArAdmissionDetailsByUserId(id);
+                _logger.Information($"GetDraftAdmissionDetailsByUserId API Started");
+                var item = await _unitOfWork.DraftAdmissionService.GetDraftAdmissionDetailsByUserId(id);
 
                 if (item == null)
                     return NotFound();
@@ -88,22 +88,22 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetArAdmissionDetailsByUserId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside GetDraftAdmissionDetailsByUserId for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetArAdmissionDetailsByUserId API completed Successfully");
+                _logger.Information($"GetDraftAdmissionDetailsByUserId API completed Successfully");
             }
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetArAdmissionDetailsByUserIdAndArFormId(int id, int userid)
+        public async Task<IActionResult> GetDraftAdmissionDetailsByUserIdAndDraftFormId(int id, int userid)
         {
             try
             {
-                _logger.Information($"GetArAdmissionDetailsByUserIdAndArFormId API Started");
-                var item = await _unitOfWork.ArAdmissionService.GetArAdmissionDetailsByUserIdAndArformId(id, userid);
+                _logger.Information($"GetDraftAdmissionDetailsByUserIdAndDraftFormId API Started");
+                var item = await _unitOfWork.DraftAdmissionService.GetDraftAdmissionDetailsByUserIdAndDraftformId(id, userid);
 
                 if (item == null)
                     return NotFound();
@@ -112,23 +112,23 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetArAdmissionDetailsByUserIdAndArFormId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside GetDraftAdmissionDetailsByUserIdAndDraftFormId for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetArAdmissionDetailsByUserIdAndArFormId API completed Successfully");
+                _logger.Information($"GetDraftAdmissionDetailsByUserIdAndDraftFormId API completed Successfully");
             }
         }
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAllDocumentsByArAdmissionId(int id)
+        public async Task<IActionResult> GetAllDocumentsByDraftAdmissionId(int id)
         {
             try
             {
-                _logger.Information($"GetAllDocumentsByArAdmissionId API Started");
-                var item = await _unitOfWork.ArAdmissionDocumentService.GetAll(id);
+                _logger.Information($"GetAllDocumentsByDraftAdmissionId API Started");
+                var item = await _unitOfWork.DraftAdmissionDocumentService.GetAll(id);
 
                 if (item == null)
                     return NotFound();
@@ -137,12 +137,12 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAllDocumentsByArAdmissionId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside GetAllDocumentsByDraftAdmissionId for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetAllDocumentsByArAdmissionId API completed Successfully");
+                _logger.Information($"GetAllDocumentsByDraftAdmissionId API completed Successfully");
             }
 
         }
@@ -163,7 +163,7 @@ namespace VVPSMS.API.Controllers
                     result.ArAdmissionDocuments.Clear();
 
                     #region Admission Form transaction
-                    await _unitOfWork.ArAdmissionService.InsertOrUpdate(result);
+                    await _unitOfWork.DraftAdmissionService.InsertOrUpdate(result);
                     await _unitOfWork.CompleteAsync();
                     removeNullEntries = true;
                     #endregion
@@ -179,12 +179,12 @@ namespace VVPSMS.API.Controllers
                     {
 
                         #region Admission Document Transaction For FileSystemandDB
-                        _unitOfWork.ArAdmissionDocumentService.RemoveRangeofDocuments(result.ArformId);
+                        _unitOfWork.DraftAdmissionDocumentService.RemoveRangeofDocuments(result.ArformId);
                         await _unitOfWork.CompleteAsync();
                         if (aradmissionFormDto.listOfArAdmissionDocuments != null && result.ArformId != 0)
                         {
                             filePath += "\\Archival\\" + result.ArformId;
-                            _unitOfWork.ArAdmissionDocumentService.createDirectory(filePath);
+                            _unitOfWork.DraftAdmissionDocumentService.createDirectory(filePath);
 
                             for (var i = 0; i < aradmissionFormDto.listOfArAdmissionDocuments.Count; i++)
                             {
@@ -216,10 +216,10 @@ namespace VVPSMS.API.Controllers
                                     var resultDocuments = _mapper.Map<List<ArAdmissionDocument>>(result.ArAdmissionDocuments);
                                     if (resultDocuments.Count > 0)
                                     {
-                                        await _unitOfWork.ArAdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
+                                        await _unitOfWork.DraftAdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
                                         _unitOfWork.Complete();
                                     }
-                                    value = result.ArformId;
+
                                 }
                                 catch(Exception ex)
                                 {
@@ -236,17 +236,19 @@ namespace VVPSMS.API.Controllers
 
                     }
                     #endregion
+                
+                    value = result.ArformId;
                 }
                 else
                 {
-                    _logger.Information($"ArAdmission Form is null");
+                    _logger.Information($"DraftAdmission Form is null");
                     statusCode = StatusCodes.Status400BadRequest;
-                    value = "ArAdmission Form is null";
+                    value = "DraftAdmission Form is null";
                 }
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside InsertOrUpdate for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside InsertOrUpdate for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
                 statusCode = StatusCodes.Status500InternalServerError;
                 value = ex.Message;
             }
@@ -260,6 +262,7 @@ namespace VVPSMS.API.Controllers
                 }
                 #endregion
                 _logger.Information($"InsertOrUpdate API completed Successfully");
+
             }
             return StatusCode(statusCode, value);
         }
@@ -273,15 +276,15 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"Delete API Started");
-                var result = _unitOfWork.ArAdmissionService.GetById(admissionFormDto.ArformId);
+                var result = _unitOfWork.DraftAdmissionService.GetById(admissionFormDto.ArformId);
                 if (result.Result != null)
                 {
-                    var item = await _unitOfWork.ArAdmissionService.Remove(result.Result);
+                    var item = await _unitOfWork.DraftAdmissionService.Remove(result.Result);
 
                     var documents = result.Result.ArAdmissionDocuments;
                     foreach (var document in documents)
                     {
-                        _unitOfWork.ArAdmissionDocumentService.createDirectory(document.DocumentPath);
+                        _unitOfWork.DraftAdmissionDocumentService.createDirectory(document.DocumentPath);
                     }
 
                     await _unitOfWork.CompleteAsync();
@@ -290,13 +293,13 @@ namespace VVPSMS.API.Controllers
                 }
                 else
                 {
-                    _logger.Information($"ArAdmission Form is not availablein Database");
-                    return StatusCode(StatusCodes.Status404NotFound, "ArAdmission Form is not available in Database");
+                    _logger.Information($"DraftAdmission Form is not availablein Database");
+                    return StatusCode(StatusCodes.Status404NotFound, "DraftAdmission Form is not available in Database");
                 }
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside Delete for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside Delete for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
             finally
@@ -308,7 +311,7 @@ namespace VVPSMS.API.Controllers
                     await _unitOfWork.CompleteAsync();
                     #endregion
                 }
-                _logger.Information($"ArDelete API completed Successfully");
+                _logger.Information($"DraftDelete API completed Successfully");
             }
         }
     }

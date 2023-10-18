@@ -1,19 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VVPSMS.Domain.Models;
-using VVPSMS.Service.Repository.Admissions;
+using VVPSMS.Service.Repository.DraftAdmissions;
 
-namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
+namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
 {
     /// <summary>
     /// AdmissionService
     /// </summary>
-    public class ArAdmissionService : GenericService<ArAdmissionForm>, IArAdmissionService
+    public class DraftAdmissionService : GenericService<ArAdmissionForm>, IDraftAdmissionService
     {
         #region Declarations
         protected VvpsmsdbContext context;
         #endregion
         #region public methods
-        public ArAdmissionService(VvpsmsdbContext context) : base(context)
+        public DraftAdmissionService(VvpsmsdbContext context) : base(context)
         {
             this.context = context;
         }
@@ -126,7 +126,7 @@ namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
             return aradmissionForm;
         }
 
-        public List<ArAdmissionForm> getArAdmissionsbyID(int? UserId)
+        public List<ArAdmissionForm> getDraftAdmissionsbyID(int? UserId)
         {
             var listOfAradmissionForm = new List<ArAdmissionForm>();
             try
@@ -157,12 +157,12 @@ namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
 
 
 
-        public async Task<List<ArAdmissionForm>> GetArAdmissionDetailsByUserId(int userId)
+        public async Task<List<ArAdmissionForm>> GetDraftAdmissionDetailsByUserId(int userId)
         {
 
             try
             {
-                return getArAdmissionsbyID(userId);
+                return getDraftAdmissionsbyID(userId);
             }
             catch
             {
@@ -170,7 +170,7 @@ namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
             }
         }
 
-        public async Task<ArAdmissionForm> GetArAdmissionDetailsByUserIdAndArformId(int id, int UserId)
+        public async Task<ArAdmissionForm> GetDraftAdmissionDetailsByUserIdAndDraftformId(int id, int UserId)
         {
 
             try

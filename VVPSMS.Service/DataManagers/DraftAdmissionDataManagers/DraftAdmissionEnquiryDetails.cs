@@ -1,18 +1,18 @@
 ﻿using VVPSMS.Domain.Models;
-using VVPSMS.Service.Repository.Admissions;
+using VVPSMS.Service.Repository.DraftAdmissions;
 
-namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
+namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
 {
     /// <summary>
     /// AdmissionEnquiryDetails
     /// </summary>
-    public class ArAdmissionEnquiryDetails : GenericService<ArAdmissionEnquiryDetail>, IArAdmissionEnquiryDetails
+    public class DraftAdmissionEnquiryDetails : GenericService<ArAdmissionEnquiryDetail>, IDraftAdmissionEnquiryDetails
     {
         /// <summary>
         /// AdmissionEnquiryDetails
         /// </summary>
         /// <param name="context"></param>
-        public ArAdmissionEnquiryDetails(VvpsmsdbContext context) : base(context)
+        public DraftAdmissionEnquiryDetails(VvpsmsdbContext context) : base(context)
         {
         }
         #region public methods

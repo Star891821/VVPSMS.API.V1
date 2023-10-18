@@ -1,18 +1,23 @@
-﻿using VVPSMS.Domain.Models;
-using VVPSMS.Service.Repository.Admissions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using VVPSMS.Domain.Models;
+using VVPSMS.Service.Repository.DraftAdmissions;
 
-namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
+namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
 {
     /// <summary>
-    /// PreviousSchoolDetailsService
+    /// SiblingInfosDetailsService
     /// </summary>
-    public class ArPreviousSchoolDetailsService : GenericService<ArPreviousSchoolDetail>, IArPreviousSchoolDetails
+    public class DraftSiblingInfosDetailsService : GenericService<ArSiblingInfo>, IDraftSiblingInfosDetails
     {
         /// <summary>
-        /// PreviousSchoolDetailsService
+        /// SiblingInfosDetailsService
         /// </summary>
         /// <param name="context"></param>
-        public ArPreviousSchoolDetailsService(VvpsmsdbContext context) : base(context)
+        public DraftSiblingInfosDetailsService(VvpsmsdbContext context) : base(context)
         {
         }
         #region public methods
@@ -29,20 +34,20 @@ namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
             }
         }
 
-
         /// <summary>
         /// RemoveRangeofDetails by id
         /// </summary>
         public async void RemoveRangeofDetailsById(int id)
         {
-            var previousSchoolDetails = dbSet.Where(x => x.ArformId == id).ToList();
+            var siblingInfosdetails = dbSet.Where(x => x.ArformId == id).ToList();
 
-            if (previousSchoolDetails.Count > 0)
+            if (siblingInfosdetails.Count > 0)
             {
-                base.RemoveRange(previousSchoolDetails);
+                base.RemoveRange(siblingInfosdetails);
             }
         }
         #endregion
+
 
     }
 }

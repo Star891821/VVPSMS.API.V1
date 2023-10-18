@@ -83,7 +83,7 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAdmissionDetailsByUserId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside GetAdmissionDetailsByUserId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
@@ -107,7 +107,7 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAdmissionDetailsByUserIdAndFormId for" + typeof(ArAdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Something went wrong inside GetAdmissionDetailsByUserIdAndFormId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
@@ -254,6 +254,8 @@ namespace VVPSMS.API.Controllers
 
                     }
                     #endregion
+                  
+                    value = result.FormId;
                 }
                 else
                 {

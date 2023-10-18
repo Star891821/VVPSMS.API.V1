@@ -1,18 +1,18 @@
 ﻿using VVPSMS.Domain.Models;
-using VVPSMS.Service.Repository.Admissions;
+using VVPSMS.Service.Repository.DraftAdmissions;
 
-namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
+namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
 {
     /// <summary>
     /// EmergencyContactDetailsService
     /// </summary>
-    public class ArEmergencyContactDetailsService : GenericService<ArEmergencyContactDetail>, IArEmergencyContactDetails
+    public class DraftEmergencyContactDetailsService : GenericService<ArEmergencyContactDetail>, IDraftEmergencyContactDetails
     {
         /// <summary>
         /// EmergencyContactDetailsService
         /// </summary>
         /// <param name="context"></param>
-        public ArEmergencyContactDetailsService(VvpsmsdbContext context) : base(context)
+        public DraftEmergencyContactDetailsService(VvpsmsdbContext context) : base(context)
         {
         }
         #region public methods

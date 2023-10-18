@@ -1,9 +1,9 @@
 ﻿using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
 
-namespace VVPSMS.Service.Repository.Admissions
+namespace VVPSMS.Service.Repository.DraftAdmissions
 {
-    public interface IArAdmissionDocumentService : ICommonService<ArAdmissionDocument>
+    public interface IDraftAdmissionDocumentService : ICommonService<ArAdmissionDocument>
     {
         void createDirectory(string directoryPath);
         void RemoveRangeofDetails();

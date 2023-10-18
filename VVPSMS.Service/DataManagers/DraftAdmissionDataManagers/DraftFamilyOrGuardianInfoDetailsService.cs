@@ -1,21 +1,21 @@
 ﻿using VVPSMS.Domain.Models;
-using VVPSMS.Service.Repository.Admissions;
+using VVPSMS.Service.Repository.DraftAdmissions;
 
-namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
+namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
 {
     /// <summary>
-    /// StudentHealthInfoDetails
+    /// FamilyOrGuardianInfoDetailsService
     /// </summary>
-    public class ArStudentHealthInfoDetails : GenericService<ArStudentHealthInfoDetail>, IArStudentHealthInfoDetails
+    public class DraftFamilyOrGuardianInfoDetailsService : GenericService<ArFamilyOrGuardianInfoDetail>, IDraftFamilyOrGuardianInfoDetails
     {
         /// <summary>
-        /// StudentHealthInfoDetails
+        /// FamilyOrGuardianInfoDetailsService
         /// </summary>
         /// <param name="context"></param>
-        public ArStudentHealthInfoDetails(VvpsmsdbContext context) : base(context)
+        public DraftFamilyOrGuardianInfoDetailsService(VvpsmsdbContext context) : base(context)
         {
         }
-        #region public method
+        #region public methods
         /// <summary>
         /// RemoveRangeofDetails
         /// </summary>
@@ -34,11 +34,11 @@ namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
         /// </summary>
         public async void RemoveRangeofDetailsById(int id)
         {
-            var studentHealthInfoDetails = dbSet.Where(x => x.ArformId == id).ToList();
+            var familyOrGuardianInfoDetails = dbSet.Where(x => x.ArformId == id).ToList();
 
-            if (studentHealthInfoDetails.Count > 0)
+            if (familyOrGuardianInfoDetails.Count > 0)
             {
-                base.RemoveRange(studentHealthInfoDetails);
+                base.RemoveRange(familyOrGuardianInfoDetails);
             }
         }
         #endregion

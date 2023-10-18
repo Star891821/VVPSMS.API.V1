@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using VVPSMS.Domain.Models;
 
-namespace VVPSMS.Service.Repository.Admissions
+namespace VVPSMS.Service.Repository.DraftAdmissions
 {
-    public interface IArPreviousSchoolDetails : ICommonService<ArPreviousSchoolDetail>
+    public interface IDraftEmergencyContactDetails : ICommonService<ArEmergencyContactDetail>
     {
         void RemoveRangeofDetails();
         void RemoveRangeofDetailsById(int id);

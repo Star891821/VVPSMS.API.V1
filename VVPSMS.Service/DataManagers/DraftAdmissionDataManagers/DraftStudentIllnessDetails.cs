@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VVPSMS.Domain.Models;
-using VVPSMS.Service.Repository.Admissions;
+using VVPSMS.Service.Repository.DraftAdmissions;
 
-namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
+namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
 {
-    public class ArStudentIllnessDetails : GenericService<ArStudentIllnessDetail>, IArStudentIllnessDetails
+    public class DraftStudentIllnessDetails : GenericService<ArStudentIllnessDetail>, IDraftStudentIllnessDetails
     {
-        public ArStudentIllnessDetails(VvpsmsdbContext context) : base(context)
+        public DraftStudentIllnessDetails(VvpsmsdbContext context) : base(context)
         {
         }
 

@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 using VVPSMS.Domain.Models;
-using VVPSMS.Service.Repository.Admissions;
+using VVPSMS.Service.Repository.DraftAdmissions;
 
-namespace VVPSMS.Service.DataManagers.ArAdmissionDataManagers
+namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
 {
-    public class ArAdmissionDocumentsService : GenericService<ArAdmissionDocument>, IArAdmissionDocumentService
+    public class DraftAdmissionDocumentsService : GenericService<ArAdmissionDocument>, IDraftAdmissionDocumentService
     {
-        public ArAdmissionDocumentsService(VvpsmsdbContext context) : base(context) { }
+        public DraftAdmissionDocumentsService(VvpsmsdbContext context) : base(context) { }
 
         public void createDirectory(string directory)
         {
