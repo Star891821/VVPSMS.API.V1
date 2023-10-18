@@ -219,7 +219,7 @@ namespace VVPSMS.API.Controllers
                                         await _unitOfWork.ArAdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
                                         _unitOfWork.Complete();
                                     }
-
+                                    value = result.ArformId;
                                 }
                                 catch(Exception ex)
                                 {
@@ -260,7 +260,6 @@ namespace VVPSMS.API.Controllers
                 }
                 #endregion
                 _logger.Information($"InsertOrUpdate API completed Successfully");
-
             }
             return StatusCode(statusCode, value);
         }

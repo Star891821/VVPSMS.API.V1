@@ -237,7 +237,7 @@ namespace VVPSMS.API.Controllers
                                         await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
                                         _unitOfWork.Complete();
                                     }
-
+                                    value = result.FormId;
                                 }
                                 catch(Exception ex)
                                 {
