@@ -1,28 +1,26 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using NLog;
+﻿using Microsoft.AspNetCore.Mvc;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.NLog;
+using VVPSMS.Service.DataManagers;
 using VVPSMS.Service.Repository;
-using VVPSMS.Service.Repository.Admissions;
 
 namespace VVPSMS.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    
+
     public class UserController : GenericController<MstUserDto>
     {
+        private IConfiguration _configuration;
         IUserService<MstUserDto> userService;
         private ILog _logger;
-        public UserController(IUserService<MstUserDto> genericService, ILog logger)
+
+        public UserController(IUserService<MstUserDto> genericService, ILog logger, IConfiguration configuration)
             : base(genericService, logger)
         {
             userService = genericService;
             _logger = logger;
-
+            _configuration = configuration;
         }
 
         [HttpGet("{name}")]
@@ -43,5 +41,26 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"GetUserByName API completed Successfully");
             }
         }
+
+
+        [HttpPost]
+        public IActionResult EncryptPassword(string clearText)
+        {
+            var encryptionKey = _configuration["PassPhrase:Key"];
+            StringEncryptionService a = new StringEncryptionService();
+            var result = a.EncryptAsync(clearText, encryptionKey);
+            return Ok(result.Result);
+        }
+
+        [HttpPost]
+        public IActionResult DecryptPassword(string cipherText)
+        {
+            var encryptionKey = _configuration["PassPhrase:Key"];
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            StringEncryptionService a = new StringEncryptionService();
+            var result = a.DecryptAsync(cipherBytes, encryptionKey);
+            return Ok(result.Result);
+        }
+
     }
 }
