@@ -60,6 +60,7 @@ namespace VVPSMS.API.Controllers
 
         [HttpPost, ActionName("InsertOrUpdate")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [Authorize]
         public IActionResult Post([FromBody] T value)
         {
             try
