@@ -27,8 +27,9 @@ namespace VVPSMS.API.Controllers
         }
 
         //[HttpPost("UpdateTeacherProfile")]
-        //[Microsoft.AspNetCore.Authorization.Authorize]
+        //[Authorize]
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllParentDetails()
         {
             try
@@ -49,6 +50,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetParentDetailsById(int id)
         {
             try
@@ -76,6 +78,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetAllDocumentsByParentId(int id)
         {
             try
@@ -129,6 +132,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> DeleteParent(ParentDto parentDto)
         {
             try

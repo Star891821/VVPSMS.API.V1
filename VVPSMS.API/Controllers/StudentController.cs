@@ -28,6 +28,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllStudentDetails()
         {
             try
@@ -48,6 +49,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetStudentDetailsById(int id)
         {
             try
@@ -72,6 +74,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetAllDocumentsByStudentId(int id)
         {
             try
@@ -120,6 +123,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> DeleteStudent(StudentDto studentDto)
         {
             try

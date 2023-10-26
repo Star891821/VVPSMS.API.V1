@@ -19,7 +19,7 @@ namespace VVPSMS.API.Controllers
         }
 
         //[Microsoft.AspNetCore.Mvc.HttpPost("Login")]
-        //[Microsoft.AspNetCore.Authorization.Authorize]
+        //[Authorize]
         //public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
         //{
         //    var response = await _dataRepository.LoginDetails(loginRequestDto);

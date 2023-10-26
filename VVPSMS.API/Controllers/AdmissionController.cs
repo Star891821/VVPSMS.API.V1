@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using VVPSMS.Api.Models.Enums;
@@ -29,6 +30,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllAdmissionDetails()
         {
             try
@@ -49,6 +51,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAdmissionStatusTypes()
         {
             try
@@ -69,6 +72,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetAdmissionDetailsByUserId(int id)
         {
             try
@@ -93,6 +97,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetAdmissionDetailsByUserIdAndFormId(int id, int userid)
         {
             try
@@ -117,6 +122,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetAdmissionDetailsById(int id)
         {
             try
@@ -141,6 +147,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetAllDocumentsByAdmissionId(int id)
         {
             try
@@ -166,6 +173,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> InsertOrUpdate(AdmissionFormDto admissionFormDto)
         {
             var statusCode = StatusCodes.Status200OK;
@@ -285,10 +293,8 @@ namespace VVPSMS.API.Controllers
             return StatusCode(statusCode,value);
         }
 
-
-
-
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> Delete(AdmissionFormDto admissionFormDto)
         {
             bool removeNullEntries = false;

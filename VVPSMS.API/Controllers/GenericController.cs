@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using VVPSMS.API.Filters;
 using VVPSMS.API.NLog;
 using VVPSMS.Service.Repository;
@@ -16,6 +17,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult? GetAll()
         {
             try
@@ -36,6 +38,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult? GetById(int id)
         {
             try
@@ -76,7 +79,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpDelete]
-
+        [Authorize]
         public IActionResult Delete(int id)
         {
             try
