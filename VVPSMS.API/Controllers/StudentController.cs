@@ -99,6 +99,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> InsertOrUpdateStudent(StudentDto studentDto)
         {
             try

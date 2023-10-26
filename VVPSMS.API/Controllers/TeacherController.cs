@@ -30,9 +30,7 @@ namespace VVPSMS.API.Controllers
             // _storageService = new StorageService(_configuration);
             _logger = logger;
         }
-
-        //[HttpPost("UpdateTeacherProfile")]
-        //[Authorize]
+       
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAllTeacherDetails()
@@ -105,6 +103,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> InsertOrUpdateTeacher(TeacherDto teacherDto)
         {
             try

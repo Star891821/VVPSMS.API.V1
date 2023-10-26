@@ -105,6 +105,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> InsertOrUpdateParent(ParentDto parentDto)
         {
             try
