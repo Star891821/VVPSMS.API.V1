@@ -99,6 +99,8 @@ public partial class VvpsmsdbContext : DbContext
 
     public virtual DbSet<TeacherDocument> TeacherDocuments { get; set; }
 
+    public virtual DbSet<TrackAdmissionStatus> TrackAdmissionStatuses { get; set; }
+
     public virtual DbSet<TransportDetail> TransportDetails { get; set; }
 
     public virtual DbSet<UserRegistration> UserRegistrations { get; set; }
@@ -1690,6 +1692,21 @@ public partial class VvpsmsdbContext : DbContext
                 .HasForeignKey(d => d.TeacherId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Documents_Teachers");
+        });
+
+        modelBuilder.Entity<TrackAdmissionStatus>(entity =>
+        {
+            entity.HasKey(e => e.TrackId).HasName("PK__TrackAdm__24ECC82EF88EE004");
+
+            entity.ToTable("TrackAdmissionStatus");
+
+            entity.Property(e => e.TrackId).HasColumnName("track_id");
+            entity.Property(e => e.AdmissionStatus).HasColumnName("admission_status");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.FormId).HasColumnName("form_id");
         });
 
         modelBuilder.Entity<TransportDetail>(entity =>

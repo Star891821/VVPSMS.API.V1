@@ -9,6 +9,7 @@ namespace VVPSMS.Service.Repository.Admissions
 {
     public interface IAdmissionUnitOfWork : IDisposable
     {
+        ITrackAdmissionStatusService TrackAdmissionStatusService { get; }
         IAdmissionDocumentService AdmissionDocumentService { get; }
         IAdmissionService AdmissionService { get; }
         IAdmissionEnquiryDetails AdmissionEnquiryDetailsService { get; }

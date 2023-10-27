@@ -172,6 +172,32 @@ namespace VVPSMS.API.Controllers
 
         }
 
+        [HttpGet("{formId}")]
+        [Authorize]
+        public async Task<IActionResult> GetTrackAdmissionStatusDetails(int formId)
+        {
+            try
+            {
+                _logger.Information($"GetTrackAdmissionStatusDetails API Started");
+                var item =  _unitOfWork.TrackAdmissionStatusService.GetAll(formId);
+               
+                if (item == null)
+                    return NotFound();
+
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetTrackAdmissionStatusDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+            finally
+            {
+                _logger.Information($"GetTrackAdmissionStatusDetails API completed Successfully");
+            }
+
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> InsertOrUpdate(AdmissionFormDto admissionFormDto)
@@ -192,6 +218,18 @@ namespace VVPSMS.API.Controllers
                     await _unitOfWork.AdmissionService.InsertOrUpdate(result);
                     await _unitOfWork.CompleteAsync();
                     removeNullEntries = true;
+                    #endregion
+
+                    #region Track Admission Status
+                    TrackAdmissionStatus trackAdmissionStatus = new()
+                    {
+                        FormId = result.FormId,
+                        AdmissionStatus = result.AdmissionStatus,
+                        CreatedAt = DateTime.Now,
+                        CreatedBy = result.CreatedBy
+                    };
+                    await _unitOfWork.TrackAdmissionStatusService.Insert(trackAdmissionStatus);
+                    await _unitOfWork.CompleteAsync();
                     #endregion
 
                     #region Upload File and Insert Admission Documents

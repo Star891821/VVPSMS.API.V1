@@ -15,6 +15,8 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         #endregion
 
         #region public Declarations
+
+        public ITrackAdmissionStatusService TrackAdmissionStatusService { get; private set; }
         public IAdmissionDocumentService AdmissionDocumentService { get; private set; }
         public IAdmissionService AdmissionService { get; private set; }
         public IAdmissionEnquiryDetails AdmissionEnquiryDetailsService { get; private set; }
@@ -47,6 +49,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             SiblingInfosDetailsService = new SiblingInfosDetailsService(vvpsmsdbContext);
             EmergencyContactDetailsService = new EmergencyContactDetailsService(vvpsmsdbContext);
             FamilyOrGuardianInfoDetailsService = new FamilyOrGuardianInfoDetailsService(vvpsmsdbContext);
+            TrackAdmissionStatusService = new TrackAdmissionStatusService(vvpsmsdbContext);
         }
 
         public void Dispose()
