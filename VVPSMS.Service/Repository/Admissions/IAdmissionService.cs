@@ -10,6 +10,7 @@ namespace VVPSMS.Service.Repository.Admissions
 {
     public interface IAdmissionService : ICommonService<AdmissionForm>
     {
+        Task<(List<AdmissionForm>,int)> GetAll(int PageNumber, int PageSize,int? StatusCode, string? name);
         Task<List<AdmissionForm>> GetAdmissionDetailsByUserId(int id);
         Task<AdmissionForm> GetAdmissionDetailsByUserIdAndFormId(int id, int UserId);
     }

@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using Castle.Core.Resource;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NLog;
 using VVPSMS.Api.Models.Enums;
+using VVPSMS.Api.Models.Helpers;
 using VVPSMS.Api.Models.ModelsDto;
+using VVPSMS.Api.Models.Wrappers;
 using VVPSMS.API.NLog;
 using VVPSMS.Domain.Models;
-using VVPSMS.Service.DataManagers;
+using VVPSMS.Service.Filters;
 using VVPSMS.Service.Repository.Admissions;
+using VVPSMS.Service.Repository.Services;
 
 namespace VVPSMS.API.Controllers
 {
@@ -20,18 +23,19 @@ namespace VVPSMS.API.Controllers
         private readonly IAdmissionUnitOfWork _unitOfWork;
         private IMapper _mapper;
         private ILog _logger;
-
-        public AdmissionController(IAdmissionUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper, ILog logger)
+        private readonly IUriService uriService;
+        public AdmissionController(IAdmissionUnitOfWork unitOfWork, IUriService uriService, IConfiguration configuration, IMapper mapper, ILog logger)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _mapper = mapper;
             _logger = logger;
+            this.uriService = uriService;
         }
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetAllAdmissionDetails()
+        public async Task<IActionResult> BackupGetAllAdmissionDetails()
         {
             try
             {
@@ -144,6 +148,20 @@ namespace VVPSMS.API.Controllers
             {
                 _logger.Information($"GetAdmissionDetailsById API completed Successfully");
             }
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetAllAdmissionDetails([FromQuery] PaginationFilter filter)
+        {
+            var route = Request.Path.Value;
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize,filter
+                .StatusCode,filter.Name);
+            var pagedData = await _unitOfWork.AdmissionService.GetAll(validFilter.PageNumber, validFilter.PageSize, filter
+                .StatusCode, filter.Name);
+            //var totalRecords =  pagedData.Count();
+           // return Ok(new PagedResponse<List<AdmissionForm>>(pagedData, validFilter.PageNumber, validFilter.PageSize));
+            var pagedReponse = PaginationHelper.CreatePagedReponse(pagedData.Item1, validFilter, pagedData.Item2, uriService, route);
+            return Ok(pagedReponse);
         }
 
         [HttpGet("{id}")]

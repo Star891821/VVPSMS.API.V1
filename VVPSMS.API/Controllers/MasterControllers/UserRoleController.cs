@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using VVPSMS.Api.Models.ModelsDto;
-using VVPSMS.API.Filters;
 using VVPSMS.API.NLog;
+using VVPSMS.Service.Filters;
 using VVPSMS.Service.Repository;
 
 namespace VVPSMS.API.Controllers.MasterControllers

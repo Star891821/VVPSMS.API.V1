@@ -30,6 +30,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         public ISiblingInfosDetails SiblingInfosDetailsService { get; private set; }
         public IEmergencyContactDetails EmergencyContactDetailsService { get; private set; }
         public IFamilyOrGuardianInfoDetails FamilyOrGuardianInfoDetailsService { get; private set; }
+
         #endregion
 
 
@@ -49,7 +50,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             SiblingInfosDetailsService = new SiblingInfosDetailsService(vvpsmsdbContext);
             EmergencyContactDetailsService = new EmergencyContactDetailsService(vvpsmsdbContext);
             FamilyOrGuardianInfoDetailsService = new FamilyOrGuardianInfoDetailsService(vvpsmsdbContext);
-            TrackAdmissionStatusService = new TrackAdmissionStatusService(vvpsmsdbContext);
+            TrackAdmissionStatusService = new TrackAdmissionStatusService(vvpsmsdbContext);         
         }
 
         public void Dispose()

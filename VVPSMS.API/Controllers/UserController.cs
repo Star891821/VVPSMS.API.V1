@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VVPSMS.Api.Models.ModelsDto;
-using VVPSMS.API.Filters;
 using VVPSMS.API.NLog;
 using VVPSMS.Service.DataManagers;
+using VVPSMS.Service.Filters;
 using VVPSMS.Service.Repository;
 
 namespace VVPSMS.API.Controllers

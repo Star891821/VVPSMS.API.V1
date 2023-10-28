@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 
-namespace VVPSMS.API.Filters
+namespace VVPSMS.Service.Filters
 {
     public class ValidationFilterAttribute : IActionFilter
     {

@@ -8,7 +8,6 @@ using System.Text;
 using System.Text.Json.Serialization;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.AutoMapper;
-using VVPSMS.API.Filters;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Business;
 using VVPSMS.Service.DataManagers;
@@ -31,6 +30,9 @@ using VVPSMS.Service.Repository.Email;
 using Microsoft.AspNetCore.Http.Features;
 using VVPSMS.Service.DataManagers.DraftAdmissionDataManagers;
 using VVPSMS.Service.Repository.DraftAdmissions;
+using VVPSMS.Service.Repository.Services;
+using VVPSMS.Service.Filters;
+using IUriService = VVPSMS.Service.Repository.Services.IUriService;
 
 try
 {
@@ -50,6 +52,16 @@ try
         o.MultipartBodyLengthLimit = int.MaxValue;
         o.MemoryBufferThreshold = int.MaxValue;
     });
+
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddSingleton<IUriService>(o =>
+    {
+        var accessor = o.GetRequiredService<IHttpContextAccessor>();
+        var request = accessor.HttpContext.Request;
+        var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+        return new UriService(uri);
+    });
+
     builder.Services.AddControllers();
     //JWT Tocken region
 
@@ -118,6 +130,7 @@ try
     });
     builder.Services.AddDbContext<VvpsmsdbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMS")));
+    
     builder.Services.AddTransient<ILoginService, LoginService>();
     builder.Services.AddScoped<IAdmissionUnitOfWork, AdmissionUnitOfWork>();
     builder.Services.AddScoped<IDraftAdmissionUnitOfWork, DraftAdmissionUnitOfWork>();

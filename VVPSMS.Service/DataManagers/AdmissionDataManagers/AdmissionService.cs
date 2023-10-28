@@ -65,6 +65,96 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 .ToListAsync();
         }
 
+        public async Task<(List<AdmissionForm>, int)> GetAll(int PageNumber, int PageSize, int? StatusCode, string? name)
+        {
+            List<AdmissionForm> pagedData = new List<AdmissionForm>();
+            int minStatuscode = 3;
+            int maxStatuscode = 100;
+            if (StatusCode == null && string.IsNullOrEmpty(name))
+            {
+
+                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
+                         .Where(a => (a.AdmissionStatus >= minStatuscode)
+                          && (a.AdmissionStatus <= maxStatuscode))
+                         .Include(a => a.AdmissionDocuments)
+                         .Include(a => a.AdmissionEnquiryDetails)
+                         .Include(a => a.SiblingInfos)
+                         .Include(a => a.StudentHealthInfoDetails)
+                         .Include(a => a.FamilyOrGuardianInfoDetails)
+                         .Include(a => a.PreviousSchoolDetails)
+                         .Include(a => a.EmergencyContactDetails)
+                         .Include(a => a.TransportDetails)
+                         .Include(a => a.StudentIllnessDetails)
+                         .Skip((PageNumber - 1) * PageSize)
+                         .Take(PageSize)
+                         .ToListAsync();
+
+            }
+            else if (StatusCode == null && !string.IsNullOrEmpty(name))
+            {
+              var tempResult = await dbSet
+                         .Where(a => a.AdmissionStatus >= minStatuscode
+                          && a.AdmissionStatus <= maxStatuscode)
+                         .Include(a => a.StudentInfoDetails.Where(o => o.FirstName.Contains(name)))
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                        .Skip((PageNumber - 1) * PageSize)
+                        .Take(PageSize)
+                        .ToListAsync();
+                foreach (var item in tempResult)
+                {
+                    if(item.StudentInfoDetails.Count > 0)
+                    {
+                        pagedData.Add(item);
+                    }
+                }
+                
+            }
+            else if (StatusCode != null && string.IsNullOrEmpty(name))
+            {
+                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Where(a => (a.AdmissionStatus == StatusCode))
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                        .Skip((PageNumber - 1) * PageSize)
+                        .Take(PageSize)
+                        .ToListAsync();
+            }
+            else 
+            {
+                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Include(a => a.StudentInfoDetails)
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                        .Skip((PageNumber - 1) * PageSize)
+                        .Take(PageSize)
+                        .ToListAsync();
+            }
+            var totalRecords = await dbSet.CountAsync();
+            return (pagedData, totalRecords);
+        }
+
         public async Task<List<AdmissionForm>> GetAdmissionDetailsByUserId(int userId)
         {
 
