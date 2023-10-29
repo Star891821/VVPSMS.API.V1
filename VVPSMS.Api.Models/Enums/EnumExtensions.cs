@@ -20,5 +20,16 @@ namespace VVPSMS.Api.Models.Enums
 
             return attribute == null ? value.ToString() : attribute.DisplayName;
         }
+        public static T ParseEnum<T>(string value)
+        {
+            FieldInfo field = value.GetType().GetField(value.ToString());
+
+            EnumDisplayNameAttribute attribute
+                = Attribute.GetCustomAttribute(field, typeof(EnumDisplayNameAttribute))
+            as EnumDisplayNameAttribute;
+
+           var result = attribute == null ? value.ToString() : attribute.DisplayName;
+            return (T)Enum.Parse(typeof(T), value, true);
+        }
     }
 }

@@ -154,12 +154,12 @@ namespace VVPSMS.API.Controllers
         public async Task<IActionResult> GetAllAdmissionDetails([FromQuery] PaginationFilter filter)
         {
             var route = Request.Path.Value;
-            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize,filter
-                .StatusCode,filter.Name);
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter
+                .StatusCode, filter.Name);
             var pagedData = await _unitOfWork.AdmissionService.GetAll(validFilter.PageNumber, validFilter.PageSize, filter
                 .StatusCode, filter.Name);
             //var totalRecords =  pagedData.Count();
-           // return Ok(new PagedResponse<List<AdmissionForm>>(pagedData, validFilter.PageNumber, validFilter.PageSize));
+            // return Ok(new PagedResponse<List<AdmissionForm>>(pagedData, validFilter.PageNumber, validFilter.PageSize));
             var pagedReponse = PaginationHelper.CreatePagedReponse(pagedData.Item1, validFilter, pagedData.Item2, uriService, route);
             return Ok(pagedReponse);
         }
@@ -197,8 +197,8 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"GetTrackAdmissionStatusDetails API Started");
-                var item =  _unitOfWork.TrackAdmissionStatusService.GetAll(formId);
-               
+                var item = _unitOfWork.TrackAdmissionStatusService.GetAll(formId);
+
                 if (item == null)
                     return NotFound();
 
@@ -223,103 +223,134 @@ namespace VVPSMS.API.Controllers
             var statusCode = StatusCodes.Status200OK;
             object? value = null;
             bool removeNullEntries = false;
+            bool isValidAdmissionStatus = false;
             try
             {
                 if (admissionFormDto != null)
                 {
-                    _logger.Information($"InsertOrUpdate API Started");
-
-                    var result = _mapper.Map<AdmissionForm>(admissionFormDto);
-                    result.AdmissionDocuments.Clear();
-
-                    #region Admission Form transaction
-                    await _unitOfWork.AdmissionService.InsertOrUpdate(result);
-                    await _unitOfWork.CompleteAsync();
-                    removeNullEntries = true;
-                    #endregion
-
-                    #region Track Admission Status
-                    TrackAdmissionStatus trackAdmissionStatus = new()
+                    
+                    var enumDTOs = Enum<AdmissionStatusDto>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
+                    if (!int.TryParse(admissionFormDto.AdmissionStatus.ToString(), out int value1))
                     {
-                        FormId = result.FormId,
-                        AdmissionStatus = result.AdmissionStatus,
-                        CreatedAt = DateTime.Now,
-                        CreatedBy = result.CreatedBy
-                    };
-                    await _unitOfWork.TrackAdmissionStatusService.Insert(trackAdmissionStatus);
-                    await _unitOfWork.CompleteAsync();
-                    #endregion
-
-                    #region Upload File and Insert Admission Documents
-                    var isUploadtoAzure = _configuration["Upload:IsUpoadtoAzure"];
-                    var filePath = _configuration["Upload:SaveFilePath"];
-                    if (isUploadtoAzure == "Yes")
-                    {
-
+                       foreach (var enumDTO in enumDTOs)
+                        {
+                            if(admissionFormDto.AdmissionStatus.ToString() == enumDTO.Name)
+                            {
+                                admissionFormDto.AdmissionStatus = enumDTO.Key;
+                                isValidAdmissionStatus = true;
+                                break;
+                            }
+                        }
+                          
                     }
                     else
                     {
-
-                        #region Admission Document Transaction For FileSystemandDB
-                        _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
+                        int.TryParse(admissionFormDto.AdmissionStatus.ToString(), out int value2);
+                        isValidAdmissionStatus = enumDTOs.Where(a => a.Key == value2).Count() > 0;
+                    }
+                    if(isValidAdmissionStatus)
+                    {
+                        _logger.Information($"InsertOrUpdate API Started");
+                        int admissionStatus = (int)admissionFormDto.AdmissionStatus;
+                        admissionFormDto.AdmissionStatus = null;
+                        var result = _mapper.Map<AdmissionForm>(admissionFormDto);
+                        result.AdmissionDocuments.Clear();
+                        result.AdmissionStatus = admissionStatus;
+                        #region Admission Form transaction
+                        await _unitOfWork.AdmissionService.InsertOrUpdate(result);
                         await _unitOfWork.CompleteAsync();
-                        if (admissionFormDto.listOfAdmissionDocuments != null && result.FormId != 0)
+                        removeNullEntries = true;
+                        #endregion
+
+                        #region Track Admission Status
+                        TrackAdmissionStatus trackAdmissionStatus = new()
                         {
-                            filePath += "\\" + result.FormId;
-                            _unitOfWork.AdmissionDocumentService.createDirectory(filePath);
+                            FormId = result.FormId,
+                            AdmissionStatus = result.AdmissionStatus,
+                            CreatedAt = DateTime.Now,
+                            CreatedBy = result.CreatedBy
+                        };
+                        await _unitOfWork.TrackAdmissionStatusService.Insert(trackAdmissionStatus);
+                        await _unitOfWork.CompleteAsync();
+                        #endregion
 
-                            for (var i = 0; i < admissionFormDto.listOfAdmissionDocuments.Count; i++)
-                            {
-                                try
-                                {
-                                    if (!string.IsNullOrEmpty(admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64))
-                                    {
-                                        var Base64FileContent = admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64;
-                                        var index = Base64FileContent.IndexOf(',');
-                                        var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
-                                        byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
-                                        var fileDetails = admissionFormDto.listOfAdmissionDocuments[i].DocumentName;
-                                        var temp = fileDetails.Split('.');
+                        #region Upload File and Insert Admission Documents
+                        var isUploadtoAzure = _configuration["Upload:IsUpoadtoAzure"];
+                        var filePath = _configuration["Upload:SaveFilePath"];
+                        if (isUploadtoAzure == "Yes")
+                        {
 
-                                        var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
-                                        System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
-                                        AdmissionDocument admissionDocument = new()
-                                        {
-                                            DocumentName = fileName,
-                                            DocumentPath = filePath,
-                                            FormId = result.FormId,
-                                            MstdocumenttypesId = admissionFormDto.listOfAdmissionDocuments[i].MstdocumenttypesId,
-                                            CreatedAt = DateTime.Now,
-                                            ModifiedAt = DateTime.Now,
-                                        };
-                                        result.AdmissionDocuments.Add(admissionDocument);
-                                    }
-
-                                    var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
-                                    if (resultDocuments.Count > 0)
-                                    {
-                                        await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
-                                        _unitOfWork.Complete();
-                                    }
-                                    value = result.FormId;
-                                }
-                                catch(Exception ex)
-                                {
-                                    statusCode = StatusCodes.Status404NotFound;
-                                    value = ex.Message;
-                                }
-                            }
                         }
                         else
                         {
-                            _logger.Information($"listOfAdmissionDocuments or FormID is Null");
+
+                            #region Admission Document Transaction For FileSystemandDB
+                            _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
+                            await _unitOfWork.CompleteAsync();
+                            if (admissionFormDto.listOfAdmissionDocuments != null && result.FormId != 0)
+                            {
+                                filePath += "\\" + result.FormId;
+                                _unitOfWork.AdmissionDocumentService.createDirectory(filePath);
+
+                                for (var i = 0; i < admissionFormDto.listOfAdmissionDocuments.Count; i++)
+                                {
+                                    try
+                                    {
+                                        if (!string.IsNullOrEmpty(admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64))
+                                        {
+                                            var Base64FileContent = admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64;
+                                            var index = Base64FileContent.IndexOf(',');
+                                            var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
+                                            byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
+                                            var fileDetails = admissionFormDto.listOfAdmissionDocuments[i].DocumentName;
+                                            var temp = fileDetails.Split('.');
+
+                                            var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
+                                            System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
+                                            AdmissionDocument admissionDocument = new()
+                                            {
+                                                DocumentName = fileName,
+                                                DocumentPath = filePath,
+                                                FormId = result.FormId,
+                                                MstdocumenttypesId = admissionFormDto.listOfAdmissionDocuments[i].MstdocumenttypesId,
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                            };
+                                            result.AdmissionDocuments.Add(admissionDocument);
+                                        }
+
+                                        var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
+                                        if (resultDocuments.Count > 0)
+                                        {
+                                            await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
+                                            _unitOfWork.Complete();
+                                        }
+                                        value = result.FormId;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        statusCode = StatusCodes.Status404NotFound;
+                                        value = ex.Message;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                _logger.Information($"listOfAdmissionDocuments or FormID is Null");
+                            }
+                            #endregion
+
                         }
                         #endregion
 
+                        value = result.FormId;
                     }
-                    #endregion
-                  
-                    value = result.FormId;
+                    else
+                    {
+                        statusCode = StatusCodes.Status404NotFound;
+                        value = "Invalid Admission Status Code";
+                    }
+                   
                 }
                 else
                 {
@@ -346,7 +377,7 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"InsertOrUpdate API completed Successfully");
 
             }
-            return StatusCode(statusCode,value);
+            return StatusCode(statusCode, value);
         }
 
         [HttpDelete]
