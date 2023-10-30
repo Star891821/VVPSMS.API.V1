@@ -19,8 +19,6 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 // Delete the files
                 foreach (FileInfo fileInfo in directoryInfo.GetFiles())
                     fileInfo.Delete();
-                // Delete the directories here if you need to.
-                directoryInfo.Delete();
             }
             else
                 Directory.CreateDirectory(directory);
