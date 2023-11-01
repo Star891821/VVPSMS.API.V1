@@ -10,6 +10,17 @@ namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
     {
         public DraftAdmissionDocumentsService(VvpsmsdbContext context) : base(context) { }
 
+        public override async Task<List<ArAdmissionDocument>> GetAll(int id)
+        {
+            try
+            {
+                return dbSet.Where(x => x.ArformId == id).ToList();
+            }
+            catch
+            {
+                return null;
+            }
+        }
         public void createDirectory(string directory)
         {
             if (Directory.Exists(directory))
@@ -19,8 +30,6 @@ namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
                 // Delete the files
                 foreach (FileInfo fileInfo in directoryInfo.GetFiles())
                     fileInfo.Delete();
-                // Delete the directories here if you need to.
-                directoryInfo.Delete();
             }
             else
                 Directory.CreateDirectory(directory);

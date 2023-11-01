@@ -44,7 +44,17 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             }
             
         }
-
+        public override async Task<List<AdmissionDocument>> GetAll(int id)
+        {
+            try
+            {
+                return dbSet.Where(x => x.FormId == id).ToList();
+            }
+            catch
+            {
+                return null;
+            }
+        }
         /// <summary>
         /// RemoveRangeofDetails
         /// </summary>

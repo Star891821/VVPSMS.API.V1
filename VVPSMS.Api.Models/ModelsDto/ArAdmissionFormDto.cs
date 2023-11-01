@@ -22,7 +22,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int ClassId { get; set; }
 
-        public AdmissionStatusDto AdmissionStatus { get; set; }
+        public object? AdmissionStatus { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 

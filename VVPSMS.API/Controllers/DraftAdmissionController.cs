@@ -160,91 +160,119 @@ namespace VVPSMS.API.Controllers
             var statusCode = StatusCodes.Status200OK;
             object? value = null;
             bool removeNullEntries = false;
+            bool isValidAdmissionStatus = false;
             try
             {
                 if (aradmissionFormDto != null)
                 {
-                    _logger.Information($"InsertOrUpdate API Started");
-
-                    var result = _mapper.Map<ArAdmissionForm>(aradmissionFormDto);
-                    result.ArAdmissionDocuments.Clear();
-
-                    #region Admission Form transaction
-                    await _unitOfWork.DraftAdmissionService.InsertOrUpdate(result);
-                    await _unitOfWork.CompleteAsync();
-                    removeNullEntries = true;
-                    #endregion
-
-                    #region Upload File and Insert Admission Documents
-                    var isUploadtoAzure = _configuration["Upload:IsUpoadtoAzure"];
-                    var filePath = _configuration["Upload:SaveFilePath"];
-                    if (isUploadtoAzure == "Yes")
+                    var enumDTOs = Enum<AdmissionStatusDto>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
+                    if (!int.TryParse(aradmissionFormDto.AdmissionStatus.ToString(), out int value1))
                     {
+                        foreach (var enumDTO in enumDTOs)
+                        {
+                            if (aradmissionFormDto.AdmissionStatus.ToString() == enumDTO.Name)
+                            {
+                                aradmissionFormDto.AdmissionStatus = enumDTO.Key;
+                                isValidAdmissionStatus = true;
+                                break;
+                            }
+                        }
 
                     }
                     else
                     {
+                        int.TryParse(aradmissionFormDto.AdmissionStatus.ToString(), out int value2);
+                        isValidAdmissionStatus = enumDTOs.Where(a => a.Key == value2).Count() > 0;
+                    }
+                    if (isValidAdmissionStatus)
+                    {
+                        _logger.Information($"InsertOrUpdate API Started");
 
-                        #region Admission Document Transaction For FileSystemandDB
-                        _unitOfWork.DraftAdmissionDocumentService.RemoveRangeofDocuments(result.ArformId);
+                        var result = _mapper.Map<ArAdmissionForm>(aradmissionFormDto);
+                        result.ArAdmissionDocuments.Clear();
+
+                        #region Admission Form transaction
+                        await _unitOfWork.DraftAdmissionService.InsertOrUpdate(result);
                         await _unitOfWork.CompleteAsync();
-                        if (aradmissionFormDto.listOfArAdmissionDocuments != null && result.ArformId != 0)
+                        removeNullEntries = true;
+                        #endregion
+
+                        #region Upload File and Insert Admission Documents
+                        var isUploadtoAzure = _configuration["Upload:IsUpoadtoAzure"];
+                        var filePath = _configuration["Upload:SaveFilePath"];
+                        if (isUploadtoAzure == "Yes")
                         {
-                            filePath += "\\Archival\\" + result.ArformId;
-                            _unitOfWork.DraftAdmissionDocumentService.createDirectory(filePath);
 
-                            for (var i = 0; i < aradmissionFormDto.listOfArAdmissionDocuments.Count; i++)
-                            {
-                                try
-                                {
-                                    if (!string.IsNullOrEmpty(aradmissionFormDto.listOfArAdmissionDocuments[i].FileContentsAsBase64))
-                                    {
-                                        var Base64FileContent = aradmissionFormDto.listOfArAdmissionDocuments[i].FileContentsAsBase64;
-                                        var index = Base64FileContent.IndexOf(',');
-                                        var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
-                                        byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
-                                        var fileDetails = aradmissionFormDto.listOfArAdmissionDocuments[i].DocumentName;
-                                        var temp = fileDetails.Split('.');
-
-                                        var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
-                                        System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
-                                        ArAdmissionDocument aradmissionDocument = new()
-                                        {
-                                            DocumentName = fileName,
-                                            DocumentPath = filePath,
-                                            ArformId = result.ArformId,
-                                            MstdocumenttypesId = aradmissionFormDto.listOfArAdmissionDocuments[i].MstdocumenttypesId,
-                                            CreatedAt = DateTime.Now,
-                                            ModifiedAt = DateTime.Now,
-                                        };
-                                        result.ArAdmissionDocuments.Add(aradmissionDocument);
-                                    }
-
-                                    var resultDocuments = _mapper.Map<List<ArAdmissionDocument>>(result.ArAdmissionDocuments);
-                                    if (resultDocuments.Count > 0)
-                                    {
-                                        await _unitOfWork.DraftAdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
-                                        _unitOfWork.Complete();
-                                    }
-
-                                }
-                                catch(Exception ex)
-                                {
-                                    statusCode = StatusCodes.Status404NotFound;
-                                    value = ex.Message;
-                                }
-                            }
                         }
                         else
                         {
-                            _logger.Information($"listOfArAdmissionDocuments or ArformID is Null");
+
+                            #region Admission Document Transaction For FileSystemandDB
+                            _unitOfWork.DraftAdmissionDocumentService.RemoveRangeofDocuments(result.ArformId);
+                            await _unitOfWork.CompleteAsync();
+                            if (aradmissionFormDto.listOfArAdmissionDocuments != null && result.ArformId != 0)
+                            {
+                                filePath += "\\Archival\\" + result.ArformId;
+                                _unitOfWork.DraftAdmissionDocumentService.createDirectory(filePath);
+
+                                for (var i = 0; i < aradmissionFormDto.listOfArAdmissionDocuments.Count; i++)
+                                {
+                                    try
+                                    {
+                                        if (!string.IsNullOrEmpty(aradmissionFormDto.listOfArAdmissionDocuments[i].FileContentsAsBase64))
+                                        {
+                                            var Base64FileContent = aradmissionFormDto.listOfArAdmissionDocuments[i].FileContentsAsBase64;
+                                            var index = Base64FileContent.IndexOf(',');
+                                            var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
+                                            byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
+                                            var fileDetails = aradmissionFormDto.listOfArAdmissionDocuments[i].DocumentName;
+                                            var temp = fileDetails.Split('.');
+
+                                            var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
+                                            System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
+                                            ArAdmissionDocument aradmissionDocument = new()
+                                            {
+                                                DocumentName = fileName,
+                                                DocumentPath = filePath,
+                                                ArformId = result.ArformId,
+                                                MstdocumenttypesId = aradmissionFormDto.listOfArAdmissionDocuments[i].MstdocumenttypesId,
+                                                CreatedAt = DateTime.Now,
+                                                ModifiedAt = DateTime.Now,
+                                            };
+                                            result.ArAdmissionDocuments.Add(aradmissionDocument);
+                                        }
+
+                                        var resultDocuments = _mapper.Map<List<ArAdmissionDocument>>(result.ArAdmissionDocuments);
+                                        if (resultDocuments.Count > 0)
+                                        {
+                                            await _unitOfWork.DraftAdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
+                                            _unitOfWork.Complete();
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        statusCode = StatusCodes.Status404NotFound;
+                                        value = ex.Message;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                _logger.Information($"listOfArAdmissionDocuments or ArformID is Null");
+                            }
+                            #endregion
+
                         }
                         #endregion
 
+                        value = result.ArformId;
                     }
-                    #endregion
-                
-                    value = result.ArformId;
+                    else
+                    {
+                        statusCode = StatusCodes.Status404NotFound;
+                        value = "Invalid Admission Status Code";
+                    }
                 }
                 else
                 {
