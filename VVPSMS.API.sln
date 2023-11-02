@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VVPSMS.API", "VVPSMS.API\VVPSMS.API.csproj", "{7BB38203-C2F6-40DC-8FD8-A8325C757763}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VVPSMS.API", "VVPSMS.API\VVPSMS.API.csproj", "{7BB38203-C2F6-40DC-8FD8-A8325C757763}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VVPSMS.Api.Models", "VVPSMS.Api.Models\VVPSMS.Api.Models.csproj", "{1ADA7DAE-5CD2-4C8B-B06C-B440C686CC18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VVPSMS.Api.Models", "VVPSMS.Api.Models\VVPSMS.Api.Models.csproj", "{1ADA7DAE-5CD2-4C8B-B06C-B440C686CC18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VVPSMS.Domain", "VVPSMS.Api.Domain\VVPSMS.Domain.csproj", "{9ECE670C-4D09-4874-B0DD-173B50D1DA36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VVPSMS.Domain", "VVPSMS.Api.Domain\VVPSMS.Domain.csproj", "{9ECE670C-4D09-4874-B0DD-173B50D1DA36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VVPSMS.Service", "VVPSMS.Service\VVPSMS.Service.csproj", "{98E2F012-09E7-4BCC-B03C-D476354BA4D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VVPSMS.Service", "VVPSMS.Service\VVPSMS.Service.csproj", "{98E2F012-09E7-4BCC-B03C-D476354BA4D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VVPSMS.Domain.Logger", "VVPSMS.Domain.Logger\VVPSMS.Domain.Logger.csproj", "{C9871B14-B37B-479B-B791-BFD4B5E75E0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{98E2F012-09E7-4BCC-B03C-D476354BA4D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98E2F012-09E7-4BCC-B03C-D476354BA4D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98E2F012-09E7-4BCC-B03C-D476354BA4D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9871B14-B37B-479B-B791-BFD4B5E75E0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9871B14-B37B-479B-B791-BFD4B5E75E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9871B14-B37B-479B-B791-BFD4B5E75E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9871B14-B37B-479B-B791-BFD4B5E75E0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -33,6 +33,7 @@ using VVPSMS.Service.Repository.DraftAdmissions;
 using VVPSMS.Service.Repository.Services;
 using VVPSMS.Service.Filters;
 using IUriService = VVPSMS.Service.Repository.Services.IUriService;
+using VVPSMS.Service.Shared.Interfaces;
 
 try
 {
@@ -151,6 +152,7 @@ try
     builder.Services.AddTransient<IJwtAuthManager, JwtAuthManager>();
     builder.Services.AddTransient<IStorageService, StorageService>();
     builder.Services.AddScoped<IEmailSender, EmailSender>();
+    builder.Services.AddScoped<ILoggerService, LoggerService>();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     
     builder.Services.AddScoped<ValidationFilterAttribute>();
