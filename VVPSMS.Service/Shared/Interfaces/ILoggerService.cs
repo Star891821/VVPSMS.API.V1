@@ -8,5 +8,6 @@ namespace VVPSMS.Service.Shared.Interfaces
 {
     public interface ILoggerService
     {
+        void LogInfo(string message);
     }
 }

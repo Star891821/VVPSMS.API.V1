@@ -34,6 +34,7 @@ using VVPSMS.Service.Repository.Services;
 using VVPSMS.Service.Filters;
 using IUriService = VVPSMS.Service.Repository.Services.IUriService;
 using VVPSMS.Service.Shared.Interfaces;
+using VVPSMS.Domain.Logger.Models;
 
 try
 {
@@ -131,7 +132,10 @@ try
     });
     builder.Services.AddDbContext<VvpsmsdbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMS")));
-    
+
+    builder.Services.AddDbContext<VvpsmsdbLogsContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMSDB_LOGS")));
+
     builder.Services.AddTransient<ILoginService, LoginService>();
     builder.Services.AddScoped<IAdmissionUnitOfWork, AdmissionUnitOfWork>();
     builder.Services.AddScoped<IDraftAdmissionUnitOfWork, DraftAdmissionUnitOfWork>();

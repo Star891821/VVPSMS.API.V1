@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
-using Castle.Core.Resource;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VVPSMS.Api.Models.Enums;
 using VVPSMS.Api.Models.Helpers;
 using VVPSMS.Api.Models.ModelsDto;
-using VVPSMS.Api.Models.Wrappers;
+
 using VVPSMS.API.NLog;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Filters;
 using VVPSMS.Service.Repository.Admissions;
 using VVPSMS.Service.Repository.Services;
+using VVPSMS.Service.Shared;
+using VVPSMS.Service.Shared.Interfaces;
 
 namespace VVPSMS.API.Controllers
 {
@@ -24,13 +25,16 @@ namespace VVPSMS.API.Controllers
         private IMapper _mapper;
         private ILog _logger;
         private readonly IUriService uriService;
-        public AdmissionController(IAdmissionUnitOfWork unitOfWork, IUriService uriService, IConfiguration configuration, IMapper mapper, ILog logger)
+        private readonly ILoggerService _loggerService;
+        
+        public AdmissionController(IAdmissionUnitOfWork unitOfWork, IUriService uriService, IConfiguration configuration, IMapper mapper, ILog logger,ILoggerService loggerService)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _mapper = mapper;
             _logger = logger;
             this.uriService = uriService;
+            _loggerService= loggerService;
         }
 
         [HttpGet]
@@ -39,6 +43,7 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
+                _loggerService.LogInfo("data");
                 _logger.Information($"GetAllAdmissionDetails API Started");
                 var result = await _unitOfWork.AdmissionService.GetAll();
                 return Ok(result);
@@ -60,6 +65,7 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
+                _loggerService.LogInfo("data");
                 _logger.Information($"GetAdmissionStatusTypes API Started");
                 var enumDTOs = Enum<AdmissionStatusDto>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
                 return Ok(enumDTOs);
