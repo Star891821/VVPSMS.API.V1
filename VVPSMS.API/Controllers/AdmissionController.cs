@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VVPSMS.Api.Models.Enums;
 using VVPSMS.Api.Models.Helpers;
+using VVPSMS.Api.Models.Logger;
 using VVPSMS.Api.Models.ModelsDto;
 
 using VVPSMS.API.NLog;
@@ -43,7 +44,7 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _loggerService.LogInfo("data");
+                _loggerService.LogInfo(new LogsDto() {  });
                 _logger.Information($"GetAllAdmissionDetails API Started");
                 var result = await _unitOfWork.AdmissionService.GetAll();
                 return Ok(result);
@@ -65,7 +66,8 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _loggerService.LogInfo("data");
+                
+                _loggerService.LogInfo(new LogsDto() { });
                 _logger.Information($"GetAdmissionStatusTypes API Started");
                 var enumDTOs = Enum<AdmissionStatusDto>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
                 return Ok(enumDTOs);

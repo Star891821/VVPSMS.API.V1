@@ -1,4 +1,5 @@
 ﻿
+using VVPSMS.Api.Models.Logger;
 using VVPSMS.Domain.Logger.Models;
 using VVPSMS.Service.Shared.Interfaces;
 
@@ -27,7 +28,7 @@ namespace VVPSMS.Service.Shared
         {
 
         }
-        public void LogInfo(string msg)
+        public void LogInfo(LogsDto logsDto)
         {
 
         }
