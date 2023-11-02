@@ -16,7 +16,7 @@ namespace VVPSMS.API.Controllers
     {
         private IConfiguration _configuration;
         private readonly ILoginService _dataRepository;
-        private static Logger logger = LogManager.GetLogger("AuthController");
+        //private static Logger logger = LogManager.GetLogger("AuthController");
         public AuthController(IConfiguration configuration, ILoginService dataRepository)
         {
             _dataRepository = dataRepository;

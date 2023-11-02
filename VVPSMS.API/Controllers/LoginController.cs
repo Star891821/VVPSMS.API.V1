@@ -11,7 +11,7 @@ namespace VVPSMS.API.Controllers
     {
         private IMapper _mapper;
         private readonly ILoginService _dataRepository;
-        private static Logger logger = LogManager.GetLogger("LoginController");
+       // private static Logger logger = LogManager.GetLogger("LoginController");
         public LoginController(IMapper mapper, ILoginService dataRepository)
         {
             _dataRepository = dataRepository;

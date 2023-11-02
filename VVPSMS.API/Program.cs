@@ -37,11 +37,12 @@ using IUriService = VVPSMS.Service.Repository.Services.IUriService;
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/NLog.config"));
+    var logger = NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
+    //LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/NLog.config"));
 
     builder.Services.AddSingleton<ILog, LogNLog>();
-    LogManager.Configuration.Variables["mydir"] = builder.Configuration["Logs:InternalLogPath"];
-    NLog.Common.InternalLogger.LogFile = builder.Configuration["Logs:ApplicationLogPath"];
+    //LogManager.Configuration.Variables["mydir"] = builder.Configuration["Logs:InternalLogPath"];
+    //NLog.Common.InternalLogger.LogFile = builder.Configuration["Logs:ApplicationLogPath"];
     // Add services to the container.
     var emailConfig = builder.Configuration
         .GetSection("EmailConfiguration")
@@ -228,3 +229,4 @@ catch(Exception ex)
 {
     //throw (ex);
 }
+

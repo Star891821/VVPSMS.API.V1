@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VVPSMS.Api.Domain\VVPSMS.Domain.csproj" />
+    <ProjectReference Include="..\VVPSMS.API.Logger\VVPSMS.API.Logger.csproj" />
     <ProjectReference Include="..\VVPSMS.Api.Models\VVPSMS.Api.Models.csproj" />
     <ProjectReference Include="..\VVPSMS.Service\VVPSMS.Service.csproj" />
   </ItemGroup>

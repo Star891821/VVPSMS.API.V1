@@ -11,6 +11,7 @@ using VVPSMS.Domain.Models;
 using VVPSMS.Service.Filters;
 using VVPSMS.Service.Repository.Admissions;
 using VVPSMS.Service.Repository.Services;
+using VVPSMS.API.Logger;
 
 namespace VVPSMS.API.Controllers
 {
@@ -22,9 +23,10 @@ namespace VVPSMS.API.Controllers
         private IConfiguration _configuration;
         private readonly IAdmissionUnitOfWork _unitOfWork;
         private IMapper _mapper;
-        private ILog _logger;
+        //private ILog _logger;
         private readonly IUriService uriService;
-        public AdmissionController(IAdmissionUnitOfWork unitOfWork, IUriService uriService, IConfiguration configuration, IMapper mapper, ILog logger)
+        private readonly ILogger<AdmissionController> _logger;
+        public AdmissionController(IAdmissionUnitOfWork unitOfWork, IUriService uriService, IConfiguration configuration, IMapper mapper, ILogger<AdmissionController> logger)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
@@ -39,18 +41,18 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _logger.Information($"GetAllAdmissionDetails API Started");
+                _logger.LogInformation($"GetAllAdmissionDetails API Started");
                 var result = await _unitOfWork.AdmissionService.GetAll();
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAllAdmissionDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.LogError($"Something went wrong inside GetAllAdmissionDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetAllAdmissionDetails API completed Successfully");
+                _logger.LogInformation($"GetAllAdmissionDetails API completed Successfully");
             }
         }
 
@@ -60,18 +62,18 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _logger.Information($"GetAdmissionStatusTypes API Started");
+                _logger.LogInformation($"GetAdmissionStatusTypes API Started");
                 var enumDTOs = Enum<AdmissionStatusDto>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
                 return Ok(enumDTOs);
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAdmissionStatusTypes for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.LogError($"Something went wrong inside GetAdmissionStatusTypes for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetAdmissionStatusTypes API completed Successfully");
+                _logger.LogInformation($"GetAdmissionStatusTypes API completed Successfully");
             }
         }
 
@@ -81,7 +83,7 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _logger.Information($"GetAdmissionDetailsByUserId API Started");
+                _logger.LogInformation($"GetAdmissionDetailsByUserId API Started");
                 var item = await _unitOfWork.AdmissionService.GetAdmissionDetailsByUserId(id);
 
                 if (item == null)
@@ -91,12 +93,12 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAdmissionDetailsByUserId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.LogError($"Something went wrong inside GetAdmissionDetailsByUserId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetAdmissionDetailsByUserId API completed Successfully");
+                _logger.LogInformation($"GetAdmissionDetailsByUserId API completed Successfully");
             }
         }
 
@@ -106,7 +108,7 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _logger.Information($"GetAdmissionDetailsByUserIdAndFormId API Started");
+                _logger.LogInformation($"GetAdmissionDetailsByUserIdAndFormId API Started");
                 var item = await _unitOfWork.AdmissionService.GetAdmissionDetailsByUserIdAndFormId(id, userid);
 
                 if (item == null)
@@ -116,12 +118,12 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAdmissionDetailsByUserIdAndFormId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.LogError($"Something went wrong inside GetAdmissionDetailsByUserIdAndFormId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetAdmissionDetailsByUserIdAndFormId API completed Successfully");
+                _logger.LogInformation($"GetAdmissionDetailsByUserIdAndFormId API completed Successfully");
             }
         }
 
@@ -131,7 +133,7 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _logger.Information($"GetAdmissionDetailsById API Started");
+                _logger.LogInformation($"GetAdmissionDetailsById API Started");
                 var item = await _unitOfWork.AdmissionService.GetById(id);
 
                 if (item == null)
@@ -141,12 +143,12 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAdmissionDetailsById for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.LogError($"Something went wrong inside GetAdmissionDetailsById for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetAdmissionDetailsById API completed Successfully");
+                _logger.LogInformation($"GetAdmissionDetailsById API completed Successfully");
             }
         }
         [HttpGet]
@@ -170,7 +172,7 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _logger.Information($"GetAllDocumentsByAdmissionId API Started");
+                _logger.LogInformation($"GetAllDocumentsByAdmissionId API Started");
                 var item = await _unitOfWork.AdmissionDocumentService.GetAll(id);
 
                 if (item == null)
@@ -180,12 +182,12 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAllDocumentsByAdmissionId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.LogError($"Something went wrong inside GetAllDocumentsByAdmissionId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetAllDocumentsByAdmissionId API completed Successfully");
+                _logger.LogInformation($"GetAllDocumentsByAdmissionId API completed Successfully");
             }
 
         }
@@ -196,7 +198,7 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _logger.Information($"GetTrackAdmissionStatusDetails API Started");
+                _logger.LogInformation($"GetTrackAdmissionStatusDetails API Started");
                 var item = _unitOfWork.TrackAdmissionStatusService.GetAll(formId);
 
                 if (item == null)
@@ -206,12 +208,12 @@ namespace VVPSMS.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetTrackAdmissionStatusDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.LogError($"Something went wrong inside GetTrackAdmissionStatusDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500, ex.Message);
             }
             finally
             {
-                _logger.Information($"GetTrackAdmissionStatusDetails API completed Successfully");
+                _logger.LogInformation($"GetTrackAdmissionStatusDetails API completed Successfully");
             }
 
         }
@@ -250,7 +252,7 @@ namespace VVPSMS.API.Controllers
                     }
                     if(isValidAdmissionStatus)
                     {
-                        _logger.Information($"InsertOrUpdate API Started");
+                        _logger.LogInformation($"InsertOrUpdate API Started");
                         int admissionStatus = (int)admissionFormDto.AdmissionStatus;
                         admissionFormDto.AdmissionStatus = null;
                         var result = _mapper.Map<AdmissionForm>(admissionFormDto);
@@ -336,7 +338,7 @@ namespace VVPSMS.API.Controllers
                             }
                             else
                             {
-                                _logger.Information($"listOfAdmissionDocuments or FormID is Null");
+                                _logger.LogInformation($"listOfAdmissionDocuments or FormID is Null");
                             }
                             #endregion
 
@@ -354,14 +356,14 @@ namespace VVPSMS.API.Controllers
                 }
                 else
                 {
-                    _logger.Information($"Admission Form is null");
+                    _logger.LogInformation($"Admission Form is null");
                     statusCode = StatusCodes.Status400BadRequest;
                     value = "Admission Form is null";
                 }
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside InsertOrUpdate for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.LogError($"Something went wrong inside InsertOrUpdate for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 statusCode = StatusCodes.Status500InternalServerError;
                 value = ex.Message;
             }
@@ -374,7 +376,7 @@ namespace VVPSMS.API.Controllers
                     await _unitOfWork.CompleteAsync();
                 }
                 #endregion
-                _logger.Information($"InsertOrUpdate API completed Successfully");
+                _logger.LogInformation($"InsertOrUpdate API completed Successfully");
 
             }
             return StatusCode(statusCode, value);
@@ -387,7 +389,7 @@ namespace VVPSMS.API.Controllers
             bool removeNullEntries = false;
             try
             {
-                _logger.Information($"Delete API Started");
+                _logger.LogInformation($"Delete API Started");
                 var result = _unitOfWork.AdmissionService.GetById(admissionFormDto.FormId);
                 if (result.Result != null)
                 {
@@ -405,13 +407,13 @@ namespace VVPSMS.API.Controllers
                 }
                 else
                 {
-                    _logger.Information($"Admission Form is not availablein Database");
+                    _logger.LogInformation($"Admission Form is not availablein Database");
                     return StatusCode(StatusCodes.Status404NotFound, "Admission Form is not available in Database");
                 }
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside Delete for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.LogError($"Something went wrong inside Delete for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
             finally
@@ -423,7 +425,7 @@ namespace VVPSMS.API.Controllers
                     await _unitOfWork.CompleteAsync();
                     #endregion
                 }
-                _logger.Information($"Delete API completed Successfully");
+                _logger.LogInformation($"Delete API completed Successfully");
             }
         }
     }
