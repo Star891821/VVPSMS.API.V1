@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using VVPSMS.Api.Models.Logger;
 using VVPSMS.Api.Models.ModelsDto;
+using VVPSMS.Domain.Logger.Models;
 using VVPSMS.Domain.Models;
 
 namespace VVPSMS.API.AutoMapper
@@ -47,6 +49,7 @@ namespace VVPSMS.API.AutoMapper
             CreateMap<ParentDocument, ParentDocumentDto>().ReverseMap();
             CreateMap<MstDocumentType,MstDocumentTypesDto>().ReverseMap();
             CreateMap<MstEnquiryQuestionDetail, MstEnquiryQuestionDetailDto>().ReverseMap();
+            CreateMap<Log, LogsDto>().ReverseMap();
         }
     }
 }

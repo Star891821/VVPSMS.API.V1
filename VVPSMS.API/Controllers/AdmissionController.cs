@@ -67,7 +67,7 @@ namespace VVPSMS.API.Controllers
             try
             {
                 
-                _loggerService.LogInfo(new LogsDto() { });
+                _loggerService.LogInfo(new LogsDto( ) { CreatedOn = DateTime.Now, Exception = "exception", Level = "debug", Message = "test message", Url = "localhost", StackTrace = "testt", Logger = "test" });
                 _logger.Information($"GetAdmissionStatusTypes API Started");
                 var enumDTOs = Enum<AdmissionStatusDto>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
                 return Ok(enumDTOs);
