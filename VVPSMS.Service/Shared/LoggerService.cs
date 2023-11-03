@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using NLog;
 using VVPSMS.Api.Models.Logger;
 using VVPSMS.Domain.Logger.Models;
+using VVPSMS.Domain.Models;
 using VVPSMS.Service.Shared.Interfaces;
 
 namespace VVPSMS.Service.Shared
@@ -22,9 +23,10 @@ namespace VVPSMS.Service.Shared
             _config = config;
             isLogLevel = Convert.ToInt16(_config["Logs:LogLevel"] ?? "0");
         }
-        public void GetAllLogs()
+        public List<LogsDto> GetAllLogs()
         {
-            // return  _vvpsmsdbLogsContext.Logs.ToList();
+            var result = _vvpsmsdbLogsContext.Logs.ToList();
+            return _mapper.Map<List<LogsDto>>(result);
         }
         public void LogError(LogsDto logsDto)
         {
