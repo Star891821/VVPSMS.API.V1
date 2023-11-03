@@ -26,9 +26,16 @@ namespace VVPSMS.Service.Shared
          // return  _vvpsmsdbLogsContext.Logs.ToList();
         }
 
-        public void LogError(string msg)
+        public void LogError(LogsDto logsDto)
         {
-
+            using (var dbContext = new VvpsmsdbLogsContext())
+            {
+                if (logsDto != null)
+                {
+                    dbContext.Logs.Add(_mapper.Map<Log>(logsDto));
+                    dbContext.SaveChanges();
+                }
+            }
         }
         public void LogDebug(string msg)
         {

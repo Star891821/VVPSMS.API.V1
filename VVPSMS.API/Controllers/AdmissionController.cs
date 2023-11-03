@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
+using NLog.Extensions.Logging;
+using NLog.Fluent;
 using VVPSMS.Api.Models.Enums;
 using VVPSMS.Api.Models.Helpers;
 using VVPSMS.Api.Models.Logger;
@@ -13,6 +17,7 @@ using VVPSMS.Service.Repository.Admissions;
 using VVPSMS.Service.Repository.Services;
 using VVPSMS.Service.Shared;
 using VVPSMS.Service.Shared.Interfaces;
+using LogLevel = NLog.LogLevel;
 
 namespace VVPSMS.API.Controllers
 {
@@ -67,7 +72,7 @@ namespace VVPSMS.API.Controllers
             try
             {
                 
-                _loggerService.LogInfo(new LogsDto( ) { CreatedOn = DateTime.Now, Exception = "exception", Level = "debug", Message = "test message", Url = "localhost", StackTrace = "testt", Logger = "test" });
+                _loggerService.LogInfo(new LogsDto( ) { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionStatusTypes API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"GetAdmissionStatusTypes API Started");
                 var enumDTOs = Enum<AdmissionStatusDto>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
                 return Ok(enumDTOs);
@@ -75,6 +80,7 @@ namespace VVPSMS.API.Controllers
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAdmissionStatusTypes for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message, Level = LogLevel.Error.ToString(), Message = "Something went wrong inside GetAdmissionStatusTypes for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return StatusCode(500);
             }
             finally
