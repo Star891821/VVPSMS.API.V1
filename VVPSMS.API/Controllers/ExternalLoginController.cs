@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using NLog;
+using VVPSMS.Api.Models.Logger;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.NLog;
 using VVPSMS.Service.Models;
 using VVPSMS.Service.Repository;
+using VVPSMS.Service.Shared.Interfaces;
+using LogLevel = NLog.LogLevel;
 
 namespace VVPSMS.API.Controllers
 {
@@ -13,10 +17,12 @@ namespace VVPSMS.API.Controllers
     {
         private readonly IExternalLoginAppService _appSvc;
         private ILog _logger;
-        public ExternalLoginController(IExternalLoginAppService appSvc, ILog logger)
+        private readonly ILoggerService _loggerService;
+        public ExternalLoginController(IExternalLoginAppService appSvc, ILog logger, ILoggerService loggerService)
         {
             _appSvc = appSvc;
             _logger = logger;
+            _loggerService = loggerService;
         }
         /// <summary>
         /// 
@@ -32,17 +38,20 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"GoogleAuthenticationAsync API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GoogleAuthenticationAsync API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var ret = await _appSvc.GoogleAuthenticationAsync(request.userId);
                 return ret;
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GoogleAuthenticationAsync for" + typeof(ExternalLoginController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GoogleAuthenticationAsync for" + typeof(ExternalLoginController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return null;
             }
             finally
             {
                 _logger.Information($"GoogleAuthenticationAsync API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GoogleAuthenticationAsync API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -52,16 +61,19 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"GoogleCallbackAsync API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GoogleCallbackAsync API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return await Task.FromResult(true);
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GoogleCallbackAsync for" + typeof(ExternalLoginController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GoogleCallbackAsync for" + typeof(ExternalLoginController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return false;
             }
             finally
             {
                 _logger.Information($"GoogleCallbackAsync API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GoogleCallbackAsync API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
         /// <summary>
@@ -93,6 +105,7 @@ namespace VVPSMS.API.Controllers
             finally
             {
                 _logger.Information($"MicrosoftAuthenticationAsync API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "MicrosoftAuthenticationAsync API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
             
         }
@@ -107,16 +120,19 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"MicrosoftCallbackAsync API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "MicrosoftCallbackAsync API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return await Task.FromResult(true);
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside MicrosoftCallbackAsync for" + typeof(ExternalLoginController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at MicrosoftCallbackAsync for" + typeof(ExternalLoginController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return false;
             }
             finally
             {
                 _logger.Information($"MicrosoftCallbackAsync API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "MicrosoftCallbackAsync API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
         /// <summary>
@@ -137,17 +153,20 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"AppleAuthenticationAsync API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "AppleAuthenticationAsync API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var ret = await _appSvc.AppleAuthenticationAsync(request.IdToken);
                 return ret;
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside AppleAuthenticationAsync for" + typeof(ExternalLoginController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at AppleAuthenticationAsync for" + typeof(ExternalLoginController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return null;
             }
             finally
             {
                 _logger.Information($"AppleAuthenticationAsync API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "AppleAuthenticationAsync API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
     }
