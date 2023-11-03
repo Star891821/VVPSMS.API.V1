@@ -28,6 +28,11 @@ namespace VVPSMS.Service.Shared
 
         public void LogError(LogsDto logsDto)
         {
+            PushtoDB(logsDto);
+        }
+
+        private void PushtoDB(LogsDto logsDto)
+        {
             using (var dbContext = new VvpsmsdbLogsContext())
             {
                 if (logsDto != null)
@@ -37,20 +42,14 @@ namespace VVPSMS.Service.Shared
                 }
             }
         }
+
         public void LogDebug(string msg)
         {
 
         }
         public void LogInfo(LogsDto logsDto)
         {
-            using (var dbContext = new VvpsmsdbLogsContext())
-            {
-                if (logsDto != null)
-                {
-                    dbContext.Logs.Add(_mapper.Map<Log>(logsDto));
-                    dbContext.SaveChanges();
-                }
-            }
+            PushtoDB(logsDto);
         }
         public void LogWarning(string msg)
         {
