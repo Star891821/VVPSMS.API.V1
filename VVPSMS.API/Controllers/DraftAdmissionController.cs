@@ -1,13 +1,17 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using VVPSMS.Api.Models.Enums;
+using VVPSMS.Api.Models.Logger;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.NLog;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.DataManagers;
 using VVPSMS.Service.Repository.DraftAdmissions;
+using VVPSMS.Service.Shared.Interfaces;
+using LogLevel = NLog.LogLevel;
 
 namespace VVPSMS.API.Controllers
 {
@@ -20,13 +24,15 @@ namespace VVPSMS.API.Controllers
         private readonly IDraftAdmissionUnitOfWork _unitOfWork;
         private IMapper _mapper;
         private ILog _logger;
+        private readonly ILoggerService _loggerService;
 
-        public DraftAdmissionController(IDraftAdmissionUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper, ILog logger)
+        public DraftAdmissionController(IDraftAdmissionUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper, ILog logger, ILoggerService loggerService)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _mapper = mapper;
             _logger = logger;
+            _loggerService = loggerService;
         }
 
         [HttpGet]
@@ -36,16 +42,18 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"GetAllDraftAdmissionDetails API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDraftAdmissionDetails API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var result = await _unitOfWork.DraftAdmissionService.GetAll();
                 return Ok(result);
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAllDraftAdmissionDetails for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
-                return StatusCode(500);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAllDraftAdmissionDetails for" + typeof(DraftAdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" }); return StatusCode(500);
             }
             finally
             {
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDraftAdmissionDetails API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"GetAllDraftAdmissionDetails API completed Successfully");
             }
         }
@@ -58,6 +66,7 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"GetDraftAdmissionDetailsById API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetDraftAdmissionDetailsById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var item = await _unitOfWork.DraftAdmissionService.GetById(id);
 
                 if (item == null)
@@ -68,11 +77,14 @@ namespace VVPSMS.API.Controllers
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetDraftAdmissionDetailsById for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetDraftAdmissionDetailsById for" + typeof(DraftAdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return StatusCode(500);
             }
             finally
             {
                 _logger.Information($"GetDraftAdmissionDetailsById API completed Successfully");
+
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetDraftAdmissionDetailsById API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
 
@@ -83,6 +95,7 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"GetDraftAdmissionDetailsByUserId API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetDraftAdmissionDetailsByUserId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var item = await _unitOfWork.DraftAdmissionService.GetDraftAdmissionDetailsByUserId(id);
 
                 if (item == null)
@@ -93,11 +106,13 @@ namespace VVPSMS.API.Controllers
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetDraftAdmissionDetailsByUserId for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetDraftAdmissionDetailsByUserId for" + typeof(DraftAdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return StatusCode(500);
             }
             finally
             {
                 _logger.Information($"GetDraftAdmissionDetailsByUserId API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetDraftAdmissionDetailsByUserId API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
 
@@ -108,6 +123,7 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"GetDraftAdmissionDetailsByUserIdAndDraftFormId API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetDraftAdmissionDetailsByUserIdAndDraftFormId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var item = await _unitOfWork.DraftAdmissionService.GetDraftAdmissionDetailsByUserIdAndDraftformId(id, userid);
 
                 if (item == null)
@@ -118,10 +134,12 @@ namespace VVPSMS.API.Controllers
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetDraftAdmissionDetailsByUserIdAndDraftFormId for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetDraftAdmissionDetailsByUserIdAndDraftFormId for" + typeof(DraftAdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return StatusCode(500);
             }
             finally
             {
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetDraftAdmissionDetailsByUserIdAndDraftFormId API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"GetDraftAdmissionDetailsByUserIdAndDraftFormId API completed Successfully");
             }
         }
@@ -134,6 +152,8 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"GetAllDocumentsByDraftAdmissionId API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDocumentsByDraftAdmissionId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
                 var item = await _unitOfWork.DraftAdmissionDocumentService.GetAll(id);
 
                 if (item == null)
@@ -144,11 +164,13 @@ namespace VVPSMS.API.Controllers
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAllDocumentsByDraftAdmissionId for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAllDocumentsByDraftAdmissionId for" + typeof(DraftAdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return StatusCode(500);
             }
             finally
             {
                 _logger.Information($"GetAllDocumentsByDraftAdmissionId API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDocumentsByDraftAdmissionId API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
 
         }
@@ -187,7 +209,7 @@ namespace VVPSMS.API.Controllers
                     if (isValidAdmissionStatus)
                     {
                         _logger.Information($"InsertOrUpdate API Started");
-
+                        _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "InsertOrUpdate API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                         var result = _mapper.Map<ArAdmissionForm>(aradmissionFormDto);
                         result.ArAdmissionDocuments.Clear();
 
@@ -260,6 +282,7 @@ namespace VVPSMS.API.Controllers
                             else
                             {
                                 _logger.Information($"listOfArAdmissionDocuments or ArformID is Null");
+                                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "listOfArAdmissionDocuments or ArformID is Null", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                             }
                             #endregion
 
@@ -277,6 +300,7 @@ namespace VVPSMS.API.Controllers
                 else
                 {
                     _logger.Information($"DraftAdmission Form is null");
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "DraftAdmission Form is null", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                     statusCode = StatusCodes.Status400BadRequest;
                     value = "DraftAdmission Form is null";
                 }
@@ -284,6 +308,7 @@ namespace VVPSMS.API.Controllers
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside InsertOrUpdate for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at InsertOrUpdate for" + typeof(DraftAdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 statusCode = StatusCodes.Status500InternalServerError;
                 value = ex.Message;
             }
@@ -297,6 +322,7 @@ namespace VVPSMS.API.Controllers
                 }
                 #endregion
                 _logger.Information($"InsertOrUpdate API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "InsertOrUpdate API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
 
             }
             return StatusCode(statusCode, value);
@@ -312,6 +338,7 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"Delete API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var result = _unitOfWork.DraftAdmissionService.GetById(admissionFormDto.ArformId);
                 if (result.Result != null)
                 {
@@ -329,13 +356,15 @@ namespace VVPSMS.API.Controllers
                 }
                 else
                 {
-                    _logger.Information($"DraftAdmission Form is not availablein Database");
+                    _logger.Information($"DraftAdmission Form is not available in Database");
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "DraftAdmission Form is not available in Database", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                     return StatusCode(StatusCodes.Status404NotFound, "DraftAdmission Form is not available in Database");
                 }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside Delete for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at Delete for" + typeof(DraftAdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
             finally
@@ -348,6 +377,8 @@ namespace VVPSMS.API.Controllers
                     #endregion
                 }
                 _logger.Information($"DraftDelete API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "DraftDelete API completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
             }
         }
     }
