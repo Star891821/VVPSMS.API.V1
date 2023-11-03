@@ -1,7 +1,6 @@
 ﻿
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
-using NLog;
 using VVPSMS.Api.Models.Logger;
 using VVPSMS.Domain.Logger.Models;
 using VVPSMS.Service.Shared.Interfaces;

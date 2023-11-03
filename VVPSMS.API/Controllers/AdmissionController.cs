@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using NLog;
-using NLog.Extensions.Logging;
-using NLog.Fluent;
 using VVPSMS.Api.Models.Enums;
 using VVPSMS.Api.Models.Helpers;
 using VVPSMS.Api.Models.Logger;
@@ -15,7 +12,6 @@ using VVPSMS.Domain.Models;
 using VVPSMS.Service.Filters;
 using VVPSMS.Service.Repository.Admissions;
 using VVPSMS.Service.Repository.Services;
-using VVPSMS.Service.Shared;
 using VVPSMS.Service.Shared.Interfaces;
 using LogLevel = NLog.LogLevel;
 
@@ -49,19 +45,19 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
-                _loggerService.LogInfo(new LogsDto() {  });
-                _logger.Information($"GetAllAdmissionDetails API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "BackupGetAllAdmissionDetails API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                _logger.Information($"BackupGetAllAdmissionDetails API Started");
                 var result = await _unitOfWork.AdmissionService.GetAll();
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.Error($"Something went wrong inside GetAllAdmissionDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _logger.Error($"Error at BackupGetAllAdmissionDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 return StatusCode(500);
             }
             finally
             {
-                _logger.Information($"GetAllAdmissionDetails API completed Successfully");
+                _logger.Information($"BackupGetAllAdmissionDetails API completed Successfully");
             }
         }
 
