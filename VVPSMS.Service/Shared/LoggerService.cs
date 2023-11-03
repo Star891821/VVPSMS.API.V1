@@ -1,59 +1,67 @@
 ﻿
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using VVPSMS.Api.Models.Enums;
+using Microsoft.Extensions.Configuration;
+using NLog;
 using VVPSMS.Api.Models.Logger;
 using VVPSMS.Domain.Logger.Models;
-using VVPSMS.Domain.Models;
-using VVPSMS.Service.Repository.Admissions;
 using VVPSMS.Service.Shared.Interfaces;
 
 namespace VVPSMS.Service.Shared
 {
-    public class LoggerService:ILoggerService
+    public class LoggerService : ILoggerService
     {
         private readonly VvpsmsdbLogsContext _vvpsmsdbLogsContext;
+        private IConfiguration _config;
         private IMapper _mapper;
+        private int isLogLevel = 0;
 
-        public LoggerService(VvpsmsdbLogsContext vvpsmsdbLogsContext, IMapper mapper)
+        public LoggerService(VvpsmsdbLogsContext vvpsmsdbLogsContext, IMapper mapper, IConfiguration config)
         {
             _vvpsmsdbLogsContext = vvpsmsdbLogsContext;
             _mapper = mapper;
+            _config = config;
+            isLogLevel = Convert.ToInt16(_config["Logs:LogLevel"] ?? "0");
         }
-
         public void GetAllLogs()
         {
-         // return  _vvpsmsdbLogsContext.Logs.ToList();
+            // return  _vvpsmsdbLogsContext.Logs.ToList();
         }
-
         public void LogError(LogsDto logsDto)
         {
-            PushtoDB(logsDto);
+            if (isLogLevel >= 4)
+            {
+                PushtoDB(logsDto);
+            }
+        }
+        public void LogDebug(LogsDto logsDto)
+        {
+            if (isLogLevel >= 1)
+            {
+                PushtoDB(logsDto);
+            }
+        }
+        public void LogInfo(LogsDto logsDto)
+        {
+            if (isLogLevel >= 2)
+            {
+                PushtoDB(logsDto);
+            }
+        }
+        public void LogWarning(LogsDto logsDto)
+        {
+            if (isLogLevel >= 3)
+            {
+                PushtoDB(logsDto);
+            }
         }
 
         private void PushtoDB(LogsDto logsDto)
         {
-            using (var dbContext = new VvpsmsdbLogsContext())
+            if (logsDto != null)
             {
-                if (logsDto != null)
-                {
-                    dbContext.Logs.Add(_mapper.Map<Log>(logsDto));
-                    dbContext.SaveChanges();
-                }
+                _vvpsmsdbLogsContext.Logs.Add(_mapper.Map<Log>(logsDto));
+                _vvpsmsdbLogsContext.SaveChanges();
             }
-        }
-
-        public void LogDebug(string msg)
-        {
-
-        }
-        public void LogInfo(LogsDto logsDto)
-        {
-            PushtoDB(logsDto);
-        }
-        public void LogWarning(string msg)
-        {
-
         }
     }
 }

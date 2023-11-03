@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VVPSMS.Api.Models.Logger;
+﻿using VVPSMS.Api.Models.Logger;
 
 namespace VVPSMS.Service.Shared.Interfaces
 {
@@ -12,5 +7,9 @@ namespace VVPSMS.Service.Shared.Interfaces
         void LogInfo(LogsDto logsDto);
 
         void LogError(LogsDto logsDto);
+
+        void LogDebug(LogsDto logsDto);
+
+        void LogWarning(LogsDto logsDto);
     }
 }
