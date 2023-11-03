@@ -294,6 +294,7 @@ namespace VVPSMS.API.Controllers
                     else
                     {
                         int.TryParse(admissionFormDto.AdmissionStatus.ToString(), out int value2);
+                        admissionFormDto.AdmissionStatus = value2;
                         isValidAdmissionStatus = enumDTOs.Where(a => a.Key == value2).Count() > 0;
                     }
                     if (isValidAdmissionStatus)
