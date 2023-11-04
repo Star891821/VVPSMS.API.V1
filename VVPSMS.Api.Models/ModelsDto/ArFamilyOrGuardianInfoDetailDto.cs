@@ -9,9 +9,9 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public bool? Legalguardian { get; set; }
 
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; }
 
-        public string Dob { get; set; } = null!;
+        public string? Dob { get; set; }
 
         public string? HighestQualification { get; set; }
 
@@ -33,7 +33,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public DateTime? Passportexpirydate { get; set; }
 
-        public string Contact { get; set; } = null!;
+        public string? Contact { get; set; }
 
         public string? Email { get; set; }
 

@@ -8,11 +8,11 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int ArformId { get; set; }
 
-        public int MstdocumenttypesId { get; set; }
+        public int? MstdocumenttypesId { get; set; }
 
-        public string DocumentName { get; set; } = null!;
+        public string? DocumentName { get; set; }
 
-        public string DocumentPath { get; set; } = null!;
+        public string? DocumentPath { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
@@ -22,6 +22,6 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int? ModifiedBy { get; set; }
 
-        public string? FileContentsAsBase64 { get; set; } = null!;
+        public string? FileContentsAsBase64 { get; set; }
     }
 }

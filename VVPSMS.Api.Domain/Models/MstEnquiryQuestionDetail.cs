@@ -21,8 +21,6 @@ public partial class MstEnquiryQuestionDetail
 
     public virtual ICollection<AdmissionEnquiryDetail> AdmissionEnquiryDetails { get; set; } = new List<AdmissionEnquiryDetail>();
 
-    public virtual ICollection<ArAdmissionEnquiryDetail> ArAdmissionEnquiryDetails { get; set; } = new List<ArAdmissionEnquiryDetail>();
-
     public virtual ICollection<MstEnquiryAnswerDetail> MstEnquiryAnswerDetails { get; set; } = new List<MstEnquiryAnswerDetail>();
 
     public virtual MstEnquiryQuestionTypeDetail? Mstenquiryquestiontypedetails { get; set; }

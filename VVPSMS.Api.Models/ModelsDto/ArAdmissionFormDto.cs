@@ -12,15 +12,15 @@ namespace VVPSMS.Api.Models.ModelsDto
         [Key]
         public int ArformId { get; set; }
 
-        public int AcademicId { get; set; }
+        public int? AcademicId { get; set; }
 
-        public int SchoolId { get; set; }
+        public int? SchoolId { get; set; }
 
-        public int StreamId { get; set; }
+        public int? StreamId { get; set; }
 
-        public int GradeId { get; set; }
+        public int? GradeId { get; set; }
 
-        public int ClassId { get; set; }
+        public int? ClassId { get; set; }
 
         public object? AdmissionStatus { get; set; }
 

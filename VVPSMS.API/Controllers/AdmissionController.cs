@@ -350,32 +350,39 @@ namespace VVPSMS.API.Controllers
                                         if (!string.IsNullOrEmpty(admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64))
                                         {
                                             var Base64FileContent = admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64;
-                                            var index = Base64FileContent.IndexOf(',');
-                                            var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
-                                            byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
-                                            var fileDetails = admissionFormDto.listOfAdmissionDocuments[i].DocumentName;
-                                            var temp = fileDetails.Split('.');
 
-                                            var fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
-                                            System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
-                                            AdmissionDocument admissionDocument = new()
+                                            if (Base64FileContent.IndexOf(',') != -1)
                                             {
-                                                DocumentName = fileName,
-                                                DocumentPath = filePath,
-                                                FormId = result.FormId,
-                                                MstdocumenttypesId = admissionFormDto.listOfAdmissionDocuments[i].MstdocumenttypesId,
-                                                CreatedAt = DateTime.Now,
-                                                ModifiedAt = DateTime.Now,
-                                            };
-                                            result.AdmissionDocuments.Add(admissionDocument);
+                                                var index = Base64FileContent.IndexOf(',');
+                                                var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
+                                                byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
+                                                var fileDetails = admissionFormDto.listOfAdmissionDocuments[i].DocumentName;
+                                                var temp = fileDetails.Split('.');
+                                                string fileName = string.Empty;
+                                                if (temp.Length > 1)
+                                                {
+                                                    fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
+                                                    System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
+                                                    AdmissionDocument admissionDocument = new()
+                                                    {
+                                                        DocumentName = fileName,
+                                                        DocumentPath = filePath,
+                                                        FormId = result.FormId,
+                                                        MstdocumenttypesId = admissionFormDto.listOfAdmissionDocuments[i].MstdocumenttypesId,
+                                                        CreatedAt = DateTime.Now,
+                                                        ModifiedAt = DateTime.Now,
+                                                    };
+                                                    result.AdmissionDocuments.Add(admissionDocument);
+                                                    var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
+                                                    if (resultDocuments.Count > 0)
+                                                    {
+                                                        await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
+                                                        _unitOfWork.Complete();
+                                                    }
+                                                }
+                                            }
                                         }
 
-                                        var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
-                                        if (resultDocuments.Count > 0)
-                                        {
-                                            await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
-                                            _unitOfWork.Complete();
-                                        }
                                         value = result.FormId;
                                     }
                                     catch (Exception ex)

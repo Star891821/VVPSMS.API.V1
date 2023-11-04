@@ -18,6 +18,4 @@ public partial class MstDocumentType
     public int? ModifiedBy { get; set; }
 
     public virtual ICollection<AdmissionDocument> AdmissionDocuments { get; set; } = new List<AdmissionDocument>();
-
-    public virtual ICollection<ArAdmissionDocument> ArAdmissionDocuments { get; set; } = new List<ArAdmissionDocument>();
 }

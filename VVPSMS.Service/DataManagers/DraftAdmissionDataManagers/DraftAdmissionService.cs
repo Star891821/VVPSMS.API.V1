@@ -70,7 +70,7 @@ namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
         private ArAdmissionForm UpdatedAdmissionEntity(ArAdmissionForm entityToUpdate, ArAdmissionForm entity)
         {
             entityToUpdate.AcademicId = entity.AcademicId;
-            //entityToUpdate.SchoolId = entity.SchoolId;
+            entityToUpdate.SchoolId = entity.SchoolId;
             entityToUpdate.StreamId = entity.StreamId;
             entityToUpdate.GradeId = entity.GradeId;
             entityToUpdate.ClassId = entity.ClassId;

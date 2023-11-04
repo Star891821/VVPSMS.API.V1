@@ -7,7 +7,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int? ArformId { get; set; }
 
-        public int MstenquiryquestiondetailsId { get; set; }
+        public int? MstenquiryquestiondetailsId { get; set; }
 
         public string? EnquiryResponse { get; set; }
 
