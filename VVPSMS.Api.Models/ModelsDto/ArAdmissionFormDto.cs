@@ -32,7 +32,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int? ModifiedBy { get; set; }
 
-        public virtual List<ArAdmissionDocumentDto> listOfArAdmissionDocuments { get; set; }
+        public virtual List<ArAdmissionDocumentDto> ArAdmissionDocuments { get; set; }
 
         public virtual List<ArAdmissionEnquiryDetailDto> ArAdmissionEnquiryDetails { get; set; } 
 

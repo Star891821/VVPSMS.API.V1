@@ -2,13 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using NLog;
+using System.Text;
 using VVPSMS.Api.Models.Enums;
 using VVPSMS.Api.Models.Logger;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.NLog;
 using VVPSMS.Domain.Models;
-using VVPSMS.Service.DataManagers;
 using VVPSMS.Service.Repository.DraftAdmissions;
 using VVPSMS.Service.Shared.Interfaces;
 using LogLevel = NLog.LogLevel;
@@ -44,7 +43,8 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"GetAllDraftAdmissionDetails API Started");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDraftAdmissionDetails API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var result = await _unitOfWork.DraftAdmissionService.GetAll();
-                return Ok(result);
+                var itemsDto = GetArAdmissionForm(result);
+                return Ok(itemsDto);
             }
             catch (Exception ex)
             {
@@ -68,11 +68,11 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"GetDraftAdmissionDetailsById API Started");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetDraftAdmissionDetailsById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var item = await _unitOfWork.DraftAdmissionService.GetById(id);
-
-                if (item == null)
+                var itemsDto = GetArAdmissionForm(item);
+                if (itemsDto == null)
                     return NotFound();
 
-                return Ok(item);
+                return Ok(itemsDto);
             }
             catch (Exception ex)
             {
@@ -87,7 +87,58 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetDraftAdmissionDetailsById API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
+        private List<ArAdmissionDocumentDto> GetArAdmissionDocumentDto(List<ArAdmissionDocument> items)
+        {
+            List<ArAdmissionDocumentDto> itemsDto = new List<ArAdmissionDocumentDto>();
+            foreach (var item1 in items)
+            {
+                ArAdmissionDocumentDto a = new ArAdmissionDocumentDto()
+                {
+                    ArdocumentId = item1.ArdocumentId,
+                    ArformId = item1.ArformId,
+                    DocumentName = item1.DocumentName,
+                    DocumentPath = item1.DocumentPath,
+                    CreatedAt = item1.CreatedAt,
+                    CreatedBy = item1.CreatedBy,
 
+                };
+
+                itemsDto.Add(a);
+            }
+            foreach (var document in itemsDto.ToList())
+            {
+                if (Directory.Exists(document.DocumentPath))
+                {
+                    DirectoryInfo directoryInfo = new DirectoryInfo(document.DocumentPath);
+
+                    foreach (FileInfo fileInfo in directoryInfo.GetFiles())
+                    {
+
+                        string content = new StreamReader(fileInfo.FullName.ToString(), Encoding.UTF8).ReadToEnd();
+                        byte[] bytes = Encoding.UTF8.GetBytes(content);
+                        document.FileContentsAsBase64 = Convert.ToBase64String(bytes);
+                    }
+                }
+            }
+            return itemsDto;
+        }
+        private ArAdmissionFormDto GetArAdmissionForm(ArAdmissionForm item)
+        {
+            ArAdmissionFormDto itemsDto = _mapper.Map<ArAdmissionFormDto>(item);
+            itemsDto.ArAdmissionDocuments = new List<ArAdmissionDocumentDto>();
+            var datalist = GetArAdmissionDocumentDto((List<ArAdmissionDocument>)item.ArAdmissionDocuments);
+            itemsDto.ArAdmissionDocuments = datalist;
+            return itemsDto;
+        }
+        private List<ArAdmissionFormDto> GetArAdmissionForm(List<ArAdmissionForm> items)
+        {
+            List<ArAdmissionFormDto> itemsDto = new List<ArAdmissionFormDto>();
+            foreach (var item in items)
+            {
+                itemsDto.Add(GetArAdmissionForm(item));
+            }
+            return itemsDto;
+        }
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetDraftAdmissionDetailsByUserId(int id)
@@ -97,11 +148,11 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"GetDraftAdmissionDetailsByUserId API Started");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetDraftAdmissionDetailsByUserId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var item = await _unitOfWork.DraftAdmissionService.GetDraftAdmissionDetailsByUserId(id);
-
-                if (item == null)
+                var itemsDto = GetArAdmissionForm(item);
+                if (itemsDto == null)
                     return NotFound();
 
-                return Ok(item);
+                return Ok(itemsDto);
             }
             catch (Exception ex)
             {
@@ -125,11 +176,11 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"GetDraftAdmissionDetailsByUserIdAndDraftFormId API Started");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetDraftAdmissionDetailsByUserIdAndDraftFormId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var item = await _unitOfWork.DraftAdmissionService.GetDraftAdmissionDetailsByUserIdAndDraftformId(id, userid);
-
-                if (item == null)
+                var itemsDto = GetArAdmissionForm(item);
+                if (itemsDto == null)
                     return NotFound();
 
-                return Ok(item);
+                return Ok(itemsDto);
             }
             catch (Exception ex)
             {
@@ -155,11 +206,11 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDocumentsByDraftAdmissionId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
 
                 var item = await _unitOfWork.DraftAdmissionDocumentService.GetAll(id);
-
-                if (item == null)
+                var itemDto = GetArAdmissionDocumentDto(item);
+                if (itemDto == null)
                     return NotFound();
 
-                return Ok(item);
+                return Ok(itemDto);
             }
             catch (Exception ex)
             {
@@ -236,39 +287,47 @@ namespace VVPSMS.API.Controllers
                         #region Admission Document Transaction For FileSystemandDB
                         _unitOfWork.DraftAdmissionDocumentService.RemoveRangeofDocuments(result.ArformId);
                         await _unitOfWork.CompleteAsync();
-                        if (aradmissionFormDto.listOfArAdmissionDocuments != null && result.ArformId != 0)
+                        if (aradmissionFormDto.ArAdmissionDocuments != null && result.ArformId != 0)
                         {
                             filePath += "\\Archival\\" + result.ArformId;
                             _unitOfWork.DraftAdmissionDocumentService.createDirectory(filePath);
 
-                            for (var i = 0; i < aradmissionFormDto.listOfArAdmissionDocuments.Count; i++)
+                            for (var i = 0; i < aradmissionFormDto.ArAdmissionDocuments.Count; i++)
                             {
                                 try
                                 {
-                                    if (!string.IsNullOrEmpty(aradmissionFormDto.listOfArAdmissionDocuments[i].FileContentsAsBase64))
+                                    if (!string.IsNullOrEmpty(aradmissionFormDto.ArAdmissionDocuments[i].FileContentsAsBase64))
                                     {
-                                        var Base64FileContent = aradmissionFormDto.listOfArAdmissionDocuments[i].FileContentsAsBase64;
+                                        var Base64FileContent = aradmissionFormDto.ArAdmissionDocuments[i].FileContentsAsBase64;
+                                        string base64stringwithoutsignature = string.Empty;
                                         if (Base64FileContent.IndexOf(',') != -1)
                                         {
                                             var index = Base64FileContent.IndexOf(',');
-                                            var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
+                                            base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
+                                        }
+                                        else
+                                        {
+                                            base64stringwithoutsignature = Base64FileContent;
+                                        }
+                                        if (!string.IsNullOrEmpty(base64stringwithoutsignature))
+                                        {
                                             byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
-                                            var fileDetails = aradmissionFormDto.listOfArAdmissionDocuments[i].DocumentName;
+                                            var fileDetails = aradmissionFormDto.ArAdmissionDocuments[i].DocumentName;
                                             var temp = fileDetails.Split('.');
                                             string fileName = string.Empty;
                                             if (temp.Length > 1)
                                             {
-                                                 fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
+                                                fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
                                                 System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
 
                                             }
-                                           
+
                                             ArAdmissionDocument aradmissionDocument = new()
                                             {
                                                 DocumentName = fileName,
                                                 DocumentPath = filePath,
                                                 ArformId = result.ArformId,
-                                                MstdocumenttypesId = aradmissionFormDto.listOfArAdmissionDocuments[i].MstdocumenttypesId,
+                                                MstdocumenttypesId = aradmissionFormDto.ArAdmissionDocuments[i].MstdocumenttypesId,
                                                 CreatedAt = DateTime.Now,
                                                 ModifiedAt = DateTime.Now,
                                             };
@@ -279,7 +338,9 @@ namespace VVPSMS.API.Controllers
                                                 await _unitOfWork.DraftAdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
                                                 _unitOfWork.Complete();
                                             }
+
                                         }
+
                                     }
 
                                 }
@@ -301,7 +362,7 @@ namespace VVPSMS.API.Controllers
                     #endregion
 
                     value = result.ArformId;
-                    
+
                 }
                 else
                 {

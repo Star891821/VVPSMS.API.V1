@@ -6,7 +6,7 @@ namespace VVPSMS.Api.Models.ModelsDto
     {
         public int ArdocumentId { get; set; }
 
-        public int ArformId { get; set; }
+        public int? ArformId { get; set; }
 
         public int? MstdocumenttypesId { get; set; }
 
