@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 using VVPSMS.Api.Models.Enums;
 using VVPSMS.Api.Models.Helpers;
 using VVPSMS.Api.Models.Logger;
@@ -48,6 +49,7 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "BackupGetAllAdmissionDetails API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"BackupGetAllAdmissionDetails API Started");
                 var result = await _unitOfWork.AdmissionService.GetAll();
+                var resultDto  = GetAdmissionForm(result);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -99,11 +101,11 @@ namespace VVPSMS.API.Controllers
 
                 _logger.Information($"GetAdmissionDetailsByUserId API Started");
                 var item = await _unitOfWork.AdmissionService.GetAdmissionDetailsByUserId(id);
-
-                if (item == null)
+                var itemsDto = GetAdmissionForm(item);
+                if (itemsDto == null)
                     return NotFound();
 
-                return Ok(item);
+                return Ok(itemsDto);
             }
             catch (Exception ex)
             {
@@ -127,11 +129,11 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsByUserIdAndFormId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"GetAdmissionDetailsByUserIdAndFormId API Started");
                 var item = await _unitOfWork.AdmissionService.GetAdmissionDetailsByUserIdAndFormId(id, userid);
-
-                if (item == null)
+                var itemsDto = GetAdmissionForm(item);
+                if (itemsDto == null)
                     return NotFound();
 
-                return Ok(item);
+                return Ok(itemsDto);
             }
             catch (Exception ex)
             {
@@ -156,11 +158,11 @@ namespace VVPSMS.API.Controllers
 
                 _logger.Information($"GetAdmissionDetailsById API Started");
                 var item = await _unitOfWork.AdmissionService.GetById(id);
-
-                if (item == null)
+                var itemsDto = GetAdmissionForm(item);
+                if (itemsDto == null)
                     return NotFound();
 
-                return Ok(item);
+                return Ok(itemsDto);
             }
             catch (Exception ex)
             {
@@ -187,9 +189,10 @@ namespace VVPSMS.API.Controllers
                     .StatusCode, filter.Name);
                 var pagedData = await _unitOfWork.AdmissionService.GetAll(validFilter.PageNumber, validFilter.PageSize, filter
                     .StatusCode, filter.Name);
+                var itemsDto = GetAdmissionForm(pagedData.Item1);
                 //var totalRecords =  pagedData.Count();
                 // return Ok(new PagedResponse<List<AdmissionForm>>(pagedData, validFilter.PageNumber, validFilter.PageSize));
-                var pagedReponse = PaginationHelper.CreatePagedReponse(pagedData.Item1, validFilter, pagedData.Item2, uriService, route);
+                var pagedReponse = PaginationHelper.CreatePagedReponse(itemsDto, validFilter, pagedData.Item2, uriService, route);
                 return Ok(pagedReponse);
             }
             catch (Exception ex)
@@ -214,11 +217,11 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDocumentsByAdmissionId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"GetAllDocumentsByAdmissionId API Started");
                 var item = await _unitOfWork.AdmissionDocumentService.GetAll(id);
-
-                if (item == null)
+                var itemsDto = GetAdmissionDocumentDto(item);
+                if (itemsDto == null)
                     return NotFound();
 
-                return Ok(item);
+                return Ok(itemsDto);
             }
             catch (Exception ex)
             {
@@ -338,47 +341,51 @@ namespace VVPSMS.API.Controllers
                             #region Admission Document Transaction For FileSystemandDB
                             _unitOfWork.AdmissionDocumentService.RemoveRangeofDocuments(result.FormId);
                             await _unitOfWork.CompleteAsync();
-                            if (admissionFormDto.listOfAdmissionDocuments != null && result.FormId != 0)
+                            if (admissionFormDto.AdmissionDocuments != null && result.FormId != 0)
                             {
                                 filePath += "\\" + result.FormId;
                                 _unitOfWork.AdmissionDocumentService.createDirectory(filePath);
 
-                                for (var i = 0; i < admissionFormDto.listOfAdmissionDocuments.Count; i++)
+                                for (var i = 0; i < admissionFormDto.AdmissionDocuments.Count; i++)
                                 {
                                     try
                                     {
-                                        if (!string.IsNullOrEmpty(admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64))
+                                        if (!string.IsNullOrEmpty(admissionFormDto.AdmissionDocuments[i].FileContentsAsBase64))
                                         {
-                                            var Base64FileContent = admissionFormDto.listOfAdmissionDocuments[i].FileContentsAsBase64;
-
+                                            var Base64FileContent = admissionFormDto.AdmissionDocuments[i].FileContentsAsBase64;
+                                            string base64stringwithoutsignature = string.Empty;
                                             if (Base64FileContent.IndexOf(',') != -1)
                                             {
                                                 var index = Base64FileContent.IndexOf(',');
-                                                var base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
-                                                byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
-                                                var fileDetails = admissionFormDto.listOfAdmissionDocuments[i].DocumentName;
-                                                var temp = fileDetails.Split('.');
-                                                string fileName = string.Empty;
-                                                if (temp.Length > 1)
+                                                base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
+                                            }
+                                            else
+                                            {
+                                                base64stringwithoutsignature = Base64FileContent;
+                                            }
+                                            byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
+                                            var fileDetails = admissionFormDto.AdmissionDocuments[i].DocumentName;
+                                            var temp = fileDetails.Split('.');
+                                            string fileName = string.Empty;
+                                            if (temp.Length > 1)
+                                            {
+                                                fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
+                                                System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
+                                                AdmissionDocument admissionDocument = new()
                                                 {
-                                                    fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
-                                                    System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
-                                                    AdmissionDocument admissionDocument = new()
-                                                    {
-                                                        DocumentName = fileName,
-                                                        DocumentPath = filePath,
-                                                        FormId = result.FormId,
-                                                        MstdocumenttypesId = admissionFormDto.listOfAdmissionDocuments[i].MstdocumenttypesId,
-                                                        CreatedAt = DateTime.Now,
-                                                        ModifiedAt = DateTime.Now,
-                                                    };
-                                                    result.AdmissionDocuments.Add(admissionDocument);
-                                                    var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
-                                                    if (resultDocuments.Count > 0)
-                                                    {
-                                                        await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
-                                                        _unitOfWork.Complete();
-                                                    }
+                                                    DocumentName = fileName,
+                                                    DocumentPath = filePath,
+                                                    FormId = result.FormId,
+                                                    MstdocumenttypesId = admissionFormDto.AdmissionDocuments[i].MstdocumenttypesId,
+                                                    CreatedAt = DateTime.Now,
+                                                    ModifiedAt = DateTime.Now,
+                                                };
+                                                result.AdmissionDocuments.Add(admissionDocument);
+                                                var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
+                                                if (resultDocuments.Count > 0)
+                                                {
+                                                    await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
+                                                    _unitOfWork.Complete();
                                                 }
                                             }
                                         }
@@ -496,5 +503,59 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
+
+        private List<AdmissionDocumentDto> GetAdmissionDocumentDto(List<AdmissionDocument> items)
+        {
+            List<AdmissionDocumentDto> itemsDto = new List<AdmissionDocumentDto>();
+            foreach (var item1 in items)
+            {
+                AdmissionDocumentDto a = new AdmissionDocumentDto()
+                {
+                    DocumentId = item1.DocumentId,
+                    FormId = item1.FormId,
+                    DocumentName = item1.DocumentName,
+                    DocumentPath = item1.DocumentPath,
+                    CreatedAt = item1.CreatedAt,
+                    CreatedBy = item1.CreatedBy,
+
+                };
+
+                itemsDto.Add(a);
+            }
+            foreach (var document in itemsDto.ToList())
+            {
+                if (Directory.Exists(document.DocumentPath))
+                {
+                    DirectoryInfo directoryInfo = new DirectoryInfo(document.DocumentPath);
+
+                    foreach (FileInfo fileInfo in directoryInfo.GetFiles())
+                    {
+
+                        string content = new StreamReader(fileInfo.FullName.ToString(), Encoding.UTF8).ReadToEnd();
+                        byte[] bytes = Encoding.UTF8.GetBytes(content);
+                        document.FileContentsAsBase64 = Convert.ToBase64String(bytes);
+                    }
+                }
+            }
+            return itemsDto;
+        }
+        private AdmissionFormDto GetAdmissionForm(AdmissionForm item)
+        {
+            AdmissionFormDto itemsDto = _mapper.Map<AdmissionFormDto>(item);
+            itemsDto.AdmissionDocuments = new List<AdmissionDocumentDto>();
+            var datalist = GetAdmissionDocumentDto((List<AdmissionDocument>)item.AdmissionDocuments);
+            itemsDto.AdmissionDocuments = datalist;
+            return itemsDto;
+        }
+        private List<AdmissionFormDto> GetAdmissionForm(List<AdmissionForm> items)
+        {
+            List<AdmissionFormDto> itemsDto = new List<AdmissionFormDto>();
+            foreach (var item in items)
+            {
+                itemsDto.Add(GetAdmissionForm(item));
+            }
+            return itemsDto;
+        }
+
     }
 }
