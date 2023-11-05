@@ -22,6 +22,4 @@ public partial class ArAdmissionEnquiryDetail
     public int? ModifiedBy { get; set; }
 
     public virtual ArAdmissionForm? Arform { get; set; }
-
-    public virtual MstEnquiryQuestionDetail? Mstenquiryquestiondetails { get; set; }
 }

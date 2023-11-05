@@ -7,11 +7,11 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int ArformId { get; set; }
 
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; }
 
-        public int ContactNumber { get; set; }
+        public int? ContactNumber { get; set; }
 
-        public string Relationship { get; set; } = null!;
+        public string? Relationship { get; set; }
 
         public string? NameofparentIncaseofstaffWard { get; set; }
 

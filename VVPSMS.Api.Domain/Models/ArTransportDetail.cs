@@ -35,7 +35,7 @@ public partial class ArTransportDetail
 
     public string? PreferredDropPoint { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }
 
@@ -44,8 +44,6 @@ public partial class ArTransportDetail
     public int? ModifiedBy { get; set; }
 
     public int? Academicid { get; set; }
-
-    public virtual MstAcademicYear? Academic { get; set; }
 
     public virtual ArAdmissionForm? Arform { get; set; }
 }

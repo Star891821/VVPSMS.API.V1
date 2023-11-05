@@ -107,7 +107,7 @@ public partial class VvpsmsdbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=192.168.59.3;Initial Catalog=VVPSMSDB;User Id=sa;Password=D#$q2023P@s;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Integrated Security=false;");
+        => optionsBuilder.UseSqlServer("Server=MSI;Initial Catalog=VVPSMSDB;User Id=sa;Password=1992;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Integrated Security=false;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -229,7 +229,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<ArAdmissionDocument>(entity =>
         {
-            entity.HasKey(e => e.ArdocumentId).HasName("PK__ArAdmiss__1A41F9E1ECDFDD17");
+            entity.HasKey(e => e.ArdocumentId).HasName("PK__ArAdmiss__1A41F9E1728CCCFD");
 
             entity.Property(e => e.ArdocumentId).HasColumnName("ardocument_id");
             entity.Property(e => e.ArformId).HasColumnName("arform_id");
@@ -252,16 +252,12 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Arform).WithMany(p => p.ArAdmissionDocuments)
                 .HasForeignKey(d => d.ArformId)
-                .HasConstraintName("FK__ArAdmissi__arfor__4F1DA8B1");
-
-            entity.HasOne(d => d.Mstdocumenttypes).WithMany(p => p.ArAdmissionDocuments)
-                .HasForeignKey(d => d.MstdocumenttypesId)
-                .HasConstraintName("FK__ArAdmissi__mstdo__5011CCEA");
+                .HasConstraintName("FK__ArAdmissi__arfor__26DAAD2D");
         });
 
         modelBuilder.Entity<ArAdmissionEnquiryDetail>(entity =>
         {
-            entity.HasKey(e => e.AradmissionenquirydetailsId).HasName("PK__ArAdmiss__F8977DB8D1C0F96B");
+            entity.HasKey(e => e.AradmissionenquirydetailsId).HasName("PK__ArAdmiss__F8977DB840CCFC4C");
 
             entity.Property(e => e.AradmissionenquirydetailsId).HasColumnName("aradmissionenquirydetails_id");
             entity.Property(e => e.ArformId).HasColumnName("arform_id");
@@ -281,11 +277,7 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.HasOne(d => d.Arform).WithMany(p => p.ArAdmissionEnquiryDetails)
                 .HasForeignKey(d => d.ArformId)
-                .HasConstraintName("FK__ArAdmissi__arfor__5105F123");
-
-            entity.HasOne(d => d.Mstenquiryquestiondetails).WithMany(p => p.ArAdmissionEnquiryDetails)
-                .HasForeignKey(d => d.MstenquiryquestiondetailsId)
-                .HasConstraintName("FK__ArAdmissi__msten__51FA155C");
+                .HasConstraintName("FK__ArAdmissi__arfor__27CED166");
         });
 
         modelBuilder.Entity<ArAdmissionForm>(entity =>
@@ -331,7 +323,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("nameofparent_incaseofstaff_ward");
             entity.Property(e => e.Relationship)
-                .HasMaxLength(100)
+                .HasMaxLength(255)
                 .HasColumnName("relationship");
 
             entity.HasOne(d => d.Arform).WithMany(p => p.ArEmergencyContactDetails)
@@ -675,7 +667,7 @@ public partial class VvpsmsdbContext : DbContext
 
         modelBuilder.Entity<ArTransportDetail>(entity =>
         {
-            entity.HasKey(e => e.ArtransportdetailsId).HasName("PK__ArTransp__08F3E0512FC90942");
+            entity.HasKey(e => e.ArtransportdetailsId).HasName("PK__ArTransp__08F3E051C9F3BE1B");
 
             entity.Property(e => e.ArtransportdetailsId).HasColumnName("artransportdetails_id");
             entity.Property(e => e.Academicid).HasColumnName("academicid");
@@ -725,13 +717,9 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("preferred_pickup_point");
 
-            entity.HasOne(d => d.Academic).WithMany(p => p.ArTransportDetails)
-                .HasForeignKey(d => d.Academicid)
-                .HasConstraintName("FK__ArTranspo__acade__604834B3");
-
             entity.HasOne(d => d.Arform).WithMany(p => p.ArTransportDetails)
                 .HasForeignKey(d => d.ArformId)
-                .HasConstraintName("FK__ArTranspo__arfor__599B3724");
+                .HasConstraintName("FK__ArTranspo__arfor__28C2F59F");
         });
 
         modelBuilder.Entity<EmergencyContactDetail>(entity =>
