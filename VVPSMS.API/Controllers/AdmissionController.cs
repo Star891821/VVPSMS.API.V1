@@ -517,7 +517,8 @@ namespace VVPSMS.API.Controllers
                     DocumentPath = item1.DocumentPath,
                     CreatedAt = item1.CreatedAt,
                     CreatedBy = item1.CreatedBy,
-
+                    ModifiedAt = item1.ModifiedAt,
+                    ModifiedBy = item1.ModifiedBy,
                 };
 
                 itemsDto.Add(a);

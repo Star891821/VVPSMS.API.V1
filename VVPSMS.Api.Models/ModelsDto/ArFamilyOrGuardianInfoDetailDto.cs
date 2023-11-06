@@ -5,7 +5,7 @@ namespace VVPSMS.Api.Models.ModelsDto
     {
         public int ArfamilyorguardianinfodetailsId { get; set; }
 
-        public int ArformId { get; set; }
+        public int? ArformId { get; set; }
 
         public bool? Legalguardian { get; set; }
 

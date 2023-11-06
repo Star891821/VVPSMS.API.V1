@@ -233,6 +233,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                     dbSet.Entry(admissionForm).Collection(adm => adm.EmergencyContactDetails).Load();
                     dbSet.Entry(admissionForm).Collection(adm => adm.TransportDetails).Load();
                     dbSet.Entry(admissionForm).Collection(adm => adm.StudentIllnessDetails).Load();
+                    dbSet.Entry(admissionForm).State = EntityState.Detached;
                 }
 
             }

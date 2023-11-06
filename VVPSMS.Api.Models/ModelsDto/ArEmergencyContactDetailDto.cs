@@ -5,7 +5,7 @@ namespace VVPSMS.Api.Models.ModelsDto
     {
         public int AremergencycontactdetailsId { get; set; }
 
-        public int ArformId { get; set; }
+        public int? ArformId { get; set; }
 
         public string? Name { get; set; }
 

@@ -100,7 +100,8 @@ namespace VVPSMS.API.Controllers
                     DocumentPath = item1.DocumentPath,
                     CreatedAt = item1.CreatedAt,
                     CreatedBy = item1.CreatedBy,
-
+                    ModifiedAt = item1.ModifiedAt,
+                    ModifiedBy = item1.ModifiedBy,
                 };
 
                 itemsDto.Add(a);
@@ -138,7 +139,7 @@ namespace VVPSMS.API.Controllers
                 itemsDto.Add(GetArAdmissionForm(item));
             }
             return itemsDto;
-        }
+        }      
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetDraftAdmissionDetailsByUserId(int id)
@@ -239,25 +240,28 @@ namespace VVPSMS.API.Controllers
                 if (aradmissionFormDto != null)
                 {
                     var enumDTOs = Enum<AdmissionStatusDto>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
-                    if (!int.TryParse(aradmissionFormDto.AdmissionStatus.ToString(), out int value1))
+                    if(aradmissionFormDto.AdmissionStatus != null)
                     {
-                        foreach (var enumDTO in enumDTOs)
+                        if (!int.TryParse(aradmissionFormDto.AdmissionStatus.ToString(), out int value1))
                         {
-                            if (aradmissionFormDto.AdmissionStatus.ToString() == enumDTO.Name)
+                            foreach (var enumDTO in enumDTOs)
                             {
-                                aradmissionFormDto.AdmissionStatus = enumDTO.Key;
-                                isValidAdmissionStatus = true;
-                                break;
+                                if (aradmissionFormDto.AdmissionStatus.ToString() == enumDTO.Name)
+                                {
+                                    aradmissionFormDto.AdmissionStatus = enumDTO.Key;
+                                    isValidAdmissionStatus = true;
+                                    break;
+                                }
                             }
+
+
                         }
-
-
-                    }
-                    else
-                    {
-                        int.TryParse(aradmissionFormDto.AdmissionStatus.ToString(), out int value2);
-                        aradmissionFormDto.AdmissionStatus = value2;
-                        isValidAdmissionStatus = enumDTOs.Where(a => a.Key == value2).Count() > 0;
+                        else
+                        {
+                            int.TryParse(aradmissionFormDto.AdmissionStatus.ToString(), out int value2);
+                            aradmissionFormDto.AdmissionStatus = value2;
+                            isValidAdmissionStatus = enumDTOs.Where(a => a.Key == value2).Count() > 0;
+                        }
                     }
                     if (!isValidAdmissionStatus)
                     {

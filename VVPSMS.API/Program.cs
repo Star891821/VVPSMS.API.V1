@@ -131,7 +131,11 @@ try
             JsonIgnoreCondition.WhenWritingNull;
     });
     builder.Services.AddDbContext<VvpsmsdbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMS")));
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMS"));
+        options.EnableSensitiveDataLogging();
+
+    });
 
     builder.Services.AddDbContext<VvpsmsdbLogsContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMSDB_LOGS")));

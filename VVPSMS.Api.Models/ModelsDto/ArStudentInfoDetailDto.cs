@@ -6,7 +6,7 @@ namespace VVPSMS.Api.Models.ModelsDto
     {
         public int ArstudentinfoId { get; set; }
 
-        public int ArformId { get; set; }
+        public int? ArformId { get; set; }
 
         public string? FirstName { get; set; }
 
