@@ -44,19 +44,22 @@ namespace VVPSMS.API.Controllers
         [Authorize]
         public async Task<IActionResult> BackupGetAllAdmissionDetails()
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "BackupGetAllAdmissionDetails API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"BackupGetAllAdmissionDetails API Started");
                 var result = await _unitOfWork.AdmissionService.GetAll();
-                var resultDto  = GetAdmissionForm(result);
-                return Ok(result);
+                var resultDto = GetAdmissionForm(result);
+                value = resultDto;
             }
             catch (Exception ex)
             {
                 _logger.Error($"Error at BackupGetAllAdmissionDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at BackupGetAllAdmissionDetails for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
@@ -64,24 +67,28 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "BackupGetAllAdmissionDetails API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
 
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpGet]
         // [Authorize]
         public async Task<IActionResult> GetAdmissionStatusTypes()
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionStatusTypes API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"GetAdmissionStatusTypes API Started");
                 var enumDTOs = Enum<AdmissionStatusDto>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
-                return Ok(enumDTOs);
+                value = enumDTOs;
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAdmissionStatusTypes for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAdmissionStatusTypes for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
@@ -89,12 +96,15 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionStatusTypes API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
 
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetAdmissionDetailsByUserId(int id)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsByUserId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
@@ -103,27 +113,36 @@ namespace VVPSMS.API.Controllers
                 var item = await _unitOfWork.AdmissionService.GetAdmissionDetailsByUserId(id);
                 var itemsDto = GetAdmissionForm(item);
                 if (itemsDto == null)
-                    return NotFound();
-
-                return Ok(itemsDto);
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "AdmissionDetailsByUserId is not found";
+                }
+                else
+                {
+                    value = itemsDto;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAdmissionDetailsByUserId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAdmissionDetailsByUserId for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"GetAdmissionDetailsByUserId API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsByUserId API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetAdmissionDetailsByUserIdAndFormId(int id, int userid)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsByUserIdAndFormId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
@@ -131,27 +150,36 @@ namespace VVPSMS.API.Controllers
                 var item = await _unitOfWork.AdmissionService.GetAdmissionDetailsByUserIdAndFormId(id, userid);
                 var itemsDto = GetAdmissionForm(item);
                 if (itemsDto == null)
-                    return NotFound();
-
-                return Ok(itemsDto);
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "AdmissionDetailsByUserIdAndFormId data is not found";
+                }
+                else
+                {
+                    value = itemsDto;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAdmissionDetailsByUserIdAndFormId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAdmissionDetailsByUserIdAndFormId for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"GetAdmissionDetailsByUserIdAndFormId API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsByUserIdAndFormId API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetAdmissionDetailsById(int id)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
@@ -160,26 +188,36 @@ namespace VVPSMS.API.Controllers
                 var item = await _unitOfWork.AdmissionService.GetById(id);
                 var itemsDto = GetAdmissionForm(item);
                 if (itemsDto == null)
-                    return NotFound();
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "AdmissionDetailsById data is not found";
+                }
+                else
+                {
+                    value = itemsDto;
+                }
 
-                return Ok(itemsDto);
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAdmissionDetailsById for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAdmissionDetailsById for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"GetAdmissionDetailsById API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAllAdmissionDetails([FromQuery] PaginationFilter filter)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllAdmissionDetails API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
@@ -190,28 +228,31 @@ namespace VVPSMS.API.Controllers
                 var pagedData = await _unitOfWork.AdmissionService.GetAll(validFilter.PageNumber, validFilter.PageSize, filter
                     .StatusCode, filter.Name);
                 var itemsDto = GetAdmissionForm(pagedData.Item1);
-                //var totalRecords =  pagedData.Count();
-                // return Ok(new PagedResponse<List<AdmissionForm>>(pagedData, validFilter.PageNumber, validFilter.PageSize));
+
                 var pagedReponse = PaginationHelper.CreatePagedReponse(itemsDto, validFilter, pagedData.Item2, uriService, route);
-                return Ok(pagedReponse);
+                value = pagedReponse;
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAllAdmissionDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAllAdmissionDetails for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"GetAllAdmissionDetails API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllAdmissionDetails API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetAllDocumentsByAdmissionId(int id)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDocumentsByAdmissionId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
@@ -219,28 +260,36 @@ namespace VVPSMS.API.Controllers
                 var item = await _unitOfWork.AdmissionDocumentService.GetAll(id);
                 var itemsDto = GetAdmissionDocumentDto(item);
                 if (itemsDto == null)
-                    return NotFound();
-
-                return Ok(itemsDto);
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "AllDocumentsByAdmissionId data is not found";
+                }
+                else
+                {
+                    value = itemsDto;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAllDocumentsByAdmissionId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAllDocumentsByAdmissionId for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDocumentsByAdmissionId API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"GetAllDocumentsByAdmissionId API completed Successfully");
             }
-
+            return StatusCode(statusCode, value);
         }
 
         [HttpGet("{formId}")]
         [Authorize]
         public async Task<IActionResult> GetTrackAdmissionStatusDetails(int formId)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetTrackAdmissionStatusDetails API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
@@ -249,22 +298,28 @@ namespace VVPSMS.API.Controllers
                 var item = _unitOfWork.TrackAdmissionStatusService.GetAll(formId);
 
                 if (item == null)
-                    return NotFound();
-
-                return Ok(item);
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "Admission Doesn't have tracking details";
+                }
+                else
+                {
+                    value = item;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetTrackAdmissionStatusDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetTrackAdmissionStatusDetails for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500, ex.Message);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetTrackAdmissionStatusDetails API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"GetTrackAdmissionStatusDetails API completed Successfully");
             }
-
+            return StatusCode(statusCode, value);
         }
 
         [HttpPost]
@@ -455,6 +510,8 @@ namespace VVPSMS.API.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(AdmissionFormDto admissionFormDto)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             bool removeNullEntries = false;
             try
             {
@@ -473,13 +530,14 @@ namespace VVPSMS.API.Controllers
 
                     await _unitOfWork.CompleteAsync();
                     removeNullEntries = true;
-                    return Ok(item);
+                    value = item;
                 }
                 else
                 {
                     _logger.Information($"Admission Form is not availablein Database");
                     _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Admission Form is not availablein Database", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                    return StatusCode(StatusCodes.Status404NotFound, "Admission Form is not available in Database");
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "Admission Form is not available in Database";
                 }
             }
             catch (Exception ex)
@@ -488,7 +546,8 @@ namespace VVPSMS.API.Controllers
 
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at Delete for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
 
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
@@ -502,60 +561,76 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"Delete API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
-        private List<AdmissionDocumentDto> GetAdmissionDocumentDto(List<AdmissionDocument> items)
+        private List<AdmissionDocumentDto>? GetAdmissionDocumentDto(List<AdmissionDocument> items)
         {
-            List<AdmissionDocumentDto> itemsDto = new List<AdmissionDocumentDto>();
-            foreach (var item1 in items)
+            if (items != null)
             {
-                AdmissionDocumentDto a = new AdmissionDocumentDto()
+                List<AdmissionDocumentDto> itemsDto = new List<AdmissionDocumentDto>();
+                foreach (var item1 in items)
                 {
-                    DocumentId = item1.DocumentId,
-                    FormId = item1.FormId,
-                    DocumentName = item1.DocumentName,
-                    DocumentPath = item1.DocumentPath,
-                    CreatedAt = item1.CreatedAt,
-                    CreatedBy = item1.CreatedBy,
-                    ModifiedAt = item1.ModifiedAt,
-                    ModifiedBy = item1.ModifiedBy,
-                };
-
-                itemsDto.Add(a);
-            }
-            foreach (var document in itemsDto.ToList())
-            {
-                if (Directory.Exists(document.DocumentPath))
-                {
-                    DirectoryInfo directoryInfo = new DirectoryInfo(document.DocumentPath);
-
-                    foreach (FileInfo fileInfo in directoryInfo.GetFiles())
+                    AdmissionDocumentDto a = new AdmissionDocumentDto()
                     {
+                        DocumentId = item1.DocumentId,
+                        FormId = item1.FormId,
+                        DocumentName = item1.DocumentName,
+                        DocumentPath = item1.DocumentPath,
+                        CreatedAt = item1.CreatedAt,
+                        CreatedBy = item1.CreatedBy,
+                        ModifiedAt = item1.ModifiedAt,
+                        ModifiedBy = item1.ModifiedBy,
+                    };
 
-                        string content = new StreamReader(fileInfo.FullName.ToString(), Encoding.UTF8).ReadToEnd();
-                        byte[] bytes = Encoding.UTF8.GetBytes(content);
-                        document.FileContentsAsBase64 = Convert.ToBase64String(bytes);
+                    itemsDto.Add(a);
+                }
+                foreach (var document in itemsDto.ToList())
+                {
+                    if (Directory.Exists(document.DocumentPath))
+                    {
+                        DirectoryInfo directoryInfo = new DirectoryInfo(document.DocumentPath);
+
+                        foreach (FileInfo fileInfo in directoryInfo.GetFiles())
+                        {
+
+                            string content = new StreamReader(fileInfo.FullName.ToString(), Encoding.UTF8).ReadToEnd();
+                            byte[] bytes = Encoding.UTF8.GetBytes(content);
+                            document.FileContentsAsBase64 = Convert.ToBase64String(bytes);
+                        }
                     }
                 }
+                return itemsDto;
             }
-            return itemsDto;
+            return null;
         }
-        private AdmissionFormDto GetAdmissionForm(AdmissionForm item)
+        private AdmissionFormDto? GetAdmissionForm(AdmissionForm item)
         {
-            AdmissionFormDto itemsDto = _mapper.Map<AdmissionFormDto>(item);
-            itemsDto.AdmissionDocuments = new List<AdmissionDocumentDto>();
-            var datalist = GetAdmissionDocumentDto((List<AdmissionDocument>)item.AdmissionDocuments);
-            itemsDto.AdmissionDocuments = datalist;
-            return itemsDto;
-        }
-        private List<AdmissionFormDto> GetAdmissionForm(List<AdmissionForm> items)
-        {
-            List<AdmissionFormDto> itemsDto = new List<AdmissionFormDto>();
-            foreach (var item in items)
+            if (item != null)
             {
-                itemsDto.Add(GetAdmissionForm(item));
+                AdmissionFormDto itemsDto = _mapper.Map<AdmissionFormDto>(item);
+                itemsDto.AdmissionDocuments = new List<AdmissionDocumentDto>();
+                var datalist = GetAdmissionDocumentDto((List<AdmissionDocument>)item.AdmissionDocuments);
+                if (datalist != null)
+                {
+                    itemsDto.AdmissionDocuments = datalist;
+                    return itemsDto;
+                }
             }
-            return itemsDto;
+            return null;
+        }
+        private List<AdmissionFormDto>? GetAdmissionForm(List<AdmissionForm> items)
+        {
+            if (items != null)
+            {
+                List<AdmissionFormDto> itemsDto = new List<AdmissionFormDto>();
+                foreach (var item in items)
+                {
+                    itemsDto.Add(GetAdmissionForm(item));
+                }
+                return itemsDto;
+            }
+            return null;
         }
 
     }
