@@ -34,23 +34,36 @@ namespace VVPSMS.API.Controllers
         [AllowAnonymous]
         public IActionResult? GetUserByName(string name)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _logger.Information($"GetUserByName API Started");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetUserByName API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return Ok(userService.GetByName(name));
+                var item = userService.GetByName(name);
+                if (item == null)
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "UserByName data is not found";
+                }
+                else
+                {
+                    value = item;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetUserByName for" + typeof(UserController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetUserByName for" + typeof(UserController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"GetUserByName API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetUserByName API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
 
@@ -79,94 +92,146 @@ namespace VVPSMS.API.Controllers
         [Authorize]
         public IActionResult? GetAll()
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _logger.Information($"GetAll API Started");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAll API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return Ok(userService.GetAll());
+                var item = userService.GetAll();
+                if (item == null)
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "GetAll data is not found";
+                }
+                else
+                {
+                    value = item;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAll API for" + typeof(UserController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAll for" + typeof(UserController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"GetAll API Completed");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAll API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpGet("{id}")]
         [AllowAnonymous]
         public IActionResult? GetById(int id)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _logger.Information($"GetById API Started");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return Ok(userService.GetById(id));
+                var item  = userService.GetById(id);
+                if (item == null)
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "GetById data is not found";
+                }
+                else
+                {
+                    value = item;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetById API for" + typeof(UserController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetById for" + typeof(UserController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"GetById API Completed");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetById API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
 
         [HttpPost, ActionName("InsertOrUpdate")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [AllowAnonymous]
-        public IActionResult Post([FromBody] MstUserDto value)
+        public IActionResult Post([FromBody] MstUserDto values)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _logger.Information($"InsertOrUpdate API Started");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "InsertOrUpdate API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return Ok(userService.InsertOrUpdate(value));
+                var item = userService.InsertOrUpdate(values);
+                if (item == null)
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "InsertOrUpdate data is not found";
+                }
+                else
+                {
+                    value = item;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside InsertOrUpdate API for" + typeof(UserController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at InsertOrUpdate for" + typeof(UserController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"InsertOrUpdate API Completed");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "InsertOrUpdate API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpDelete]
         [Authorize]
         public IActionResult Delete(int id)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _logger.Information($"Delete API Started");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return Ok(userService.Delete(id));
+                var item = userService.Delete(id);
+                if (item == null)
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "Delete data is not found";
+                }
+                else
+                {
+                    value = item;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside Delete API for" + typeof(UserController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at Delete for" + typeof(UserController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"Delete API Completed");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
     }

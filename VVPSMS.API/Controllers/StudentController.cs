@@ -1,16 +1,12 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using NLog;
-using System.Threading.Tasks;
 using VVPSMS.Api.Models.Logger;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.NLog;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository.Students;
-using VVPSMS.Service.Shared;
 using VVPSMS.Service.Shared.Interfaces;
 using LogLevel = NLog.LogLevel;
 
@@ -37,30 +33,44 @@ namespace VVPSMS.API.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllStudentDetails()
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _logger.Information($"GetAllStudentDetails API Started");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllStudentDetails API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var users = await _unitOfWork.StudentService.GetAll();
-                return Ok(users);
+                if (users == null)
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "AllStudentDetails data is not found";
+                }
+                else
+                {
+                    value = users;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAllStudentDetails for" + typeof(StudentController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAllStudentDetails for" + typeof(StudentController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"GetAllStudentDetails API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllStudentDetails API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetStudentDetailsById(int id)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _logger.Information($"GetStudentDetailsById API Started");
@@ -68,27 +78,36 @@ namespace VVPSMS.API.Controllers
                 var item = await _unitOfWork.StudentService.GetById(id);
 
                 if (item == null)
-                    return NotFound();
-
-                return Ok(item);
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "StudentDetailsById data is not found";
+                }
+                else
+                {
+                    value = item;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetStudentDetailsById for" + typeof(StudentController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetStudentDetailsById for" + typeof(StudentController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"GetStudentDetailsById API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetStudentDetailsById API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetAllDocumentsByStudentId(int id)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _logger.Information($"GetAllDocumentsByStudentId API Started");
@@ -96,27 +115,36 @@ namespace VVPSMS.API.Controllers
                 var item = await _unitOfWork.DocumentService.GetAll(id);
 
                 if (item == null)
-                    return NotFound();
-
-                return Ok(item);
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "AllDocumentsByStudentId data is not found";
+                }
+                else
+                {
+                    value = item;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside GetAllDocumentsByStudentId for" + typeof(StudentController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAllDocumentsByStudentId for" + typeof(StudentController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"GetAllDocumentsByStudentId API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDocumentsByStudentId API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> InsertOrUpdateStudent(StudentDto studentDto)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _logger.Information($"InsertOrUpdateStudent API Started");
@@ -126,25 +154,37 @@ namespace VVPSMS.API.Controllers
                 await _unitOfWork.DocumentService.RemoveRange(documents);
                 await _unitOfWork.StudentService.InsertOrUpdate(result);
                 await _unitOfWork.CompleteAsync();
-                return Ok();
+                if (result == null)
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "InsertOrUpdateStudent data is not found";
+                }
+                else
+                {
+                    value = result;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside InsertOrUpdateStudent for" + typeof(StudentController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at InsertOrUpdateStudent for" + typeof(StudentController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"InsertOrUpdateStudent API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "InsertOrUpdateStudent API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
 
         [HttpDelete]
         [Authorize]
         public async Task<IActionResult> DeleteStudent(StudentDto studentDto)
         {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
             try
             {
                 _logger.Information($"DeleteStudent API Started");
@@ -153,19 +193,29 @@ namespace VVPSMS.API.Controllers
                 var item = await _unitOfWork.StudentService.Remove(result);
                 var documents = _mapper.Map<List<StudentDocument>>(studentDto.Documents);
                 await _unitOfWork.DocumentService.RemoveRange(documents);
-                return Ok(item);
+                if (item == null)
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "DeleteStudent data is not found";
+                }
+                else
+                {
+                    value = item;
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside DeleteStudent for" + typeof(StudentController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at DeleteStudent for" + typeof(StudentController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                return StatusCode(500);
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             finally
             {
                 _logger.Information($"DeleteStudent API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "DeleteStudent API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
+            return StatusCode(statusCode, value);
         }
     }
 }
