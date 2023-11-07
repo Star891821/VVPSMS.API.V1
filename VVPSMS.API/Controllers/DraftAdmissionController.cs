@@ -524,5 +524,63 @@ namespace VVPSMS.API.Controllers
             }
             return StatusCode(statusCode, value);
         }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeleteByArFormId(int arformId)
+        {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
+            bool removeNullEntries = false;
+            try
+            {
+                _logger.Information($"DeleteByArFormId API Started");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                var result = _unitOfWork.DraftAdmissionService.GetById(arformId);
+                if (result.Result != null)
+                {
+                    var item = await _unitOfWork.DraftAdmissionService.Remove(result.Result);
+
+                    var documents = result.Result.ArAdmissionDocuments;
+                    foreach (var document in documents)
+                    {
+                        _unitOfWork.DraftAdmissionDocumentService.createDirectory(document.DocumentPath);
+                    }
+
+                    await _unitOfWork.CompleteAsync();
+                    removeNullEntries = true;
+                    value = item;
+                }
+                else
+                {
+                    _logger.Information($"DeleteByArFormId is not available in Database");
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "DraftAdmission Form is not available in Database", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "DeleteByArFormId is not available in Database";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside Delete for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at DeleteByArFormId for" + typeof(DraftAdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
+            }
+            finally
+            {
+                if (removeNullEntries)
+                {
+                    #region Remove Null Entries
+                    _unitOfWork.RemoveNullableEntitiesFromDb();
+                    await _unitOfWork.CompleteAsync();
+                    #endregion
+                }
+                _logger.Information($"DeleteByArFormId API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "DraftDelete API completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+            }
+            return StatusCode(statusCode, value);
+        }
+
     }
 }
