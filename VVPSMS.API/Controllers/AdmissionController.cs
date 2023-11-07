@@ -564,6 +564,64 @@ namespace VVPSMS.API.Controllers
             return StatusCode(statusCode, value);
         }
 
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeleteByFormId(int formID)
+        {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
+            bool removeNullEntries = false;
+            try
+            {
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                _logger.Information($"DeleteByFormId API Started");
+                var result = _unitOfWork.AdmissionService.GetById(formID);
+                if (result.Result != null)
+                {
+                    var item = await _unitOfWork.AdmissionService.Remove(result.Result);
+
+                    var documents = result.Result.AdmissionDocuments;
+                    foreach (var document in documents)
+                    {
+                        _unitOfWork.AdmissionDocumentService.createDirectory(document.DocumentPath);
+                    }
+
+                    await _unitOfWork.CompleteAsync();
+                    removeNullEntries = true;
+                    value = item;
+                }
+                else
+                {
+                    _logger.Information($"Admission Form is not availablein Database");
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Admission Form is not availablein Database", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "Admission Form is not available in Database";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside Delete for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at DeleteByFormId for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
+            }
+            finally
+            {
+                if (removeNullEntries)
+                {
+                    #region Remove Null Entries
+                    _unitOfWork.RemoveNullableEntitiesFromDb();
+                    await _unitOfWork.CompleteAsync();
+                    #endregion
+                }
+                _logger.Information($"DeleteByFormId API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+            }
+            return StatusCode(statusCode, value);
+        }
+
         private List<AdmissionDocumentDto>? GetAdmissionDocumentDto(List<AdmissionDocument> items)
         {
             if (items != null)
