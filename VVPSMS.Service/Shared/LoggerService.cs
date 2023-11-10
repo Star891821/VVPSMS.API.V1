@@ -13,18 +13,18 @@ namespace VVPSMS.Service.Shared
         private readonly VvpsmsdbLogsContext _vvpsmsdbLogsContext;
         private IConfiguration _config;
         private IMapper _mapper;
-        private int isLogLevel = 0;
+        private int isLogLevel = 4;
 
         public LoggerService(VvpsmsdbLogsContext vvpsmsdbLogsContext, IMapper mapper, IConfiguration config)
         {
             _vvpsmsdbLogsContext = vvpsmsdbLogsContext;
             _mapper = mapper;
             _config = config;
-            isLogLevel = Convert.ToInt16(_config["Logs:LogLevel"] ?? "0");
+            isLogLevel = Convert.ToInt16(_config["Logs:LogLevel"] ?? "4");
         }
         public List<LogsDto> GetAllLogs()
         {
-            var result = _vvpsmsdbLogsContext.Logs.ToList();
+            var result = _vvpsmsdbLogsContext.Logs.OrderByDescending(x=>x.CreatedOn).ToList();
             return _mapper.Map<List<LogsDto>>(result);
         }
         public void LogError(LogsDto logsDto)
