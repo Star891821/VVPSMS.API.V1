@@ -1,5 +1,4 @@
 ﻿
-
 namespace VVPSMS.Api.Models.ModelsDto
 {
     public class PreviousSchoolDetailDto

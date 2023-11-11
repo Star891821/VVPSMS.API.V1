@@ -15,13 +15,13 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public string? FatherName { get; set; }
 
-        public int? FatherPhone { get; set; }
+        public string? FatherPhone { get; set; }
 
         public string? FatherEmail { get; set; }
 
         public string? MotherName { get; set; }
 
-        public int? MotherPhone { get; set; }
+        public string? MotherPhone { get; set; }
 
         public string? MotherEmail { get; set; }
 

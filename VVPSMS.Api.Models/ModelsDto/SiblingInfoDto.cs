@@ -1,10 +1,12 @@
-﻿namespace VVPSMS.Api.Models.ModelsDto
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace VVPSMS.Api.Models.ModelsDto
 {
     public class SiblingInfoDto
     {
         public int SiblingId { get; set; }
 
-        public int FormId { get; set; }
+        public int? FormId { get; set; }
 
         public string? SiblingName { get; set; }
 

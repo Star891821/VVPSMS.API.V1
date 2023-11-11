@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository.Admissions;
 
@@ -58,6 +60,19 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             vvpsmsdbContext.Dispose();
         }
 
+        public void BeginTransaction()
+        {
+            vvpsmsdbContext.Database.BeginTransaction();
+        }
+        public void CommitTransaction()
+        {
+             vvpsmsdbContext.Database.CommitTransaction();
+        }
+
+        public void RollBack()
+        {
+            vvpsmsdbContext.Database.RollbackTransaction();
+        }
         public async Task<bool> SaveChangesAsync()
         {
             return await vvpsmsdbContext.SaveChangesAsync() > 0;

@@ -35,6 +35,8 @@ using VVPSMS.Service.Filters;
 using IUriService = VVPSMS.Service.Repository.Services.IUriService;
 using VVPSMS.Service.Shared.Interfaces;
 using VVPSMS.Domain.Logger.Models;
+using FluentValidation;
+using VVPSMS.Service.Validators.AdmissionFormValidators;
 
 try
 {
@@ -49,7 +51,8 @@ try
         .GetSection("EmailConfiguration")
         .Get<EmailConfiguration>();
     builder.Services.AddSingleton(emailConfig);
-    builder.Services.Configure<FormOptions>(o => {
+    builder.Services.Configure<FormOptions>(o =>
+    {
         o.ValueLengthLimit = int.MaxValue;
         o.MultipartBodyLengthLimit = int.MaxValue;
         o.MemoryBufferThreshold = int.MaxValue;
@@ -162,7 +165,7 @@ try
     builder.Services.AddScoped<IEmailSender, EmailSender>();
     builder.Services.AddScoped<ILoggerService, LoggerService>();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-    
+    builder.Services.AddScoped<IValidator<AdmissionFormDto>, AdmissionValidator>();
     builder.Services.AddScoped<ValidationFilterAttribute>();
     builder.Services.Configure<ApiBehaviorOptions>(options
         => options.SuppressModelStateInvalidFilter = true);
@@ -234,7 +237,7 @@ try
     app.MapControllers();
     app.Run();
 }
-catch(Exception ex)
+catch (Exception ex)
 {
     //throw (ex);
 }

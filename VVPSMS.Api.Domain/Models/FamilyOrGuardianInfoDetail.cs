@@ -13,7 +13,7 @@ public partial class FamilyOrGuardianInfoDetail
 
     public string Name { get; set; } = null!;
 
-    public string Dob { get; set; } = null!;
+    public DateTime Dob { get; set; }
 
     public string? HighestQualification { get; set; }
 
@@ -21,11 +21,11 @@ public partial class FamilyOrGuardianInfoDetail
 
     public string? DesignationNameofcompany { get; set; }
 
-    public int? AnnualIncome { get; set; }
+    public int AnnualIncome { get; set; }
 
     public string? OfficeAddress { get; set; }
 
-    public string? AadharNumber { get; set; }
+    public int AadharNumber { get; set; }
 
     public string? PanNumber { get; set; }
 
@@ -37,7 +37,7 @@ public partial class FamilyOrGuardianInfoDetail
 
     public string Contact { get; set; } = null!;
 
-    public string? Email { get; set; }
+    public string Email { get; set; } = null!;
 
     public string? Preferredcontact { get; set; }
 

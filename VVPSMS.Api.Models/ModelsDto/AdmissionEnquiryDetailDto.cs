@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace VVPSMS.Api.Models.ModelsDto
 {
     public class AdmissionEnquiryDetailDto
@@ -7,7 +9,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int? FormId { get; set; }
 
-        public int MstenquiryquestiondetailsId { get; set; }
+        public int? MstenquiryquestiondetailsId { get; set; }
 
         public string? EnquiryResponse { get; set; }
 

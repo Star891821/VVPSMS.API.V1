@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.EntityFrameworkCore.Storage;
+
 namespace VVPSMS.Service.Repository.Admissions
 {
     public interface IAdmissionUnitOfWork : IDisposable
@@ -19,7 +21,9 @@ namespace VVPSMS.Service.Repository.Admissions
         void RemoveNullableEntitiesFromDb();
         void RemoveEntitiesById(int id);
         Task CompleteAsync();
-
+        void BeginTransaction();
+        void CommitTransaction();
+        void RollBack();
         bool Complete();
     }
 }

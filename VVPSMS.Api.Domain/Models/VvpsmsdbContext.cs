@@ -757,9 +757,7 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasKey(e => e.FamilyorguardianinfodetailsId).HasName("PK__FamilyOr__8B52AFBED9FAC11C");
 
             entity.Property(e => e.FamilyorguardianinfodetailsId).HasColumnName("familyorguardianinfodetails_id");
-            entity.Property(e => e.AadharNumber)
-                .HasMaxLength(100)
-                .HasColumnName("aadhar_number");
+            entity.Property(e => e.AadharNumber).HasColumnName("aadhar_number");
             entity.Property(e => e.AnnualIncome).HasColumnName("annual_income");
             entity.Property(e => e.Contact)
                 .HasMaxLength(15)
@@ -773,7 +771,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(80)
                 .HasColumnName("designation_nameofcompany");
             entity.Property(e => e.Dob)
-                .HasMaxLength(255)
+                .HasColumnType("datetime")
                 .HasColumnName("dob");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
@@ -1459,7 +1457,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("health_history");
             entity.Property(e => e.Height)
-                .HasMaxLength(25)
+                .HasMaxLength(255)
                 .HasColumnName("height");
             entity.Property(e => e.IdentificationMarks)
                 .HasMaxLength(255)
@@ -1486,7 +1484,9 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.VisionRight)
                 .HasMaxLength(255)
                 .HasColumnName("vision_right");
-            entity.Property(e => e.Weight).HasColumnName("weight");
+            entity.Property(e => e.Weight)
+                .HasMaxLength(255)
+                .HasColumnName("weight");
 
             entity.HasOne(d => d.Form).WithMany(p => p.StudentHealthInfoDetails)
                 .HasForeignKey(d => d.FormId)
@@ -1531,9 +1531,7 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasKey(e => e.StudentinfoId).HasName("PK__StudentI__C396B23FA6ABBAC9");
 
             entity.Property(e => e.StudentinfoId).HasColumnName("studentinfo_id");
-            entity.Property(e => e.AadharNumber)
-                .HasMaxLength(100)
-                .HasColumnName("aadhar_number");
+            entity.Property(e => e.AadharNumber).HasColumnName("aadhar_number");
             entity.Property(e => e.Age).HasColumnName("age");
             entity.Property(e => e.Caste)
                 .HasMaxLength(100)
@@ -1550,7 +1548,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("date_of_issue");
             entity.Property(e => e.Dob)
-                .HasMaxLength(255)
+                .HasColumnType("datetime")
                 .HasColumnName("dob");
             entity.Property(e => e.DobInWords)
                 .HasMaxLength(255)
@@ -1723,7 +1721,9 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.FatherName)
                 .HasMaxLength(255)
                 .HasColumnName("father_name");
-            entity.Property(e => e.FatherPhone).HasColumnName("father_phone");
+            entity.Property(e => e.FatherPhone)
+                .HasMaxLength(70)
+                .HasColumnName("father_phone");
             entity.Property(e => e.FormId).HasColumnName("form_id");
             entity.Property(e => e.LandMark)
                 .HasMaxLength(255)
@@ -1738,7 +1738,9 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.MotherName)
                 .HasMaxLength(255)
                 .HasColumnName("mother_name");
-            entity.Property(e => e.MotherPhone).HasColumnName("mother_phone");
+            entity.Property(e => e.MotherPhone)
+                .HasMaxLength(70)
+                .HasColumnName("mother_phone");
             entity.Property(e => e.NameofStudent)
                 .HasMaxLength(255)
                 .HasColumnName("nameof_student");

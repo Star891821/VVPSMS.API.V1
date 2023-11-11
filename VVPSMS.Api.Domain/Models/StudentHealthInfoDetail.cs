@@ -9,21 +9,21 @@ public partial class StudentHealthInfoDetail
 
     public int? FormId { get; set; }
 
-    public string? ChildName { get; set; }
+    public string ChildName { get; set; } = null!;
 
-    public string? Class { get; set; }
+    public string Class { get; set; } = null!;
 
-    public string? BloodGroup { get; set; }
+    public string BloodGroup { get; set; } = null!;
 
     public string? VisionLeft { get; set; }
 
     public string? VisionRight { get; set; }
 
-    public string? Height { get; set; }
+    public string Height { get; set; } = null!;
 
-    public int? Weight { get; set; }
+    public string Weight { get; set; } = null!;
 
-    public string? ImmunizationStatus { get; set; }
+    public string ImmunizationStatus { get; set; } = null!;
 
     public string? IdentificationMarks { get; set; }
 
@@ -37,7 +37,7 @@ public partial class StudentHealthInfoDetail
 
     public string? LearningDisabilities { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }
 

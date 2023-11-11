@@ -17,13 +17,13 @@ public partial class TransportDetail
 
     public string? FatherName { get; set; }
 
-    public int? FatherPhone { get; set; }
+    public string? FatherPhone { get; set; }
 
     public string? FatherEmail { get; set; }
 
     public string? MotherName { get; set; }
 
-    public int? MotherPhone { get; set; }
+    public string? MotherPhone { get; set; }
 
     public string? MotherEmail { get; set; }
 
@@ -35,7 +35,7 @@ public partial class TransportDetail
 
     public string? PreferredDropPoint { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int? CreatedBy { get; set; }
 

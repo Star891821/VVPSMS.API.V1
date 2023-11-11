@@ -1,34 +1,36 @@
 ﻿
 
+using System.ComponentModel.DataAnnotations;
+
 namespace VVPSMS.Api.Models.ModelsDto
 {
     public class StudentInfoDetailDto
     {
         public int StudentinfoId { get; set; }
 
-        public int FormId { get; set; }
+        public int? FormId { get; set; }
 
         public string FirstName { get; set; } = null!;
-
-        public string MiddleName { get; set; } = null!;
-
-        public string LastName { get; set; } = null!;
-
-        public string Dob { get; set; } = null!;
-
+      
+        public string? MiddleName { get; set; }
+        
+        public string? LastName { get; set; }
+     
+        public DateTime Dob { get; set; }
+        
         public string DobInWords { get; set; } = null!;
-
+      
         public string Nationality { get; set; } = null!;
-
+        
         public string Gender { get; set; } = null!;
-
+     
         public int Age { get; set; }
 
         public string? Religion { get; set; }
 
         public string? Caste { get; set; }
-
-        public string AadharNumber { get; set; } = null!;
+        
+        public int? AadharNumber { get; set; }
 
         public string? SatsChildNumber { get; set; }
 
