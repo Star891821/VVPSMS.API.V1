@@ -13,6 +13,9 @@ using VVPSMS.Service.Shared.Interfaces;
 using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Azure.Storage.Blobs.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Text.RegularExpressions;
 
 namespace VVPSMS.API.Controllers
 {
@@ -57,6 +60,7 @@ namespace VVPSMS.API.Controllers
         {
             try
             {
+                var hi = HttpContext.Request.Query["jsonData"].ToString();
                 var draw = HttpContext.Request.Query["draw"].FirstOrDefault();
                 // Skiping number of Rows count  
                 var start = Request.Query["start"].FirstOrDefault();
@@ -64,10 +68,18 @@ namespace VVPSMS.API.Controllers
                 var length = Request.Query["length"].FirstOrDefault();
                 // Sort Column Name  
                 var sortColumn = Request.Query["columns[" + Request.Query["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+
+                //iSortCol gives your Column numebr of for which sorting is required
+                int iSortCol = Convert.ToInt32(Request.Query["order[0][column]"].FirstOrDefault());
+
                 // Sort Column Direction ( asc ,desc)  
                 var sortColumnDirection = Request.Query["order[0][dir]"].FirstOrDefault();
                 // Search Value from (Search box)  
                 var searchValue = Request.Query["search[value]"].FirstOrDefault();
+
+                var fromDate = Request.Query["fromDate"].FirstOrDefault();
+                var toDate = Request.Query["toDate"].FirstOrDefault();
+                var level = Request.Query["level"].FirstOrDefault();
 
                 //Paging Size (10,20,50,100)  
                 int pageSize = length != null ? Convert.ToInt32(length) : 0;
@@ -76,7 +88,22 @@ namespace VVPSMS.API.Controllers
 
                 var result = _loggerService.GetAllLogs();
                 var logsData = (from templogdata in result select templogdata);
-                if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
+
+                if (!string.IsNullOrEmpty(fromDate) && !string.IsNullOrEmpty(toDate))
+                {
+                    DateTime fromCreatedOn = DateTime.ParseExact(fromDate, "MM/dd/yyyy", System.Globalization.CultureInfo.CurrentCulture);
+                    DateTime toCreatedOn = DateTime.ParseExact(toDate, "MM/dd/yyyy", System.Globalization.CultureInfo.CurrentCulture);
+                    logsData = logsData.Where(x => x.CreatedOn >= fromCreatedOn
+                           && x.CreatedOn <= toCreatedOn.AddDays(1).AddTicks(-1));
+                }
+
+                if (!string.IsNullOrEmpty(level))
+                {
+                    logsData = logsData.Where(x => x.Level == level);
+                }
+                
+
+                    if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
                 {
                     if (sortColumnDirection == "asc")
                     {
@@ -98,12 +125,18 @@ namespace VVPSMS.API.Controllers
                                                 || m.Exception.Contains(searchValue)
                                                 || m.Logger.Contains(searchValue)
                                                 || m.Url.Contains(searchValue));
+
+                    // Call SortFunction to provide sorted Data, then Skip using iDisplayStart  
+                    logsData = SortFunction(iSortCol, sortColumnDirection, logsData).Skip(skip).ToList();
                 }
+
+                // Call SortFunction to provide sorted Data, then Skip using iDisplayStart  
+                logsData = SortFunction(iSortCol, sortColumnDirection, logsData).Skip(skip).ToList();
 
                 //total number of rows count   
                 recordsTotal = logsData.Count();
                 //Paging   
-                var data = logsData.Skip(skip).ToList();
+                var data = logsData.ToList();
                 //Returning Json Data  
                 var jsonData = (new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
                 return Ok(jsonData);
@@ -113,6 +146,44 @@ namespace VVPSMS.API.Controllers
                 throw;
             }
 
+        }
+
+        //Sorting Function
+        private IEnumerable<LogsDto> SortFunction(int iSortCol, string sortOrder, IEnumerable<LogsDto> list)
+        {
+
+            //Sorting for String columns
+            if (iSortCol == 1 || iSortCol == 2 || iSortCol == 3 || iSortCol == 4)
+            {
+                Func<LogsDto, string> orderingFunction = (c => iSortCol == 1 ? c.CreatedOn.ToString() : iSortCol == 2 ? c.Level : c.Message); // compare the sorting column
+
+                if (sortOrder == "desc")
+                {
+                    list = list.OrderByDescending(orderingFunction).ToList();
+                }
+                else
+                {
+                    list = list.OrderBy(orderingFunction).ToList();
+
+                }
+            }
+            //Sorting for Int columns
+            else if (iSortCol == 0)
+            {
+                Func<LogsDto, int> orderingFunction = (c => iSortCol == 0 ? c.Id : c.Id); // compare the sorting column
+
+                if (sortOrder == "desc")
+                {
+                    list = list.OrderByDescending(orderingFunction).ToList();
+                }
+                else
+                {
+                    list = list.OrderBy(orderingFunction).ToList();
+
+                }
+            }
+
+            return list;
         }
     }
 }
