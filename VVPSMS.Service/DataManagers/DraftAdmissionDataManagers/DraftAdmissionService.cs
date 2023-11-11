@@ -85,6 +85,18 @@ namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
             entityToUpdate.ArStudentIllnessDetails = entity.ArStudentIllnessDetails;
             entityToUpdate.ArStudentInfoDetails = entity.ArStudentInfoDetails;
             entityToUpdate.ArTransportDetails = entity.ArTransportDetails;
+            
+            entityToUpdate.ArAdmissionDocuments.Where(w => w.ArformId == entityToUpdate.ArformId).ToList().ForEach(w => w.ArdocumentId = 0);
+            entityToUpdate.ArAdmissionEnquiryDetails.Where(w => w.ArformId == entityToUpdate.ArformId).ToList().ForEach(w => w.AradmissionenquirydetailsId = 0);
+            entityToUpdate.ArEmergencyContactDetails.Where(w => w.ArformId == entityToUpdate.ArformId).ToList().ForEach(w => w.AremergencycontactdetailsId = 0);
+            entityToUpdate.ArFamilyOrGuardianInfoDetails.Where(w => w.ArformId == entityToUpdate.ArformId).ToList().ForEach(w => w.ArfamilyorguardianinfodetailsId = 0);
+            entityToUpdate.ArPreviousSchoolDetails.Where(w => w.ArformId == entityToUpdate.ArformId).ToList().ForEach(w => w.ArpreviousschooldetailsId = 0);
+            entityToUpdate.ArSiblingInfos.Where(w => w.ArformId == entityToUpdate.ArformId).ToList().ForEach(w => w.ArsiblingId = 0);
+            entityToUpdate.ArStudentHealthInfoDetails.Where(w => w.ArformId == entityToUpdate.ArformId).ToList().ForEach(w => w.ArstudenthealthinfodetailsId = 0);
+            entityToUpdate.ArStudentIllnessDetails.Where(w => w.ArformId == entityToUpdate.ArformId).ToList().ForEach(w => w.ArstudentillnessdetailsId = 0);
+            entityToUpdate.ArStudentInfoDetails.Where(w => w.ArformId == entityToUpdate.ArformId).ToList().ForEach(w => w.ArstudentinfoId = 0);
+            entityToUpdate.ArTransportDetails.Where(w => w.ArformId == entityToUpdate.ArformId).ToList().ForEach(w => w.ArtransportdetailsId = 0);
+
             entityToUpdate.CreatedAt = entity.CreatedAt;
             entityToUpdate.CreatedBy = entity.CreatedBy;
             entityToUpdate.ModifiedAt = entity.ModifiedAt;
@@ -116,7 +128,6 @@ namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
                     dbSet.Entry(aradmissionForm).Collection(adm => adm.ArEmergencyContactDetails).Load();
                     dbSet.Entry(aradmissionForm).Collection(adm => adm.ArTransportDetails).Load();
                     dbSet.Entry(aradmissionForm).Collection(adm => adm.ArStudentIllnessDetails).Load();
-                    dbSet.Entry(aradmissionForm).State = EntityState.Detached;
                 }
 
             }
@@ -176,7 +187,7 @@ namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
 
             try
             {
-                return getbyID(id, UserId,true);
+                return getbyID(id, UserId, true);
             }
             catch
             {
