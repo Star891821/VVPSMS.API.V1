@@ -17,15 +17,37 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             this.context = context;
         }
-        
+
         public override async Task<bool> InsertOrUpdate(AdmissionForm entity)
         {
             try
             {
-                var exist = getbyID(entity.FormId,null);
+                var exist = getbyID(entity.FormId, null);
+
+
                 if (exist != null)
                 {
-                    await base.Update(exist, UpdatedAdmissionEntity(exist, entity));// UpdatedAdmissionEntity(exist, entity));
+                    AdmissionForm existingEntity = context.Set<AdmissionForm>().Local.FirstOrDefault(e => e.FormId == entity.FormId);
+
+                    if (existingEntity == null)
+                    {
+                        context.Entry(entity).State = EntityState.Modified;
+                    }
+                    else
+                    {
+                        context.Entry(existingEntity).CurrentValues.SetValues(entity);
+
+                        UpdateChildEntities(existingEntity.AdmissionDocuments, entity.AdmissionDocuments, (a, b) => a.DocumentId == b.DocumentId);
+                        UpdateChildEntities(existingEntity.AdmissionEnquiryDetails, entity.AdmissionEnquiryDetails, (a, b) => a.AdmissionenquirydetailsId == b.AdmissionenquirydetailsId);
+                        UpdateChildEntities(existingEntity.EmergencyContactDetails, entity.EmergencyContactDetails, (a, b) => a.EmergencycontactdetailsId == b.EmergencycontactdetailsId);
+                        UpdateChildEntities(existingEntity.FamilyOrGuardianInfoDetails, entity.FamilyOrGuardianInfoDetails, (a, b) => a.FamilyorguardianinfodetailsId == b.FamilyorguardianinfodetailsId);
+                        UpdateChildEntities(existingEntity.PreviousSchoolDetails, entity.PreviousSchoolDetails, (a, b) => a.PreviousschooldetailsId == b.PreviousschooldetailsId);
+                        UpdateChildEntities(existingEntity.SiblingInfos, entity.SiblingInfos, (a, b) => a.SiblingId == b.SiblingId);
+                        UpdateChildEntities(existingEntity.StudentHealthInfoDetails, entity.StudentHealthInfoDetails, (a, b) => a.StudenthealthinfodetailsId == b.StudenthealthinfodetailsId);
+                        UpdateChildEntities(existingEntity.StudentIllnessDetails, entity.StudentIllnessDetails, (a, b) => a.StudentillnessdetailsId == b.StudentillnessdetailsId);
+                        UpdateChildEntities(existingEntity.StudentInfoDetails, entity.StudentInfoDetails, (a, b) => a.StudentinfoId == b.StudentinfoId);
+                        UpdateChildEntities(existingEntity.TransportDetails, entity.TransportDetails, (a, b) => a.TransportdetailsId == b.TransportdetailsId);
+                    }
                 }
                 else
                 {
@@ -34,9 +56,41 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                // Log or handle the specific exception
                 return false;
+            }
+        }
+
+        private void UpdateChildEntities<T>(ICollection<T> existingCollection, ICollection<T> updatedCollection, Func<T, T, bool> areEqual)
+    where T : class
+        {
+            // Delete functionality
+            var itemsToRemove = existingCollection
+                .Where(existingItem => !updatedCollection.Any(updatedItem => areEqual(existingItem, updatedItem)))
+                .ToList();
+
+            foreach (var itemToRemove in itemsToRemove)
+            {
+                context.Entry(itemToRemove).State = EntityState.Deleted;
+                existingCollection.Remove(itemToRemove);
+            }
+
+            // Update and add new
+            foreach (var updatedItem in updatedCollection)
+            {
+                var existingItem = existingCollection.FirstOrDefault(e => areEqual(e, updatedItem));
+
+                if (existingItem != null)
+                {
+                    context.Entry(existingItem).CurrentValues.SetValues(updatedItem);
+                }
+                else
+                {
+                    existingCollection.Add(updatedItem);
+                    context.Entry(updatedItem).State = EntityState.Added;
+                }
             }
         }
         public override async Task<AdmissionForm?> GetById(int id)
@@ -185,42 +239,6 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         #endregion
 
         #region Private Methods
-        private AdmissionForm UpdatedAdmissionEntity(AdmissionForm entityToUpdate, AdmissionForm entity)
-        {
-            entityToUpdate.AcademicId = entity.AcademicId;
-            entityToUpdate.SchoolId = entity.SchoolId;
-            entityToUpdate.StreamId = entity.StreamId;
-            entityToUpdate.GradeId = entity.GradeId;
-            entityToUpdate.ClassId = entity.ClassId;
-            entityToUpdate.AdmissionStatus = entity.AdmissionStatus;
-            entityToUpdate.AdmissionDocuments = entity.AdmissionDocuments;
-            entityToUpdate.AdmissionEnquiryDetails = entity.AdmissionEnquiryDetails;
-            entityToUpdate.EmergencyContactDetails = entity.EmergencyContactDetails;
-            entityToUpdate.FamilyOrGuardianInfoDetails = entity.FamilyOrGuardianInfoDetails;
-            entityToUpdate.PreviousSchoolDetails = entity.PreviousSchoolDetails;
-            entityToUpdate.SiblingInfos = entity.SiblingInfos;
-            entityToUpdate.StudentHealthInfoDetails = entity.StudentHealthInfoDetails;
-            entityToUpdate.StudentIllnessDetails = entity.StudentIllnessDetails;
-            entityToUpdate.StudentInfoDetails = entity.StudentInfoDetails;
-            entityToUpdate.TransportDetails = entity.TransportDetails;
-
-            entityToUpdate.AdmissionDocuments.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.DocumentId = 0);
-            entityToUpdate.AdmissionEnquiryDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.AdmissionenquirydetailsId = 0);
-            entityToUpdate.EmergencyContactDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.EmergencycontactdetailsId = 0);
-            entityToUpdate.FamilyOrGuardianInfoDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.FamilyorguardianinfodetailsId = 0);
-            entityToUpdate.PreviousSchoolDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.PreviousschooldetailsId = 0);
-            entityToUpdate.SiblingInfos.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.SiblingId = 0);
-            entityToUpdate.StudentHealthInfoDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.StudenthealthinfodetailsId = 0);
-            entityToUpdate.StudentIllnessDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.StudentillnessdetailsId = 0);
-            entityToUpdate.StudentInfoDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.StudentinfoId = 0);
-            entityToUpdate.TransportDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.TransportdetailsId = 0);
-
-            entityToUpdate.CreatedAt = entity.CreatedAt;
-            entityToUpdate.CreatedBy = entity.CreatedBy;
-            entityToUpdate.ModifiedAt = entity.ModifiedAt;
-            entityToUpdate.ModifiedBy = entity.ModifiedBy;
-            return entityToUpdate;
-        }
         private AdmissionForm getbyID(int? id, int? UserId, bool userWise = false)
         {
             var admissionForm = new AdmissionForm();
