@@ -326,7 +326,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> InsertOrUpdate(AdmissionFormDto admissionFormDto)
         {
 

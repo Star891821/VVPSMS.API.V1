@@ -203,6 +203,18 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             entityToUpdate.StudentIllnessDetails = entity.StudentIllnessDetails;
             entityToUpdate.StudentInfoDetails = entity.StudentInfoDetails;
             entityToUpdate.TransportDetails = entity.TransportDetails;
+
+            entityToUpdate.AdmissionDocuments.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.DocumentId = 0);
+            entityToUpdate.AdmissionEnquiryDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.AdmissionenquirydetailsId = 0);
+            entityToUpdate.EmergencyContactDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.EmergencycontactdetailsId = 0);
+            entityToUpdate.FamilyOrGuardianInfoDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.FamilyorguardianinfodetailsId = 0);
+            entityToUpdate.PreviousSchoolDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.PreviousschooldetailsId = 0);
+            entityToUpdate.SiblingInfos.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.SiblingId = 0);
+            entityToUpdate.StudentHealthInfoDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.StudenthealthinfodetailsId = 0);
+            entityToUpdate.StudentIllnessDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.StudentillnessdetailsId = 0);
+            entityToUpdate.StudentInfoDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.StudentinfoId = 0);
+            entityToUpdate.TransportDetails.Where(w => w.FormId == entityToUpdate.FormId).ToList().ForEach(w => w.TransportdetailsId = 0);
+
             entityToUpdate.CreatedAt = entity.CreatedAt;
             entityToUpdate.CreatedBy = entity.CreatedBy;
             entityToUpdate.ModifiedAt = entity.ModifiedAt;
@@ -234,7 +246,6 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                     dbSet.Entry(admissionForm).Collection(adm => adm.EmergencyContactDetails).Load();
                     dbSet.Entry(admissionForm).Collection(adm => adm.TransportDetails).Load();
                     dbSet.Entry(admissionForm).Collection(adm => adm.StudentIllnessDetails).Load();
-                    dbSet.Entry(admissionForm).State = EntityState.Detached;
                 }
 
             }

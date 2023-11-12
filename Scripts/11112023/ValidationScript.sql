@@ -3,7 +3,15 @@ TRUNCATE TABLE [dbo].[FamilyOrGuardianInfoDetails]
 TRUNCATE TABLE [dbo].[EmergencyContactDetails]
 TRUNCATE TABLE [dbo].[StudentHealthInfoDetails]
 TRUNCATE TABLE [dbo].[TransportDetails]
+
+TRUNCATE TABLE [dbo].[AdmissionDocuments]
+TRUNCATE TABLE [dbo].[AdmissionEnquiryDetails]
+TRUNCATE TABLE [dbo].[SiblingInfo]
 TRUNCATE TABLE [dbo].[StudentIllnessDetails]
+TRUNCATE TABLE [dbo].[StudentInfoDetails]
+TRUNCATE TABLE [dbo].[TrackAdmissionStatus]
+TRUNCATE TABLE [dbo].[PreviousSchoolDetails]
+Delete from [dbo].[AdmissionForms]
 
 ALTER TABLE [dbo].[StudentInfoDetails] ALTER COLUMN middle_name nvarchar(255) NULL
 ALTER TABLE [dbo].[StudentInfoDetails] ALTER COLUMN last_name nvarchar(255) NULL

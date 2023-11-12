@@ -23,7 +23,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
         {
             RuleFor(p => p.FormId).NotNull().WithErrorCode("FormId").WithMessage("FormId cannot be null");
             RuleFor(p => p.Academicid).NotNull().WithErrorCode("Academicid").WithMessage("Academicid cannot be null")
-                 .GreaterThan(0).WithErrorCode("Academicid").WithMessage("Academicid should be greater 0");
+                 .GreaterThan(0).WithErrorCode("Academicid").WithMessage("Academicid should be greater than 0");
 
 
             RuleFor(p => p.NameofStudent).Matches(onlyAlphabet).WithErrorCode("NameofStudent").WithMessage("NameofStudent should contains only Alphabets");
