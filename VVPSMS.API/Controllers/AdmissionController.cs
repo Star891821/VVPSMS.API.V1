@@ -447,8 +447,10 @@ namespace VVPSMS.API.Controllers
                                                             DocumentPath = filePath,
                                                             FormId = result.FormId,
                                                             MstdocumenttypesId = admissionFormDto.AdmissionDocuments[i].MstdocumenttypesId,
-                                                            CreatedAt = DateTime.Now,
-                                                            ModifiedAt = DateTime.Now,
+                                                            CreatedAt = admissionFormDto.AdmissionDocuments[i].CreatedAt,
+                                                            CreatedBy = admissionFormDto.AdmissionDocuments[i].CreatedBy,
+                                                            ModifiedAt = admissionFormDto.AdmissionDocuments[i].ModifiedAt,
+                                                            ModifiedBy = admissionFormDto.AdmissionDocuments[i].ModifiedBy
                                                         };
                                                         result.AdmissionDocuments.Add(admissionDocument);
                                                         var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
