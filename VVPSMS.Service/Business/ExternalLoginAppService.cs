@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
@@ -24,17 +25,19 @@ namespace VVPSMS.Service.Business
         }
         public async Task<LoginResponseDto> GoogleAuthenticationAsync(string authCode)
         {
-            var creds = $"client_id={_GoogleConfig.ClientId}&client_secret={_GoogleConfig.ClientSecret}&code={authCode}" +
-                $"&grant_type={_GoogleConfig.GrantType}&redirect_uri={_GoogleConfig.RedirectUri}";
+            //var creds = $"client_id={_GoogleConfig.ClientId}&client_secret={_GoogleConfig.ClientSecret}&code={authCode}" +
+            //    $"&grant_type={_GoogleConfig.GrantType}&redirect_uri={_GoogleConfig.RedirectUri}";
+            var creds = $"client_id=213745833496-bjl44i73ncddjir21bkm0c06774a2gnl.apps.googleusercontent.com&client_secret=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&code={authCode}" +
+                $"&grant_type=authorization_code&redirect_uri=https://localhost:7187/api/ExternalLogin/GoogleCallback/google/callback";
 
-            var accessToken = GetResponse(creds, _GoogleConfig.TokenUrl);
+            var accessToken = GetResponse(creds, "https://oauth2.googleapis.com/token");
 
             if (accessToken == null)
             {
                 throw new UnauthorizedAccessException("Invalid authentication code.");
             }
 
-            var result = await GetUserInfo(accessToken, _GoogleConfig.GraphUrl);
+            var result = await GetUserInfo(accessToken, "https://www.googleapis.com/oauth2/v3/userinfo");
 
             var items = JsonConvert.DeserializeObject<GoogleUserInfo>(result);
 
@@ -285,6 +288,8 @@ namespace VVPSMS.Service.Business
             //return ret;
             return true;
         }
+
+        
         private string GetEmailFromToken(string idToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

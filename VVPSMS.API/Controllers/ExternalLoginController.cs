@@ -38,7 +38,7 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"GoogleAuthenticationAsync API Started");
-                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GoogleAuthenticationAsync API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+              //  _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GoogleAuthenticationAsync API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var ret = await _appSvc.GoogleAuthenticationAsync(request.userId);
                 return ret;
             }
@@ -54,7 +54,7 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GoogleAuthenticationAsync API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
-        [ApiExplorerSettings(IgnoreApi = true)]
+       [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("google/callback")]
         public async Task<bool> GoogleCallbackAsync()
         {
@@ -113,7 +113,7 @@ namespace VVPSMS.API.Controllers
         /// MicrosoftCallbackAsync
         /// </summary>
         /// <returns></returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+      //  [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("microsoft/callback")]
         public async Task<bool> MicrosoftCallbackAsync()
         {
