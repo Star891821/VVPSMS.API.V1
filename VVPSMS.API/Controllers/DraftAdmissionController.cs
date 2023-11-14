@@ -380,7 +380,7 @@ namespace VVPSMS.API.Controllers
                                         {
                                             base64stringwithoutsignature = Base64FileContent;
                                         }
-                                        if (!string.IsNullOrEmpty(base64stringwithoutsignature))
+                                        if (IsBase64(base64stringwithoutsignature))
                                         {
                                             byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
                                             var fileDetails = aradmissionFormDto.ArAdmissionDocuments[i].DocumentName;
@@ -403,12 +403,14 @@ namespace VVPSMS.API.Controllers
                                                 ModifiedAt = DateTime.Now,
                                             };
                                             result.ArAdmissionDocuments.Add(aradmissionDocument);
-                                            var resultDocuments = _mapper.Map<List<ArAdmissionDocument>>(result.ArAdmissionDocuments);
-                                            if (resultDocuments.Count > 0)
-                                            {
-                                                await _unitOfWork.DraftAdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
-                                                _unitOfWork.Complete();
-                                            }
+                                            
+
+                                        }
+                                        else
+                                        {
+                                            _logger.Information($"ArAdmissionDocuments File Didn't save since FileContents is not of type Base64 ");
+                                            _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "listOfArAdmissionDocuments or ArformID is Null", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
 
                                         }
 
@@ -421,6 +423,16 @@ namespace VVPSMS.API.Controllers
                                     value = ex.Message;
                                 }
                             }
+                            if (result.ArAdmissionDocuments != null && result.ArAdmissionDocuments.Count > 0)
+                            {
+                                var resultDocuments = _mapper.Map<List<ArAdmissionDocument>>(result.ArAdmissionDocuments);
+                                if (resultDocuments.Count > 0)
+                                {
+                                    await _unitOfWork.DraftAdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
+                                    _unitOfWork.Complete();
+                                }
+                            }
+                          
                         }
                         else
                         {
@@ -466,7 +478,23 @@ namespace VVPSMS.API.Controllers
             return StatusCode(statusCode, value);
         }
 
+        public static bool IsBase64(string base64String)
+        {
+            if (string.IsNullOrEmpty(base64String) || base64String.Length % 4 != 0
+               || base64String.Contains(" ") || base64String.Contains("\t") || base64String.Contains("\r") || base64String.Contains("\n"))
+                return false;
 
+            try
+            {
+                Convert.FromBase64String(base64String);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                // Handle the exception
+            }
+            return false;
+        }
 
         [HttpDelete]
         [Authorize]

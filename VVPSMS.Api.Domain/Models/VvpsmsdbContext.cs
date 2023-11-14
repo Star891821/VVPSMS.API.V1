@@ -107,7 +107,7 @@ public partial class VvpsmsdbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=192.168.59.3;Initial Catalog=VVPSMSDB;User Id=sa;Password=D#$q2023P@s;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Integrated Security=false;");
+        => optionsBuilder.UseSqlServer("Server=MSI;Initial Catalog=VVPSMSDB;User Id=sa;Password=1992;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Integrated Security=false;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -307,7 +307,9 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.Property(e => e.AremergencycontactdetailsId).HasColumnName("aremergencycontactdetails_id");
             entity.Property(e => e.ArformId).HasColumnName("arform_id");
-            entity.Property(e => e.ContactNumber).HasColumnName("contact_number");
+            entity.Property(e => e.ContactNumber)
+                .HasMaxLength(100)
+                .HasColumnName("contact_number");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
@@ -373,7 +375,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("occupation");
             entity.Property(e => e.OfficeAddress)
-                .HasMaxLength(100)
+                .HasMaxLength(255)
                 .HasColumnName("office_address");
             entity.Property(e => e.PanNumber)
                 .HasMaxLength(100)
@@ -423,7 +425,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("dateOf_leavingschool");
             entity.Property(e => e.HasapplicanteverExpelledorsuspended)
-                .HasMaxLength(25)
+                .HasMaxLength(255)
                 .HasColumnName("hasapplicantever_expelledorsuspended");
             entity.Property(e => e.MediumofInstruction)
                 .HasMaxLength(255)
@@ -539,7 +541,9 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.VisionRight)
                 .HasMaxLength(255)
                 .HasColumnName("vision_right");
-            entity.Property(e => e.Weight).HasColumnName("weight");
+            entity.Property(e => e.Weight)
+                .HasMaxLength(100)
+                .HasColumnName("weight");
 
             entity.HasOne(d => d.Arform).WithMany(p => p.ArStudentHealthInfoDetails)
                 .HasForeignKey(d => d.ArformId)
@@ -727,7 +731,9 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasKey(e => e.EmergencycontactdetailsId).HasName("PK__Emergenc__BFAEBFB9EE31B3C8");
 
             entity.Property(e => e.EmergencycontactdetailsId).HasColumnName("emergencycontactdetails_id");
-            entity.Property(e => e.ContactNumber).HasColumnName("contact_number");
+            entity.Property(e => e.ContactNumber)
+                .HasMaxLength(100)
+                .HasColumnName("contact_number");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
@@ -792,7 +798,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("occupation");
             entity.Property(e => e.OfficeAddress)
-                .HasMaxLength(100)
+                .HasMaxLength(255)
                 .HasColumnName("office_address");
             entity.Property(e => e.PanNumber)
                 .HasMaxLength(100)
@@ -1299,7 +1305,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasColumnName("dateOf_leavingschool");
             entity.Property(e => e.FormId).HasColumnName("form_id");
             entity.Property(e => e.HasapplicanteverExpelledorsuspended)
-                .HasMaxLength(25)
+                .HasMaxLength(255)
                 .HasColumnName("hasapplicantever_expelledorsuspended");
             entity.Property(e => e.MediumofInstruction)
                 .HasMaxLength(255)
@@ -1485,7 +1491,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("vision_right");
             entity.Property(e => e.Weight)
-                .HasMaxLength(255)
+                .HasMaxLength(100)
                 .HasColumnName("weight");
 
             entity.HasOne(d => d.Form).WithMany(p => p.StudentHealthInfoDetails)

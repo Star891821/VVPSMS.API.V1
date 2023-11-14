@@ -19,7 +19,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public string? Height { get; set; }
 
-        public int? Weight { get; set; }
+        public string? Weight { get; set; }
 
         public string? ImmunizationStatus { get; set; }
 

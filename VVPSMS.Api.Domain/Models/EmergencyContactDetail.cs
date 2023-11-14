@@ -11,7 +11,7 @@ public partial class EmergencyContactDetail
 
     public string? Name { get; set; }
 
-    public int? ContactNumber { get; set; }
+    public string? ContactNumber { get; set; }
 
     public string? Relationship { get; set; }
 

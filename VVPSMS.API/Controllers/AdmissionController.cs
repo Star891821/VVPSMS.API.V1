@@ -453,13 +453,7 @@ namespace VVPSMS.API.Controllers
                                                             ModifiedBy = admissionFormDto.AdmissionDocuments[i].ModifiedBy
                                                         };
                                                         result.AdmissionDocuments.Add(admissionDocument);
-                                                        var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
-                                                        if (resultDocuments.Count > 0)
-                                                        {
-                                                            await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
-                                                            _unitOfWork.Complete();
-                                                            noOfDocumentsSaved++;
-                                                        }
+                                                        noOfDocumentsSaved++;
                                                     }
                                                     
                                                 }
@@ -476,6 +470,16 @@ namespace VVPSMS.API.Controllers
                                         {
                                             statusCode = StatusCodes.Status404NotFound;
                                             value = ex.Message;
+                                        }
+                                    }
+                                    if(result.AdmissionDocuments != null && result.AdmissionDocuments.Count > 0)
+                                    {
+                                        var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
+                                        if (resultDocuments.Count > 0)
+                                        {
+                                            await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
+                                            _unitOfWork.Complete();
+                                            
                                         }
                                     }
                                     if(noOfDocumentsSaved == admissionFormDto.AdmissionDocuments.Count)

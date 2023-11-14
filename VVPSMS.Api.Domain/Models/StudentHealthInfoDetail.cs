@@ -21,7 +21,7 @@ public partial class StudentHealthInfoDetail
 
     public string Height { get; set; } = null!;
 
-    public string Weight { get; set; } = null!;
+    public string? Weight { get; set; }
 
     public string ImmunizationStatus { get; set; } = null!;
 
