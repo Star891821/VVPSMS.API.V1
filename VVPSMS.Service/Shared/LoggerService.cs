@@ -29,28 +29,28 @@ namespace VVPSMS.Service.Shared
         }
         public void LogError(LogsDto logsDto)
         {
-            if (isLogLevel >= 4)
+            if (isLogLevel <= 4)
             {
                 PushtoDB(logsDto);
             }
         }
         public void LogDebug(LogsDto logsDto)
         {
-            if (isLogLevel >= 1)
+            if (isLogLevel <= 1)
             {
                 PushtoDB(logsDto);
             }
         }
         public void LogInfo(LogsDto logsDto)
         {
-            if (isLogLevel >= 2)
+            if (isLogLevel <= 2)
             {
                 PushtoDB(logsDto);
             }
         }
         public void LogWarning(LogsDto logsDto)
         {
-            if (isLogLevel >= 3)
+            if (isLogLevel <= 3)
             {
                 PushtoDB(logsDto);
             }
