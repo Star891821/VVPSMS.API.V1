@@ -67,7 +67,7 @@ namespace VVPSMS.API.Controllers
                 // Paging Length 10,20  
                 var length = Request.Query["length"].FirstOrDefault();
                 // Sort Column Name  
-                var sortColumn = Request.Query["columns[" + Request.Query["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+                var sortColumn = Request.Query["columns[" + Request.Query["order[1][data]"].FirstOrDefault() + "][name]"].FirstOrDefault();
 
                 //iSortCol gives your Column numebr of for which sorting is required
                 int iSortCol = Convert.ToInt32(Request.Query["order[0][column]"].FirstOrDefault());
@@ -89,6 +89,8 @@ namespace VVPSMS.API.Controllers
                 var result = _loggerService.GetAllLogs();
                 var logsData = (from templogdata in result select templogdata);
 
+                logsData = logsData.OrderByDescending(x => x.CreatedOn);
+
                 if (!string.IsNullOrEmpty(fromDate) && !string.IsNullOrEmpty(toDate))
                 {
                     DateTime fromCreatedOn = DateTime.ParseExact(fromDate, "MM/dd/yyyy", System.Globalization.CultureInfo.CurrentCulture);
@@ -103,7 +105,7 @@ namespace VVPSMS.API.Controllers
                 }
                 
 
-                    if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
+                if (!string.IsNullOrEmpty(sortColumn) && !string.IsNullOrEmpty(sortColumnDirection))
                 {
                     if (sortColumnDirection == "asc")
                     {
@@ -127,18 +129,27 @@ namespace VVPSMS.API.Controllers
                                                 || m.Url.Contains(searchValue));
 
                     // Call SortFunction to provide sorted Data, then Skip using iDisplayStart  
-                    logsData = SortFunction(iSortCol, sortColumnDirection, logsData).Skip(skip).ToList();
+                    logsData = SortFunction(iSortCol, sortColumnDirection, logsData).ToList();
                 }
 
                 // Call SortFunction to provide sorted Data, then Skip using iDisplayStart  
-                logsData = SortFunction(iSortCol, sortColumnDirection, logsData).Skip(skip).ToList();
+                logsData = SortFunction(iSortCol, sortColumnDirection, logsData).ToList();
 
                 //total number of rows count   
                 recordsTotal = logsData.Count();
+
+                
                 //Paging   
-                var data = logsData.ToList();
+                if (pageSize == -1)
+                {
+                    logsData = logsData.Skip(skip);
+                } else
+                {
+                    logsData = logsData.Skip(skip).Take(pageSize);
+                }
+                
                 //Returning Json Data  
-                var jsonData = (new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+                var jsonData = (new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = logsData });
                 return Ok(jsonData);
             }
             catch (Exception)
@@ -153,9 +164,32 @@ namespace VVPSMS.API.Controllers
         {
 
             //Sorting for String columns
-            if (iSortCol == 1 || iSortCol == 2 || iSortCol == 3 || iSortCol == 4)
+            if (iSortCol == 1 || iSortCol == 2 || iSortCol == 3 || iSortCol == 4 || iSortCol == 5 || iSortCol == 6 || iSortCol == 7)
             {
-                Func<LogsDto, string> orderingFunction = (c => iSortCol == 1 ? c.CreatedOn.ToString() : iSortCol == 2 ? c.Level : c.Message); // compare the sorting column
+                Func<LogsDto, object> orderingFunction = (c =>
+                {
+                    switch (iSortCol)
+                    {
+                        case 1:
+                            return c.CreatedOn;
+                        case 2:
+                            return c.Level;
+                        case 3:
+                            return c.Message;
+                        case 4:
+                            return c.StackTrace;
+                        case 5:
+                            return c.Exception;
+                        case 6:
+                            return c.Logger;
+                        case 7:
+                            return c.Url;
+                        default:
+                            // Default sorting column when iSortCol doesn't match any specified column
+                            return c.CreatedOn;
+                    }
+                });
+                
 
                 if (sortOrder == "desc")
                 {
