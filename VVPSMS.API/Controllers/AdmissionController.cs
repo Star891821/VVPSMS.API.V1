@@ -74,7 +74,7 @@ namespace VVPSMS.API.Controllers
         }
 
         [HttpGet]
-        // [Authorize]
+        [Authorize]
         public async Task<IActionResult> GetAdmissionStatusTypes()
         {
             var statusCode = StatusCodes.Status200OK;
@@ -334,16 +334,12 @@ namespace VVPSMS.API.Controllers
             object? value = null;
             bool removeNullEntries = false;
             bool isValidAdmissionStatus = false;
-            IDbContextTransaction dbContextTransaction = null;
 
             var validationResult = _admissionValidator.Validate(admissionFormDto);
             if (validationResult.IsValid)
             {
-
                 try
                 {
-
-
                     if (admissionFormDto != null)
                     {
 
@@ -485,13 +481,15 @@ namespace VVPSMS.API.Controllers
                                     if(noOfDocumentsSaved == admissionFormDto.AdmissionDocuments.Count)
                                     {
                                         _unitOfWork.CommitTransaction();
-                                        value = "Admission Form ID :" + result.FormId;
+                                        value = "Admission Form ID :" + result.FormId + Environment.NewLine +
+                                            "Message: Success";
                                         statusCode = StatusCodes.Status200OK;
                                     }
                                     else
                                     {
                                         _unitOfWork.RollBack();
-                                        value = "Admission did not save since documents didnot save";
+                                        value = "Admission did not save since documents didnot save" + Environment.NewLine +
+                                            "Message: Failure";
                                         statusCode = StatusCodes.Status422UnprocessableEntity;
                                     }
                                 }
@@ -509,7 +507,8 @@ namespace VVPSMS.API.Controllers
                         else
                         {
                             statusCode = StatusCodes.Status404NotFound;
-                            value = "Invalid Admission Status Code";
+                            value = "Invalid Admission Status Code" + Environment.NewLine +
+                                            "Message: Failure";
                             _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Invalid Admission Status Code", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
 
                             _logger.Information($"Invalid Admission Status Code");
@@ -522,7 +521,8 @@ namespace VVPSMS.API.Controllers
 
                         _logger.Information($"Admission Form is null");
                         statusCode = StatusCodes.Status400BadRequest;
-                        value = "Admission Form is null";
+                        value = "Admission Form is null" + Environment.NewLine +
+                                            "Message: Failure";
                     }
                 }
                 catch (Exception ex)
@@ -531,7 +531,8 @@ namespace VVPSMS.API.Controllers
                     _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at InsertOrUpdate for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                     statusCode = StatusCodes.Status500InternalServerError;
                     _unitOfWork.RollBack();
-                    value = ex.Message;
+                    value = ex.Message + Environment.NewLine +
+                                            "Message: Failure";
                 }
                 finally
                 {

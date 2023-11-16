@@ -54,11 +54,11 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
 
             RuleFor(p => p.DateOfIssue).NotEmpty().WithErrorCode("DateOfIssue").WithMessage("DateOfIssue cannot be Empty")
               .Must(BeAValidDate).WithErrorCode("DateOfIssue").WithMessage("DateOfIssue should be valid date")
-              .LessThan(p => p.DateOfExpiry).WithErrorCode("DateOfIssue").WithMessage("DateOfIssue should be less than Expiry date");
+              .LessThan(p => p.DateOfExpiry).WithErrorCode("DateOfIssue").WithMessage("DateOfIssue should be less than DateOfExpiry");
 
             RuleFor(p => p.DateOfExpiry).NotEmpty().WithErrorCode("DateOfExpiry").WithMessage("DateOfExpiry cannot be Empty")
               .Must(BeAValidDate).WithErrorCode("DateOfExpiry").WithMessage("DateOfExpiry should be valid date")
-              .GreaterThan(p => p.DateOfIssue).WithErrorCode("DateOfExpiry").WithMessage("DateOfExpiry should be greater than Issue date");
+              .GreaterThan(p => p.DateOfIssue).WithErrorCode("DateOfExpiry").WithMessage("DateOfExpiry should be greater than DateOfIssue");
 
             RuleFor(p => p.OtherKnownLanguages).Matches(onlyAlphabet).WithErrorCode("OtherKnownLanguages").WithMessage("OtherKnownLanguages should contains only Alphabets");
 

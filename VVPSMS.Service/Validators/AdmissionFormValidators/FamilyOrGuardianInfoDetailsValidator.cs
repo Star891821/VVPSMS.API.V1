@@ -57,11 +57,11 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
 
             RuleFor(p => p.Passportissuedate).NotEmpty().WithErrorCode("Passportissuedate").WithMessage("Passportissuedate cannot be Empty")
               .Must(BeAValidDate).WithErrorCode("Passportissuedate").WithMessage("DateOfIssue should be valid date")
-              .LessThan(p => p.Passportexpirydate).WithErrorCode("Passportissuedate").WithMessage("Passportissuedate should be less than Expiry date");
+              .LessThan(p => p.Passportexpirydate).WithErrorCode("Passportissuedate").WithMessage("Passportissuedate should be less than Passportexpirydate");
 
             RuleFor(p => p.Passportexpirydate).NotEmpty().WithErrorCode("Passportexpirydate").WithMessage("Passportexpirydate cannot be Empty")
               .Must(BeAValidDate).WithErrorCode("Passportexpirydate").WithMessage("Passportexpirydate should be valid date")
-              .GreaterThan(p => p.Passportissuedate).WithErrorCode("Passportissuedate").WithMessage("Passportexpirydate should be greater than Issue date");
+              .GreaterThan(p => p.Passportissuedate).WithErrorCode("Passportissuedate").WithMessage("Passportexpirydate should be greater than Passportissuedate");
 
 
             RuleFor(p => p.Contact).NotNull().WithErrorCode("Contact").WithMessage("Contact cannot be null")

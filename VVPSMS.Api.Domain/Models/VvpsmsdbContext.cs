@@ -589,7 +589,7 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.Property(e => e.ArstudentinfoId).HasColumnName("arstudentinfo_id");
             entity.Property(e => e.AadharNumber)
-                .HasMaxLength(100)
+                .HasMaxLength(20)
                 .HasColumnName("aadhar_number");
             entity.Property(e => e.Age).HasColumnName("age");
             entity.Property(e => e.ArformId).HasColumnName("arform_id");
@@ -619,6 +619,7 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.Gender)
                 .HasMaxLength(80)
                 .HasColumnName("gender");
+            entity.Property(e => e.Ispresentaddresspermanentaddress).HasDefaultValueSql("('FALSE')");
             entity.Property(e => e.LastName)
                 .HasMaxLength(255)
                 .HasColumnName("last_name");
@@ -1537,7 +1538,9 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasKey(e => e.StudentinfoId).HasName("PK__StudentI__C396B23FA6ABBAC9");
 
             entity.Property(e => e.StudentinfoId).HasColumnName("studentinfo_id");
-            entity.Property(e => e.AadharNumber).HasColumnName("aadhar_number");
+            entity.Property(e => e.AadharNumber)
+                .HasMaxLength(20)
+                .HasColumnName("aadhar_number");
             entity.Property(e => e.Age).HasColumnName("age");
             entity.Property(e => e.Caste)
                 .HasMaxLength(100)
@@ -1566,6 +1569,7 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.Gender)
                 .HasMaxLength(80)
                 .HasColumnName("gender");
+            entity.Property(e => e.Ispresentaddresspermanentaddress).HasDefaultValueSql("('FALSE')");
             entity.Property(e => e.LastName)
                 .HasMaxLength(255)
                 .HasColumnName("last_name");

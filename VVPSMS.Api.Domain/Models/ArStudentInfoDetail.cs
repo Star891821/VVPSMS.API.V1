@@ -63,5 +63,7 @@ public partial class ArStudentInfoDetail
 
     public int? ModifiedBy { get; set; }
 
+    public bool? Ispresentaddresspermanentaddress { get; set; }
+
     public virtual ArAdmissionForm? Arform { get; set; }
 }
