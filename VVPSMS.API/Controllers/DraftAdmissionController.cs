@@ -420,7 +420,7 @@ namespace VVPSMS.API.Controllers
                                 catch (Exception ex)
                                 {
                                     statusCode = StatusCodes.Status404NotFound;
-                                    value = ex.Message + Environment.NewLine + "Message: Failure";
+                                    value = new { DraftAdmissionID = "", Message = ex.Message };
                                 }
                             }
                             if (result.ArAdmissionDocuments != null && result.ArAdmissionDocuments.Count > 0)
@@ -443,18 +443,14 @@ namespace VVPSMS.API.Controllers
 
                     }
                     #endregion
-
-                    value = "Draft Admission ID :" + result.ArformId + Environment.NewLine +
-                                            "Message: Success";
-
+                    value = new { DraftAdmissionID = result.ArformId, Message = "Success" };
                 }
                 else
                 {
                     _logger.Information($"DraftAdmission Form is null");
                     _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "DraftAdmission Form is null", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                     statusCode = StatusCodes.Status400BadRequest;
-                    value = "DraftAdmission Form is null" + Environment.NewLine +
-                                            "Message: Failure";
+                    value = new { DraftAdmissionID = "", Message = "DraftAdmission Form is null" };
                 }
             }
             catch (Exception ex)
@@ -462,8 +458,7 @@ namespace VVPSMS.API.Controllers
                 _logger.Error($"Something went wrong inside InsertOrUpdate for" + typeof(DraftAdmissionController).FullName + "entity with exception" + ex.Message);
                 _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at InsertOrUpdate for" + typeof(DraftAdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 statusCode = StatusCodes.Status500InternalServerError;
-                value = ex.Message + Environment.NewLine +
-                                            "Message: Failure";
+                value = new { DraftAdmissionID = "", Message = ex.Message };
             }
             finally
             {
