@@ -36,3 +36,7 @@ ALTER TABLE [dbo].[ArStudentInfoDetails] ALTER COLUMN aadhar_number nvarchar(20)
 
 ALTER TABLE [dbo].[StudentInfoDetails] add  Ispresentaddresspermanentaddress BIT default 'FALSE';
 ALTER TABLE [dbo].[ArStudentInfoDetails] add  Ispresentaddresspermanentaddress BIT default 'FALSE';
+
+
+ALTER TABLE [dbo].[FamilyOrGuardianInfoDetails] ALTER COLUMN aadhar_number nvarchar(20) NOT NULL
+ALTER TABLE [dbo].[ArFamilyOrGuardianInfoDetails] ALTER COLUMN aadhar_number nvarchar(20) NULL

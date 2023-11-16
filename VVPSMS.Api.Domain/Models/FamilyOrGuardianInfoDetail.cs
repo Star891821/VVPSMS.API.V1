@@ -25,7 +25,7 @@ public partial class FamilyOrGuardianInfoDetail
 
     public string? OfficeAddress { get; set; }
 
-    public int AadharNumber { get; set; }
+    public string AadharNumber { get; set; } = null!;
 
     public string? PanNumber { get; set; }
 

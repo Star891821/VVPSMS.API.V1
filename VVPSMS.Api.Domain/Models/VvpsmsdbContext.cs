@@ -339,7 +339,7 @@ public partial class VvpsmsdbContext : DbContext
 
             entity.Property(e => e.ArfamilyorguardianinfodetailsId).HasColumnName("arfamilyorguardianinfodetails_id");
             entity.Property(e => e.AadharNumber)
-                .HasMaxLength(100)
+                .HasMaxLength(20)
                 .HasColumnName("aadhar_number");
             entity.Property(e => e.AnnualIncome).HasColumnName("annual_income");
             entity.Property(e => e.ArformId).HasColumnName("arform_id");
@@ -764,7 +764,9 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasKey(e => e.FamilyorguardianinfodetailsId).HasName("PK__FamilyOr__8B52AFBED9FAC11C");
 
             entity.Property(e => e.FamilyorguardianinfodetailsId).HasColumnName("familyorguardianinfodetails_id");
-            entity.Property(e => e.AadharNumber).HasColumnName("aadhar_number");
+            entity.Property(e => e.AadharNumber)
+                .HasMaxLength(20)
+                .HasColumnName("aadhar_number");
             entity.Property(e => e.AnnualIncome).HasColumnName("annual_income");
             entity.Property(e => e.Contact)
                 .HasMaxLength(15)

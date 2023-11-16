@@ -23,7 +23,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public string? OfficeAddress { get; set; }
 
-        public int AadharNumber { get; set; }
+        public string AadharNumber { get; set; }
 
         public string? PanNumber { get; set; }
 

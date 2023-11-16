@@ -46,8 +46,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
 
             RuleFor(p => p.OfficeAddress).Matches(AlphaNumeric).WithErrorCode("OfficeAddress").WithMessage("OfficeAddress should contains only Alpha Numeric Characters");
 
-            RuleFor(p => p.AadharNumber).NotNull().WithErrorCode("AadharNumber").WithMessage("AadharNumber cannot be null")
-                          .GreaterThan(0).WithErrorCode("AadharNumber").WithMessage("AadharNumber must be greater than 0.");
+            RuleFor(p => p.AadharNumber).Matches(onlyNumbers).WithErrorCode("AadharNumber").WithMessage("AadharNumber should contains only Numeric Characters");
 
             RuleFor(p => p.PanNumber).Matches(AlphaNumeric).WithErrorCode("PanNumber").WithMessage("PanNumber should contains only Alpha Numeric Characters");
 
