@@ -29,7 +29,7 @@ public partial class StudentInfoDetail
 
     public string? Caste { get; set; }
 
-    public int? AadharNumber { get; set; }
+    public string? AadharNumber { get; set; }
 
     public string? SatsChildNumber { get; set; }
 
@@ -62,6 +62,8 @@ public partial class StudentInfoDetail
     public DateTime? ModifiedAt { get; set; }
 
     public int? ModifiedBy { get; set; }
+
+    public bool? Ispresentaddresspermanentaddress { get; set; }
 
     public virtual AdmissionForm? Form { get; set; }
 }

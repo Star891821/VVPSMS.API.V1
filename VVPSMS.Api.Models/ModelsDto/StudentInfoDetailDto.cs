@@ -30,7 +30,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public string? Caste { get; set; }
         
-        public int? AadharNumber { get; set; }
+        public string? AadharNumber { get; set; }
 
         public string? SatsChildNumber { get; set; }
 
@@ -61,6 +61,8 @@ namespace VVPSMS.Api.Models.ModelsDto
         public int? CreatedBy { get; set; }
 
         public DateTime? ModifiedAt { get; set; }
+
+        public bool? Ispresentaddresspermanentaddress { get; set; }
 
         public int? ModifiedBy { get; set; }
 

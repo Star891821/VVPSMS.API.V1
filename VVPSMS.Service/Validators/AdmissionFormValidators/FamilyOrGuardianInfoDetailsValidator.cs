@@ -46,8 +46,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
 
             RuleFor(p => p.OfficeAddress).Matches(AlphaNumeric).WithErrorCode("OfficeAddress").WithMessage("OfficeAddress should contains only Alpha Numeric Characters");
 
-            RuleFor(p => p.AadharNumber).NotNull().WithErrorCode("AadharNumber").WithMessage("AadharNumber cannot be null")
-                          .GreaterThan(0).WithErrorCode("AadharNumber").WithMessage("AadharNumber must be greater than 0.");
+            RuleFor(p => p.AadharNumber).Matches(onlyNumbers).WithErrorCode("AadharNumber").WithMessage("AadharNumber should contains only Numeric Characters");
 
             RuleFor(p => p.PanNumber).Matches(AlphaNumeric).WithErrorCode("PanNumber").WithMessage("PanNumber should contains only Alpha Numeric Characters");
 
@@ -57,11 +56,11 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
 
             RuleFor(p => p.Passportissuedate).NotEmpty().WithErrorCode("Passportissuedate").WithMessage("Passportissuedate cannot be Empty")
               .Must(BeAValidDate).WithErrorCode("Passportissuedate").WithMessage("DateOfIssue should be valid date")
-              .LessThan(p => p.Passportexpirydate).WithErrorCode("Passportissuedate").WithMessage("Passportissuedate should be less than Expiry date");
+              .LessThan(p => p.Passportexpirydate).WithErrorCode("Passportissuedate").WithMessage("Passportissuedate should be less than Passportexpirydate");
 
             RuleFor(p => p.Passportexpirydate).NotEmpty().WithErrorCode("Passportexpirydate").WithMessage("Passportexpirydate cannot be Empty")
               .Must(BeAValidDate).WithErrorCode("Passportexpirydate").WithMessage("Passportexpirydate should be valid date")
-              .GreaterThan(p => p.Passportissuedate).WithErrorCode("Passportissuedate").WithMessage("Passportexpirydate should be greater than Issue date");
+              .GreaterThan(p => p.Passportissuedate).WithErrorCode("Passportissuedate").WithMessage("Passportexpirydate should be greater than Passportissuedate");
 
 
             RuleFor(p => p.Contact).NotNull().WithErrorCode("Contact").WithMessage("Contact cannot be null")

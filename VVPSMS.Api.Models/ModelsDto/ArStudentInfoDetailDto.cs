@@ -60,6 +60,8 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public DateTime? ModifiedAt { get; set; }
 
+        public bool? Ispresentaddresspermanentaddress { get; set; }
+
         public int? ModifiedBy { get; set; }
 
     }
