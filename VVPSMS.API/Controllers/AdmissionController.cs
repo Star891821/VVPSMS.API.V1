@@ -481,7 +481,7 @@ namespace VVPSMS.API.Controllers
                                     if(noOfDocumentsSaved == admissionFormDto.AdmissionDocuments.Count)
                                     {
                                         _unitOfWork.CommitTransaction();
-                                        value = "Admission Form ID :" + result.FormId + Environment.NewLine +
+                                        value = "Admission ID :" + result.FormId + Environment.NewLine +
                                             "Message: Success";
                                         statusCode = StatusCodes.Status200OK;
                                     }

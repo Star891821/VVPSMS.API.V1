@@ -444,7 +444,7 @@ namespace VVPSMS.API.Controllers
                     }
                     #endregion
 
-                    value = result.ArformId + Environment.NewLine +
+                    value = "Draft Admission ID :" + result.ArformId + Environment.NewLine +
                                             "Message: Success";
 
                 }
