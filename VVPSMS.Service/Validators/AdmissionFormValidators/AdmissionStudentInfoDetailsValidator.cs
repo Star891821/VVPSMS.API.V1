@@ -28,7 +28,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
             RuleFor(p => p.FormId).NotNull().WithErrorCode("FormId").WithMessage("FormId cannot be null");
             RuleFor(p => p.FirstName).NotEmpty().WithErrorCode("FirstName").WithMessage("FirstName cannot be Empty")
                .Matches(onlyAlphabet).WithErrorCode("FirstName").WithMessage("FirstName should contains only Alphabets");
-            RuleFor(p => p.MiddleName).Matches(onlyAlphabet).WithErrorCode("MiddleName").WithMessage("MiddleName should contains only Alphabets");
+           // RuleFor(p => p.MiddleName).Matches(onlyAlphabet).WithErrorCode("MiddleName").WithMessage("MiddleName should contains only Alphabets");
             RuleFor(p => p.LastName).Matches(onlyAlphabet).WithErrorCode("LastName").WithMessage("LastName should contains only Alphabets");
             RuleFor(p => p.Dob).NotEmpty().WithErrorCode("Dob").WithMessage("Dob cannot be Empty")
                 .Must(BeAValidDate).WithErrorCode("Dob").WithMessage("Dob should be valid date")

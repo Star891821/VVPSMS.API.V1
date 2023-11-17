@@ -29,8 +29,8 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
             
             RuleFor(p => p.Class).NotEmpty().WithErrorCode("Class").WithMessage("Class cannot be Empty")
                 .Matches(AlphaNumeric).WithErrorCode("Class").WithMessage("Class should contains Alpha Numeric Characters");
-            RuleFor(p => p.BloodGroup).NotEmpty().WithErrorCode("BloodGroup").WithMessage("BloodGroup cannot be Empty")
-                .Matches(AlphaNumeric).WithErrorCode("BloodGroup").WithMessage("BloodGroup should contains Alpha Numeric Characters");
+            RuleFor(p => p.BloodGroup).NotEmpty().WithErrorCode("BloodGroup").WithMessage("BloodGroup cannot be Empty");
+               // .Matches(AlphaNumeric).WithErrorCode("BloodGroup").WithMessage("BloodGroup should contains Alpha Numeric Characters");
             RuleFor(p => p.Height).NotEmpty().WithErrorCode("Height").WithMessage("Height cannot be Empty")
                 .Matches(AlphaNumeric).WithErrorCode("Height").WithMessage("Height should contains Alpha Numeric Characters");
             RuleFor(p => p.Weight).NotEmpty().WithErrorCode("Weight").WithMessage("Weight cannot be Empty")

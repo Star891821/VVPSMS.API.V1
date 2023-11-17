@@ -42,7 +42,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                         UpdateChildEntities(existingEntity.EmergencyContactDetails, entity.EmergencyContactDetails, (a, b) => a.EmergencycontactdetailsId == b.EmergencycontactdetailsId);
                         UpdateChildEntities(existingEntity.FamilyOrGuardianInfoDetails, entity.FamilyOrGuardianInfoDetails, (a, b) => a.FamilyorguardianinfodetailsId == b.FamilyorguardianinfodetailsId);
                         UpdateChildEntities(existingEntity.PreviousSchoolDetails, entity.PreviousSchoolDetails, (a, b) => a.PreviousschooldetailsId == b.PreviousschooldetailsId);
-                        UpdateChildEntities(existingEntity.SiblingInfos, entity.SiblingInfos, (a, b) => a.SiblingId == b.SiblingId);
+                        UpdateSiblingEntities(existingEntity.SiblingInfos, entity.SiblingInfos, (a, b) => a.SiblingId == b.SiblingId);
                         UpdateChildEntities(existingEntity.StudentHealthInfoDetails, entity.StudentHealthInfoDetails, (a, b) => a.StudenthealthinfodetailsId == b.StudenthealthinfodetailsId);
                         UpdateChildEntities(existingEntity.StudentIllnessDetails, entity.StudentIllnessDetails, (a, b) => a.StudentillnessdetailsId == b.StudentillnessdetailsId);
                         UpdateChildEntities(existingEntity.StudentInfoDetails, entity.StudentInfoDetails, (a, b) => a.StudentinfoId == b.StudentinfoId);
@@ -76,6 +76,28 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 context.Entry(itemToRemove).State = EntityState.Deleted;
                 existingCollection.Remove(itemToRemove);
             }
+
+            // Update and add new
+            foreach (var updatedItem in updatedCollection)
+            {
+                var existingItem = existingCollection.FirstOrDefault(e => areEqual(e, updatedItem));
+
+                if (existingItem != null)
+                {
+                    context.Entry(existingItem).CurrentValues.SetValues(updatedItem);
+                }
+                else
+                {
+                    existingCollection.Add(updatedItem);
+                    context.Entry(updatedItem).State = EntityState.Added;
+                }
+            }
+        }
+
+        private void UpdateSiblingEntities<T>(ICollection<T> existingCollection, ICollection<T> updatedCollection, Func<T, T, bool> areEqual)
+    where T : class
+        {
+            
 
             // Update and add new
             foreach (var updatedItem in updatedCollection)
