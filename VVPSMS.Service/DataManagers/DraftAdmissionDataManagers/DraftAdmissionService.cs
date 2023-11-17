@@ -48,7 +48,19 @@ namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
                         UpdateChildEntities(existingEntity.ArEmergencyContactDetails, entity.ArEmergencyContactDetails, (a, b) => a.AremergencycontactdetailsId == b.AremergencycontactdetailsId);
                         UpdateChildEntities(existingEntity.ArFamilyOrGuardianInfoDetails, entity.ArFamilyOrGuardianInfoDetails, (a, b) => a.ArfamilyorguardianinfodetailsId == b.ArfamilyorguardianinfodetailsId);
                         UpdateChildEntities(existingEntity.ArPreviousSchoolDetails, entity.ArPreviousSchoolDetails, (a, b) => a.ArpreviousschooldetailsId == b.ArpreviousschooldetailsId);
+
+                        var ArSiblingInfoToRemove = existingEntity.ArSiblingInfos
+                                                .Where(existingSiblingInfos => entity.ArSiblingInfos.Any(d => d.ArformId == existingSiblingInfos.ArformId))
+                                                .ToList();
+
+                        foreach (var item in ArSiblingInfoToRemove)
+                        {
+                            context.Entry(item).State = EntityState.Deleted;
+                            existingEntity.ArSiblingInfos.Remove(item);
+                        }
+
                         UpdateSiblingEntities(existingEntity.ArSiblingInfos, entity.ArSiblingInfos, (a, b) => a.ArsiblingId == b.ArsiblingId);
+                        
                         UpdateChildEntities(existingEntity.ArStudentHealthInfoDetails, entity.ArStudentHealthInfoDetails, (a, b) => a.ArstudenthealthinfodetailsId == b.ArstudenthealthinfodetailsId);
                         UpdateChildEntities(existingEntity.ArStudentIllnessDetails, entity.ArStudentIllnessDetails, (a, b) => a.ArstudentillnessdetailsId == b.ArstudentillnessdetailsId);
                         UpdateChildEntities(existingEntity.ArStudentInfoDetails, entity.ArStudentInfoDetails, (a, b) => a.ArstudentinfoId == b.ArstudentinfoId);
@@ -103,22 +115,11 @@ namespace VVPSMS.Service.DataManagers.DraftAdmissionDataManagers
         private void UpdateSiblingEntities<T>(ICollection<T> existingCollection, ICollection<T> updatedCollection, Func<T, T, bool> areEqual)
     where T : class
         {
-
-
-            // Update and add new
+            // add new
             foreach (var updatedItem in updatedCollection)
             {
-                var existingItem = existingCollection.FirstOrDefault(e => areEqual(e, updatedItem));
-
-                if (existingItem != null)
-                {
-                    context.Entry(existingItem).CurrentValues.SetValues(updatedItem);
-                }
-                else
-                {
-                    existingCollection.Add(updatedItem);
-                    context.Entry(updatedItem).State = EntityState.Added;
-                }
+                existingCollection.Add(updatedItem);
+                context.Entry(updatedItem).State = EntityState.Added;
             }
         }
         public override async Task<ArAdmissionForm?> GetById(int id)
