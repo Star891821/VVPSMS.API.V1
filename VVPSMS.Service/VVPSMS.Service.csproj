@@ -26,6 +26,7 @@
     <ProjectReference Include="..\VVPSMS.Api.Domain\VVPSMS.Domain.csproj" />
     <ProjectReference Include="..\VVPSMS.Api.Models\VVPSMS.Api.Models.csproj" />
     <ProjectReference Include="..\VVPSMS.Domain.Logger\VVPSMS.Domain.Logger.csproj" />
+    <ProjectReference Include="..\VVPSMS.Domain.SSO\VVPSMS.Domain.SSO.csproj" />
   </ItemGroup>
 
 </Project>

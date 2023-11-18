@@ -37,6 +37,7 @@ using VVPSMS.Service.Shared.Interfaces;
 using VVPSMS.Domain.Logger.Models;
 using FluentValidation;
 using VVPSMS.Service.Validators.AdmissionFormValidators;
+using VVPSMS.Domain.SSO.Models;
 
 try
 {
@@ -142,6 +143,9 @@ try
 
     builder.Services.AddDbContext<VvpsmsdbLogsContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMSDB_LOGS")));
+
+    builder.Services.AddDbContext<VvpsmsdbSsoContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMSDB_SSO")));
 
     builder.Services.AddTransient<ILoginService, LoginService>();
     builder.Services.AddScoped<IAdmissionUnitOfWork, AdmissionUnitOfWork>();

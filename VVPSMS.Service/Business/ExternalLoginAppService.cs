@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Text;
 using VVPSMS.Api.Models.ModelsDto;
+using VVPSMS.Domain.SSO.Models;
 using VVPSMS.Service.Models;
 using VVPSMS.Service.Repository;
 
@@ -15,83 +15,90 @@ namespace VVPSMS.Service.Business
         private readonly IJwtAuthManager _JwtManager;
         private readonly GoogleConfig _GoogleConfig;
         private readonly ILoginService _LoginService;
+        readonly VvpsmsdbSsoContext _vvpsmsdbSsoContext;
+
         private const string Email = "email";
         public ExternalLoginAppService(IJwtAuthManager jwtManager,
-            ILoginService loginService)
+            ILoginService loginService,VvpsmsdbSsoContext vvpsmsdbSsoContext)
         {
             _GoogleConfig = new GoogleConfig();
             _JwtManager = jwtManager;
             _LoginService = loginService;
+            _vvpsmsdbSsoContext = vvpsmsdbSsoContext;
         }
         public async Task<LoginResponseDto> GoogleAuthenticationAsync(string authCode)
         {
             //var creds = $"client_id={_GoogleConfig.ClientId}&client_secret={_GoogleConfig.ClientSecret}&code={authCode}" +
             //    $"&grant_type={_GoogleConfig.GrantType}&redirect_uri={_GoogleConfig.RedirectUri}";
-            var creds = $"client_id=213745833496-bjl44i73ncddjir21bkm0c06774a2gnl.apps.googleusercontent.com&client_secret=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&code={authCode}" +
-                $"&grant_type=authorization_code&redirect_uri=https://localhost:7187/api/ExternalLogin/GoogleCallback/google/callback";
-
-            var accessToken = GetResponse(creds, "https://oauth2.googleapis.com/token");
-
-            if (accessToken == null)
-            {
-                throw new UnauthorizedAccessException("Invalid authentication code.");
-            }
-
-            var result = await GetUserInfo(accessToken, "https://www.googleapis.com/oauth2/v3/userinfo");
-
-            var items = JsonConvert.DeserializeObject<GoogleUserInfo>(result);
-
-            if (items.email.IsNullOrEmpty())
-            {
-                throw new UnauthorizedAccessException("Google Authentication failed");
-            }
-
-            var loginResult = await _LoginService.GetEmployeeExternalvalidationAsync(items.email);
-
-            //if (empResult == null)
-            //{
-            //    throw new UnauthorizedAccessException("login credentials are not updated in the facility, please contact administrator");
-            //}
-
-            //if (empResult.DelStatus.Value)
-            //{
-            //    await AuditLoginAsync(empResult.Id, (int)empResult.FacilityID, "Failure-Staff is Inactive", "Google");
-            //    throw new UnauthorizedAccessException("Staff is Inactive, Please contact your administrator");
-            //}
-
-            var now = DateTime.Now;
-            var id = Guid.NewGuid();
-            //var tokens = _JwtManager.GenerateToken(empResult.QRPassCode, now, id);
-            var tokens = _JwtManager.GenerateToken("", now, id);
-            var refreshToken = _JwtManager.GenerateRefreshToken(now);
-
-           // var isSaveToken = await SaveTokenAsync(empResult.Id, refreshToken.Item1, refreshToken.Item2);
-            var isSaveToken = await SaveTokenAsync(0, refreshToken.Item1, refreshToken.Item2);
-            if (!isSaveToken)
-            {
-                //throw new EntityNotFoundException("Internal server error.");
-            }
-
-            var item = new Token
-            {
-                AccessToken = tokens.Item1,
-                AccessTokenExpiry = tokens.Item2,
-                RefreshToken = refreshToken.Item1,
-                RefreshTokenExpiry = refreshToken.Item2,
-            };
-
-            //var resultRS = new LoginRS.LoginItem
-            //{
-            //    EmployeeId = empResult.Id,
-            //    EmployeeName = empResult.EmployeeName,
-            //    EmployeeQRCode = empResult.QRPassCode,
-            //    Token = item,
-            //};
-
-            //await AuditLoginAsync(empResult.Id, (int)empResult.FacilityID, "Success", "Google");
-
-            //  var ret = new LoginRS { Result = resultRS };
+            //var creds = $"client_id=213745833496-bjl44i73ncddjir21bkm0c06774a2gnl.apps.googleusercontent.com&client_secret=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&code={authCode}" +
+            //    $"&grant_type=authorization_code&redirect_uri=https://localhost:7187/api/ExternalLogin/GoogleCallback/google/callback";
             var ret = new LoginResponseDto();
+            try
+            {
+               var googleConfigurations= _vvpsmsdbSsoContext.GoogleConfigurations.ToList();
+                foreach (var configuration in googleConfigurations)
+                {
+                   var credentails = $"client_id={configuration.ClientId}&client_secret={configuration.ClientSecretCode}&code={authCode}" +
+                    $"&grant_type={configuration.GrantType}&redirect_uri={configuration.RedirectUrl}";
+                    var accessToken = GetResponse(credentails, configuration.TokenUrl);
+                    if (accessToken == null)
+                    {
+                        throw new UnauthorizedAccessException("Invalid authentication code.");
+                    }
+                    var result = await GetUserInfo(accessToken, configuration.GraphUrl);
+                    var items = JsonConvert.DeserializeObject<GoogleUserInfo>(result);
+                    if (items.email.IsNullOrEmpty())
+                    {
+                        throw new UnauthorizedAccessException("Google Authentication failed");
+                    }
+                    var loginResult = await _LoginService.GetEmployeeExternalvalidationAsync(items.email);
+                    //if (empResult == null)
+                    //{
+                    //    throw new UnauthorizedAccessException("login credentials are not updated in the facility, please contact administrator");
+                    //}
+
+                    //if (empResult.DelStatus.Value)
+                    //{
+                    //    await AuditLoginAsync(empResult.Id, (int)empResult.FacilityID, "Failure-Staff is Inactive", "Google");
+                    //    throw new UnauthorizedAccessException("Staff is Inactive, Please contact your administrator");
+                    //}
+                    var now = DateTime.Now;
+                    var id = Guid.NewGuid();
+                    //var tokens = _JwtManager.GenerateToken(empResult.QRPassCode, now, id);
+                    var tokens = _JwtManager.GenerateToken("", now, id);
+                    var refreshToken = _JwtManager.GenerateRefreshToken(now);
+
+                    // var isSaveToken = await SaveTokenAsync(empResult.Id, refreshToken.Item1, refreshToken.Item2);
+                    var isSaveToken = await SaveTokenAsync(0, refreshToken.Item1, refreshToken.Item2);
+                    if (!isSaveToken)
+                    {
+                        //throw new EntityNotFoundException("Internal server error.");
+                    }
+
+                    var item = new Token
+                    {
+                        AccessToken = tokens.Item1,
+                        AccessTokenExpiry = tokens.Item2,
+                        RefreshToken = refreshToken.Item1,
+                        RefreshTokenExpiry = refreshToken.Item2,
+                    };
+                    //var resultRS = new LoginRS.LoginItem
+                    //{
+                    //    EmployeeId = empResult.Id,
+                    //    EmployeeName = empResult.EmployeeName,
+                    //    EmployeeQRCode = empResult.QRPassCode,
+                    //    Token = item,
+                    //};
+
+                    //await AuditLoginAsync(empResult.Id, (int)empResult.FacilityID, "Success", "Google");
+                    //  var ret = new LoginRS { Result = resultRS };                   
+                  
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
             return ret;
         }
 
