@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VVPSMS.Domain", "VVPSMS.Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VVPSMS.Service", "VVPSMS.Service\VVPSMS.Service.csproj", "{98E2F012-09E7-4BCC-B03C-D476354BA4D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VVPSMS.Domain.Logger", "VVPSMS.Domain.Logger\VVPSMS.Domain.Logger.csproj", "{C9871B14-B37B-479B-B791-BFD4B5E75E0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VVPSMS.Domain.Logger", "VVPSMS.Domain.Logger\VVPSMS.Domain.Logger.csproj", "{C9871B14-B37B-479B-B791-BFD4B5E75E0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VVPSMS.Domain.SSO", "VVPSMS.Domain.SSO\VVPSMS.Domain.SSO.csproj", "{415C92B7-6273-4698-9FFD-26E4A6F49538}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{C9871B14-B37B-479B-B791-BFD4B5E75E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9871B14-B37B-479B-B791-BFD4B5E75E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9871B14-B37B-479B-B791-BFD4B5E75E0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{415C92B7-6273-4698-9FFD-26E4A6F49538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{415C92B7-6273-4698-9FFD-26E4A6F49538}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{415C92B7-6273-4698-9FFD-26E4A6F49538}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{415C92B7-6273-4698-9FFD-26E4A6F49538}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
