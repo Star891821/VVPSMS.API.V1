@@ -3,7 +3,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage;
 using System.Text;
 using VVPSMS.Api.Models.Enums;
 using VVPSMS.Api.Models.Helpers;
@@ -451,13 +450,13 @@ namespace VVPSMS.API.Controllers
                                                         result.AdmissionDocuments.Add(admissionDocument);
                                                         noOfDocumentsSaved++;
                                                     }
-                                                    
+
                                                 }
                                                 else
                                                 {
                                                     _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Admission Is not Saved since in Document  File Content is not Base64 Type", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                                                     _logger.Information($"Admission Is not Saved since in Document  File Content is not Base64 Type");
-                                                    
+
                                                 }
                                             }
 
@@ -468,17 +467,17 @@ namespace VVPSMS.API.Controllers
                                             value = new { AdmissionID = "", Message = ex.Message };
                                         }
                                     }
-                                    if(result.AdmissionDocuments != null && result.AdmissionDocuments.Count > 0)
+                                    if (result.AdmissionDocuments != null && result.AdmissionDocuments.Count > 0)
                                     {
                                         var resultDocuments = _mapper.Map<List<AdmissionDocument>>(result.AdmissionDocuments);
                                         if (resultDocuments.Count > 0)
                                         {
                                             await _unitOfWork.AdmissionDocumentService.InsertOrUpdateRange(resultDocuments);
                                             _unitOfWork.Complete();
-                                            
+
                                         }
                                     }
-                                    if(noOfDocumentsSaved == admissionFormDto.AdmissionDocuments.Count)
+                                    if (noOfDocumentsSaved == admissionFormDto.AdmissionDocuments.Count)
                                     {
                                         _unitOfWork.CommitTransaction();
                                         value = new { AdmissionID = result.FormId, Message = "Success" };
@@ -710,14 +709,17 @@ namespace VVPSMS.API.Controllers
                 {
                     if (Directory.Exists(document.DocumentPath))
                     {
-                        DirectoryInfo directoryInfo = new DirectoryInfo(document.DocumentPath);
-
-                        foreach (FileInfo fileInfo in directoryInfo.GetFiles())
+                        foreach (FileInfo fileInfo in new DirectoryInfo(document.DocumentPath).GetFiles())
                         {
-
-                            string content = new StreamReader(fileInfo.FullName.ToString(), Encoding.UTF8).ReadToEnd();
-                            byte[] bytes = Encoding.UTF8.GetBytes(content);
+                            using FileStream fs = new FileStream(fileInfo.FullName.ToString(), FileMode.Open, FileAccess.Read);
+                            using StreamReader sr = new StreamReader(fs, Encoding.UTF8);
+                            var lines = sr.ReadToEnd();
+                           
+                           // string content = new StreamReader(fileInfo.FullName.ToString(), Encoding.UTF8).ReadToEnd();
+                            byte[] bytes = Encoding.UTF8.GetBytes(lines);
                             document.FileContentsAsBase64 = Convert.ToBase64String(bytes);
+                            sr.Close();
+                            fs.Close();
                         }
                     }
                 }

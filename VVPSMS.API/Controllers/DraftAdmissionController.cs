@@ -138,14 +138,17 @@ namespace VVPSMS.API.Controllers
                 {
                     if (Directory.Exists(document.DocumentPath))
                     {
-                        DirectoryInfo directoryInfo = new DirectoryInfo(document.DocumentPath);
-
-                        foreach (FileInfo fileInfo in directoryInfo.GetFiles())
+                        foreach (FileInfo fileInfo in new DirectoryInfo(document.DocumentPath).GetFiles())
                         {
+                            using FileStream fs = new FileStream(fileInfo.FullName.ToString(), FileMode.Open, FileAccess.Read);
+                            using StreamReader sr = new StreamReader(fs, Encoding.UTF8);
+                            var lines = sr.ReadToEnd();
 
-                            string content = new StreamReader(fileInfo.FullName.ToString(), Encoding.UTF8).ReadToEnd();
-                            byte[] bytes = Encoding.UTF8.GetBytes(content);
+                            // string content = new StreamReader(fileInfo.FullName.ToString(), Encoding.UTF8).ReadToEnd();
+                            byte[] bytes = Encoding.UTF8.GetBytes(lines);
                             document.FileContentsAsBase64 = Convert.ToBase64String(bytes);
+                            sr.Close();
+                            fs.Close();
                         }
                     }
                 }
