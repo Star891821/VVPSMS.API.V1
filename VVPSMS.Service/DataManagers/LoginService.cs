@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
+using VVPSMS.Service.Models;
 using VVPSMS.Service.Repository;
 
 namespace VVPSMS.Service.DataManagers
@@ -69,6 +70,35 @@ namespace VVPSMS.Service.DataManagers
                         }
                         break;
                 }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return loginResponseDto;
+        }
+
+        public async Task<NewLoginResponseDto> LoginDetails1(Google.Apis.Auth.GoogleJsonWebSignature.Payload payload)
+        {
+            NewLoginResponseDto loginResponseDto = null;
+            try
+            {
+                var user = await _vvpsmsdbContext.MstUsers.FirstOrDefaultAsync(x => x.Useremail == payload.Email);
+                if (user != null)
+                {
+                    var loggedInRole = await _vvpsmsdbContext.MstUserRoles.FirstOrDefaultAsync(x => x.RoleId == user.RoleId);
+                    loginResponseDto = new NewLoginResponseDto()
+                    {
+                        UserId = user.UserId,
+                        UserName = user.Username,
+                        GivenName = user.UserGivenName,
+                        Phone = user.UserPhone ?? string.Empty,
+                        Status = true,
+                        Message = "Valid User",
+                        Role = loggedInRole != null ? loggedInRole.RoleName : "Unknown"
+                    };
+                }
+                
             }
             catch (Exception ex)
             {

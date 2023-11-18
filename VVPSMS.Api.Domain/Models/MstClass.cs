@@ -7,7 +7,7 @@ public partial class MstClass
 {
     public int ClassId { get; set; }
 
-    public string ClassName { get; set; } = null!;
+    public string? ClassName { get; set; }
 
     public int ActiveYn { get; set; }
 

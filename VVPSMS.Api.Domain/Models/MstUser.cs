@@ -33,6 +33,8 @@ public partial class MstUser
 
     public DateTime? LastloginAt { get; set; }
 
+    public string? Useremail { get; set; }
+
     public virtual ICollection<Announcement> Announcements { get; set; } = new List<Announcement>();
 
     public virtual MstUserRole Role { get; set; } = null!;

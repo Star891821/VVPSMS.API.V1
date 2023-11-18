@@ -1,6 +1,16 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using crypto;
+using Google.Apis.Auth;
+using Google.Apis.Auth.OAuth2.Responses;
+using Google.Apis.Auth.OAuth2;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Amqp;
+using Microsoft.IdentityModel.Tokens;
 using NLog;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using VVPSMS.Api.Models.Logger;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.NLog;
@@ -8,6 +18,10 @@ using VVPSMS.Service.Models;
 using VVPSMS.Service.Repository;
 using VVPSMS.Service.Shared.Interfaces;
 using LogLevel = NLog.LogLevel;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Services;
+using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace VVPSMS.API.Controllers
 {
@@ -15,11 +29,15 @@ namespace VVPSMS.API.Controllers
     [ApiController]
     public class ExternalLoginController : ControllerBase
     {
+        private IConfiguration _configuration;
         private readonly IExternalLoginAppService _appSvc;
+        private readonly ILoginService _dataRepository;
         private ILog _logger;
         private readonly ILoggerService _loggerService;
-        public ExternalLoginController(IExternalLoginAppService appSvc, ILog logger, ILoggerService loggerService)
+        public ExternalLoginController(IExternalLoginAppService appSvc, ILoginService dataRepository, ILog logger, ILoggerService loggerService, IConfiguration configuration)
         {
+            _dataRepository = dataRepository;
+            _configuration = configuration;
             _appSvc = appSvc;
             _logger = logger;
             _loggerService = loggerService;
@@ -38,7 +56,7 @@ namespace VVPSMS.API.Controllers
             try
             {
                 _logger.Information($"GoogleAuthenticationAsync API Started");
-              //  _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GoogleAuthenticationAsync API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                //  _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GoogleAuthenticationAsync API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 var ret = await _appSvc.GoogleAuthenticationAsync(request.userId);
                 return ret;
             }
@@ -54,7 +72,7 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GoogleAuthenticationAsync API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
-       [ApiExplorerSettings(IgnoreApi = true)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("google/callback")]
         public async Task<bool> GoogleCallbackAsync()
         {
@@ -94,7 +112,7 @@ namespace VVPSMS.API.Controllers
             try
             {
                 await _appSvc.LogErrorAsync("MicrosoftAuthenticationAsync-Start", request.userId, "request.userId");
-               var LoginRS = await _appSvc.MicrosoftAuthenticationAsync(request);
+                var LoginRS = await _appSvc.MicrosoftAuthenticationAsync(request);
                 return LoginRS;
             }
             catch (Exception ex)
@@ -107,7 +125,7 @@ namespace VVPSMS.API.Controllers
                 _logger.Information($"MicrosoftAuthenticationAsync API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "MicrosoftAuthenticationAsync API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
-            
+
         }
         /// <summary>
         /// MicrosoftCallbackAsync
@@ -169,5 +187,61 @@ namespace VVPSMS.API.Controllers
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "AppleAuthenticationAsync API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
             }
         }
+
+        public class UserView
+        {
+            public string tokenId { get; set; }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("google")]
+        public async Task<IActionResult> Google([FromBody] UserView userView)
+        {
+            try
+            {
+                var payload = GoogleJsonWebSignature.ValidateAsync(userView.tokenId, new GoogleJsonWebSignature.ValidationSettings()).Result;
+                var user = await _dataRepository.LoginDetails1(payload);
+                var issuer = _configuration["Jwt:Issuer"];
+                var audience = _configuration["Jwt:Audience"];
+                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+                var signingCredentails = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha384Signature
+                    );
+                var subject = new ClaimsIdentity(new[]
+                {
+                        new Claim(JwtRegisteredClaimNames.Sub,user.UserId.ToString()),
+                        new Claim(JwtRegisteredClaimNames.Email,user.UserId.ToString()),
+                    });
+                var expires = DateTime.UtcNow.AddMinutes(10);
+
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = subject,
+                    Expires = expires,
+                    Issuer = issuer,
+                    Audience = audience,
+                    SigningCredentials = signingCredentails
+                };
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var jwtToken = tokenHandler.WriteToken(token);
+
+                var authResponse = new LoginAuthResponse()
+                {
+                    JwtToken = jwtToken,
+                    ExpiryDateTime = expires.ToString(),
+                    LoggedInUser = user.Role
+                };
+                return Ok(authResponse);
+            }
+            catch (Exception ex)
+            {
+                BadRequest(ex.Message);
+            }
+            return BadRequest();
+        }
+        
     }
 }
