@@ -42,6 +42,16 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                         UpdateChildEntities(existingEntity.EmergencyContactDetails, entity.EmergencyContactDetails, (a, b) => a.EmergencycontactdetailsId == b.EmergencycontactdetailsId);
                         UpdateChildEntities(existingEntity.FamilyOrGuardianInfoDetails, entity.FamilyOrGuardianInfoDetails, (a, b) => a.FamilyorguardianinfodetailsId == b.FamilyorguardianinfodetailsId);
                         UpdateChildEntities(existingEntity.PreviousSchoolDetails, entity.PreviousSchoolDetails, (a, b) => a.PreviousschooldetailsId == b.PreviousschooldetailsId);
+
+                        var SiblingInfoToRemove = existingEntity.SiblingInfos
+                                                .Where(existingSiblingInfos => entity.SiblingInfos.Any(d => d.FormId == existingSiblingInfos.FormId))
+                                                .ToList();
+
+                        foreach (var item in SiblingInfoToRemove)
+                        {
+                            context.Entry(item).State = EntityState.Deleted;
+                            existingEntity.SiblingInfos.Remove(item);
+                        }
                         UpdateSiblingEntities(existingEntity.SiblingInfos, entity.SiblingInfos, (a, b) => a.SiblingId == b.SiblingId);
                         UpdateChildEntities(existingEntity.StudentHealthInfoDetails, entity.StudentHealthInfoDetails, (a, b) => a.StudenthealthinfodetailsId == b.StudenthealthinfodetailsId);
                         UpdateChildEntities(existingEntity.StudentIllnessDetails, entity.StudentIllnessDetails, (a, b) => a.StudentillnessdetailsId == b.StudentillnessdetailsId);
@@ -95,24 +105,13 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         }
 
         private void UpdateSiblingEntities<T>(ICollection<T> existingCollection, ICollection<T> updatedCollection, Func<T, T, bool> areEqual)
-    where T : class
+   where T : class
         {
-            
-
-            // Update and add new
+            // add new
             foreach (var updatedItem in updatedCollection)
             {
-                var existingItem = existingCollection.FirstOrDefault(e => areEqual(e, updatedItem));
-
-                if (existingItem != null)
-                {
-                    context.Entry(existingItem).CurrentValues.SetValues(updatedItem);
-                }
-                else
-                {
-                    existingCollection.Add(updatedItem);
-                    context.Entry(updatedItem).State = EntityState.Added;
-                }
+                existingCollection.Add(updatedItem);
+                context.Entry(updatedItem).State = EntityState.Added;
             }
         }
         public override async Task<AdmissionForm?> GetById(int id)
