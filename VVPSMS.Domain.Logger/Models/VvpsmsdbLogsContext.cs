@@ -19,7 +19,7 @@ public partial class VvpsmsdbLogsContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=192.168.59.3;Initial Catalog=VVPSMSDB_LOGS;User Id=sa;Password=D#$q2023P@s;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Integrated Security=false;");
+        => optionsBuilder.UseSqlServer("Server=MSI;Initial Catalog=VVPSMSDB_LOGS;User Id=sa;Password=1992;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Integrated Security=false;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,6 +28,7 @@ public partial class VvpsmsdbLogsContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__Logs__3214EC0703A7DDAF");
 
             entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+            entity.Property(e => e.FormId).HasMaxLength(255);
             entity.Property(e => e.Level).HasMaxLength(10);
             entity.Property(e => e.Logger).HasMaxLength(255);
             entity.Property(e => e.Url).HasMaxLength(255);

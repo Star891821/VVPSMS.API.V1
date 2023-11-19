@@ -144,12 +144,15 @@ try
     builder.Services.AddDbContext<VvpsmsdbLogsContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMSDB_LOGS")));
 
-    builder.Services.AddDbContext<VvpsmsdbSsoContext>(options =>
+    builder.Services.AddDbContext<VvpsmsSsoContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("VVPSMSDB_SSO")));
 
     builder.Services.AddTransient<ILoginService, LoginService>();
     builder.Services.AddScoped<IAdmissionUnitOfWork, AdmissionUnitOfWork>();
     builder.Services.AddScoped<IDraftAdmissionUnitOfWork, DraftAdmissionUnitOfWork>();
+    builder.Services.AddScoped<IGoogleSSOService<GoogleConfigurationDto>, GoogleSSOService>();
+    builder.Services.AddScoped<IMicroSoftSSOService<MicroSoftConfigurationDto>, MicroSoftSSOService>();
+    builder.Services.AddScoped<IAzureSSOService<AzureBlobConfigurationDto>, AzureSSOService>();
     builder.Services.AddScoped<IEnquiryUnitOfWork, EnquiryUnitOfWork>();
     builder.Services.AddScoped<IStudentUnitOfWork, StudentUnitOfWork>();
     builder.Services.AddScoped<ITeacherUnitOfWork, TeacherUnitOfWork>();

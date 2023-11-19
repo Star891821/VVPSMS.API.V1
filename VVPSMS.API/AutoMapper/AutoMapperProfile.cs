@@ -3,6 +3,7 @@ using VVPSMS.Api.Models.Logger;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Logger.Models;
 using VVPSMS.Domain.Models;
+using VVPSMS.Domain.SSO.Models;
 
 namespace VVPSMS.API.AutoMapper
 {
@@ -50,6 +51,10 @@ namespace VVPSMS.API.AutoMapper
             CreateMap<MstDocumentType,MstDocumentTypesDto>().ReverseMap();
             CreateMap<MstEnquiryQuestionDetail, MstEnquiryQuestionDetailDto>().ReverseMap();
             CreateMap<Log, LogsDto>().ReverseMap();
+            CreateMap<GoogleConfiguration, GoogleConfigurationDto>().ReverseMap();
+            CreateMap<MicroSoftConfiguration, MicroSoftConfigurationDto>().ReverseMap();
+            CreateMap<AzureBlobConfiguration, AzureBlobConfigurationDto>().ReverseMap();
+            
         }
     }
 }

@@ -78,27 +78,45 @@ namespace VVPSMS.Service.DataManagers
             return loginResponseDto;
         }
 
-        public async Task<NewLoginResponseDto> LoginDetails1(Google.Apis.Auth.GoogleJsonWebSignature.Payload payload)
+        public async Task<NewLoginResponseDto> FetchOrInsertLoginDetails(Google.Apis.Auth.GoogleJsonWebSignature.Payload payload)
         {
-            NewLoginResponseDto loginResponseDto = null;
+            NewLoginResponseDto? loginResponseDto = null;
             try
             {
                 var user = await _vvpsmsdbContext.MstUsers.FirstOrDefaultAsync(x => x.Useremail == payload.Email);
+                MstUserRole? loggedInRole = null;
                 if (user != null)
                 {
-                    var loggedInRole = await _vvpsmsdbContext.MstUserRoles.FirstOrDefaultAsync(x => x.RoleId == user.RoleId);
-                    loginResponseDto = new NewLoginResponseDto()
-                    {
-                        UserId = user.UserId,
-                        UserName = user.Username,
-                        GivenName = user.UserGivenName,
-                        Phone = user.UserPhone ?? string.Empty,
-                        Status = true,
-                        Message = "Valid User",
-                        Role = loggedInRole != null ? loggedInRole.RoleName : "Unknown"
-                    };
+                   loggedInRole = await _vvpsmsdbContext.MstUserRoles.FirstOrDefaultAsync(x => x.RoleId == user.RoleId);                  
                 }
-                
+                else
+                {
+                    user = new MstUser()
+                    {
+                        Username = payload.Email,
+                        Userpassword = "123",
+                        UserGivenName = payload.Email,
+                        UserSurname = payload.Email,
+                        Useremail = payload.Email,
+                        UserLoginType = "User",
+                        Enforce2Fa = 0,
+                        RoleId = 1,
+                        CreatedAt = DateTime.Now
+                    };
+                    _vvpsmsdbContext.MstUsers.Add(user);
+                    _vvpsmsdbContext.SaveChanges();
+                }
+                loginResponseDto = new NewLoginResponseDto()
+                {
+                    UserId = user.UserId,
+                    UserName = user.Username,
+                    GivenName = user.UserGivenName,
+                    Phone = user.UserPhone ?? string.Empty,
+                    Status = true,
+                    Message = "Valid User",
+                    Role = loggedInRole != null ? loggedInRole.RoleName : "Unknown"
+                };
+
             }
             catch (Exception ex)
             {

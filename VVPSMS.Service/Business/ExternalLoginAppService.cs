@@ -15,11 +15,11 @@ namespace VVPSMS.Service.Business
         private readonly IJwtAuthManager _JwtManager;
         private readonly GoogleConfig _GoogleConfig;
         private readonly ILoginService _LoginService;
-        readonly VvpsmsdbSsoContext _vvpsmsdbSsoContext;
+        readonly VvpsmsSsoContext _vvpsmsdbSsoContext;
 
         private const string Email = "email";
         public ExternalLoginAppService(IJwtAuthManager jwtManager,
-            ILoginService loginService,VvpsmsdbSsoContext vvpsmsdbSsoContext)
+            ILoginService loginService, VvpsmsSsoContext vvpsmsdbSsoContext)
         {
             _GoogleConfig = new GoogleConfig();
             _JwtManager = jwtManager;
