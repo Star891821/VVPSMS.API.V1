@@ -87,6 +87,7 @@ namespace VVPSMS.API.Controllers
                 int recordsTotal = 0;
 
                 var result = _loggerService.GetAllLogs(skip, pageSize);
+                //var totalrecordscount = _loggerService.GetAllLogsCount();
                 var logsData = (from templogdata in result select templogdata);
 
                 logsData = logsData.OrderByDescending(x => x.CreatedOn);
@@ -139,16 +140,17 @@ namespace VVPSMS.API.Controllers
                 //total number of rows count   
                 recordsTotal = logsData.Count();
 
-                
-                ////Paging   
-                //if (pageSize == -1)
-                //{
-                //    logsData = logsData.Skip(skip);
-                //} else
-                //{
-                //    logsData = logsData.Skip(skip).Take(pageSize);
-                //}
-                
+
+                //Paging   
+                if (pageSize == -1)
+                {
+                    logsData = logsData.Skip(skip);
+                }
+                else
+                {
+                    logsData = logsData.Skip(skip).Take(pageSize);
+                }
+
                 //Returning Json Data  
                 var jsonData = (new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = logsData });
                 return Ok(jsonData);
