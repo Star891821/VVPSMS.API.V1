@@ -35,25 +35,25 @@ namespace VVPSMS.API.Controllers
         }
 
 
-        [HttpGet]
-        public IActionResult? GetAll()
-        {
-            try
-            {
-                _logger.Information($"GetAll API Started");
+        //[HttpGet]
+        //public IActionResult? GetAll()
+        //{
+        //    try
+        //    {
+        //        _logger.Information($"GetAll API Started");
 
-                return Ok(_loggerService.GetAllLogs());
-            }
-            catch (Exception ex)
-            {
-                _logger.Error($"Something went wrong inside GetAll API for" + typeof(UserController).FullName + "entity with exception" + ex.Message);
-                return StatusCode(500);
-            }
-            finally
-            {
-                _logger.Information($"GetAll API Completed");
-            }
-        }
+        //        return Ok(_loggerService.GetAllLogs());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Error($"Something went wrong inside GetAll API for" + typeof(UserController).FullName + "entity with exception" + ex.Message);
+        //        return StatusCode(500);
+        //    }
+        //    finally
+        //    {
+        //        _logger.Information($"GetAll API Completed");
+        //    }
+        //}
 
         [HttpGet]
         public IActionResult LoadData()
@@ -86,7 +86,7 @@ namespace VVPSMS.API.Controllers
                 int skip = start != null ? Convert.ToInt32(start) : 0;
                 int recordsTotal = 0;
 
-                var result = _loggerService.GetAllLogs();
+                var result = _loggerService.GetAllLogs(skip, pageSize);
                 var logsData = (from templogdata in result select templogdata);
 
                 logsData = logsData.OrderByDescending(x => x.CreatedOn);
@@ -140,14 +140,14 @@ namespace VVPSMS.API.Controllers
                 recordsTotal = logsData.Count();
 
                 
-                //Paging   
-                if (pageSize == -1)
-                {
-                    logsData = logsData.Skip(skip);
-                } else
-                {
-                    logsData = logsData.Skip(skip).Take(pageSize);
-                }
+                ////Paging   
+                //if (pageSize == -1)
+                //{
+                //    logsData = logsData.Skip(skip);
+                //} else
+                //{
+                //    logsData = logsData.Skip(skip).Take(pageSize);
+                //}
                 
                 //Returning Json Data  
                 var jsonData = (new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = logsData });

@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using VVPSMS.Api.Models.Logger;
 using VVPSMS.Domain.Logger.Models;
 using VVPSMS.Domain.Models;
@@ -22,9 +23,16 @@ namespace VVPSMS.Service.Shared
             _config = config;
             isLogLevel = Convert.ToInt16(_config["Logs:LogLevel"] ?? "4");
         }
-        public List<LogsDto> GetAllLogs()
+        public List<LogsDto> GetAllLogs(int skip, int pageSize)
         {
-            var result = _vvpsmsdbLogsContext.Logs.OrderByDescending(x=>x.CreatedOn).ToList();
+            var query = _vvpsmsdbLogsContext.Logs.OrderByDescending(x => x.CreatedOn).Skip(skip);
+
+            if (pageSize != -1)
+            {
+                query = query.Take(pageSize);
+            }
+
+            var result = query.ToList();
             return _mapper.Map<List<LogsDto>>(result);
         }
         public void LogError(LogsDto logsDto)

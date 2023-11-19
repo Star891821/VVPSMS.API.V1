@@ -6,7 +6,7 @@ namespace VVPSMS.Service.Shared.Interfaces
 {
     public interface ILoggerService
     {
-        List<LogsDto> GetAllLogs();
+        List<LogsDto> GetAllLogs(int skip, int pageSize);
         void LogInfo(LogsDto logsDto);
 
         void LogError(LogsDto logsDto);
