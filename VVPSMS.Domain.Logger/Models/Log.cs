@@ -20,4 +20,6 @@ public partial class Log
     public string? Logger { get; set; }
 
     public string? Url { get; set; }
+
+    public string? FormId { get; set; }
 }

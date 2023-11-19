@@ -126,7 +126,8 @@ namespace VVPSMS.API.Controllers
                                                 || m.StackTrace.Contains(searchValue)
                                                 || m.Exception.Contains(searchValue)
                                                 || m.Logger.Contains(searchValue)
-                                                || m.Url.Contains(searchValue));
+                                                || m.Url.Contains(searchValue)
+                                                || m.FormId.Contains(searchValue));
 
                     // Call SortFunction to provide sorted Data, then Skip using iDisplayStart  
                     logsData = SortFunction(iSortCol, sortColumnDirection, logsData).ToList();
@@ -164,7 +165,7 @@ namespace VVPSMS.API.Controllers
         {
 
             //Sorting for String columns
-            if (iSortCol == 1 || iSortCol == 2 || iSortCol == 3 || iSortCol == 4 || iSortCol == 5 || iSortCol == 6 || iSortCol == 7)
+            if (iSortCol == 1 || iSortCol == 2 || iSortCol == 3 || iSortCol == 4 || iSortCol == 5 || iSortCol == 6 || iSortCol == 7 || iSortCol == 8)
             {
                 Func<LogsDto, object> orderingFunction = (c =>
                 {
@@ -184,6 +185,8 @@ namespace VVPSMS.API.Controllers
                             return c.Logger;
                         case 7:
                             return c.Url;
+                        case 8:
+                            return c.FormId;
                         default:
                             // Default sorting column when iSortCol doesn't match any specified column
                             return c.CreatedOn;
