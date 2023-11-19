@@ -1,0 +1,1 @@
+ALTER TABLE [dbo].[Logs] add FormId nvarchar(255) null
