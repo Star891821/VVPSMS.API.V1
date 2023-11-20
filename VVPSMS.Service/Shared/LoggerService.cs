@@ -25,14 +25,7 @@ namespace VVPSMS.Service.Shared
         }
         public List<LogsDto> GetAllLogs(int skip, int pageSize)
         {
-            var query = _vvpsmsdbLogsContext.Logs.OrderByDescending(x => x.CreatedOn);
-
-            //if (pageSize != -1)
-            //{
-            //    query = query.Take(pageSize);
-            //}
-
-            var result = query.ToList();
+            var result = _vvpsmsdbLogsContext.Logs.OrderByDescending(x => x.CreatedOn).Skip(skip).Take(pageSize);
             return _mapper.Map<List<LogsDto>>(result);
         }
 

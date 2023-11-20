@@ -1,4 +1,5 @@
-﻿using Google.Apis.Auth;
+﻿using Azure.Storage.Blobs.Models;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.API.NLog;
+using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository;
 using VVPSMS.Service.Shared.Interfaces;
 
@@ -224,7 +226,13 @@ namespace VVPSMS.API.Controllers
                         {
                             JwtToken = jwtToken,
                             ExpiryDateTime = expires.ToString(),
-                            LoggedInUser = user.Role
+                            //LoggedInUser = user.Role,
+                            UserId = user.Id,
+                            UserName = user.UserName,
+                            GivenName = user.GivenName,
+                            SurName = user.SurName,
+                            Phone = user.Phone,
+                            Role = user.Role
                         };
                         return Ok(authResponse);
                     }
