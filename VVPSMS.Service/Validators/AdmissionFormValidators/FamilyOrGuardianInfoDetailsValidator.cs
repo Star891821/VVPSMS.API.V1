@@ -12,7 +12,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
     public class FamilyOrGuardianInfoDetailsValidator : AbstractValidator<FamilyOrGuardianInfoDetailDto>
     {
         readonly Regex onlyAlphabet = new Regex("^\\D+$");
-        readonly Regex AlphaNumeric = new Regex("^[a-zA-Z0-9]*$");
+        readonly Regex AlphaNumeric = new Regex("^[0-9a-zA-Z\" \"''-_@]+$");
         readonly Regex onlyNumbers = new Regex("^[0-9]*$");
         private bool BeAValidDate(DateTime date)
         {
@@ -71,7 +71,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
                 .EmailAddress().WithErrorCode("Email").WithMessage("A valid email is required");
 
             RuleFor(p => p.Preferredcontact).NotEmpty().WithErrorCode("Preferredcontact").WithMessage("Preferredcontact cannot be Empty")
-                          .Matches(onlyAlphabet).WithErrorCode("Preferredcontact").WithMessage("Preferredcontact should contains only Alphabets");
+                          .Matches(onlyNumbers).WithErrorCode("Preferredcontact").WithMessage("Preferredcontact should contains only Numbers");
 
         }
     }

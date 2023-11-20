@@ -13,7 +13,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
     public class AdmissionStudentInfoDetailsValidator : AbstractValidator<StudentInfoDetailDto>
     {
         readonly Regex onlyAlphabet = new Regex("^\\D+$");
-        readonly Regex AlphaNumeric = new Regex("^[a-zA-Z0-9]*$");
+        readonly Regex AlphaNumeric = new Regex("^[0-9a-zA-Z\" \"''-_@]+$");//   //^[a-zA-Z0-9]*$
         readonly Regex onlyNumbers = new Regex("^[0-9]*$");
         private bool BeAValidDate(DateTime date)
         {
@@ -65,7 +65,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
             RuleFor(p => p.TypeofFamily).NotEmpty().WithErrorCode("TypeofFamily").WithMessage("TypeofFamily cannot be Empty")
                 .Matches(onlyAlphabet).WithErrorCode("TypeofFamily").WithMessage("TypeofFamily should contains only Alphabets");
             RuleFor(p => p.PresentAddress).NotEmpty().WithErrorCode("PresentAddress").WithMessage("PresentAddress cannot be Empty")
-                .Matches(AlphaNumeric).WithErrorCode("PresentAddress").WithMessage("PresentAddress should contains Alpha Numeric Characters");
+             .Matches(AlphaNumeric).WithErrorCode("PresentAddress").WithMessage("PresentAddress should contains Alpha Numeric Characters");
 
             RuleFor(p => p.PermanentAddress).NotEmpty().WithErrorCode("PermanentAddress").WithMessage("PermanentAddress cannot be Empty")
                 .Matches(AlphaNumeric).WithErrorCode("PermanentAddress").WithMessage("PermanentAddress should contains Alpha Numeric Characters");

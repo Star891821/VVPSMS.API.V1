@@ -13,7 +13,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
     {
         readonly Regex onlyAlphabet = new Regex("^\\D+$");
 
-        readonly Regex AlphaNumeric = new Regex("^[a-zA-Z0-9]*$");
+        readonly Regex AlphaNumeric = new Regex("^[0-9a-zA-Z\" \"''-_@]+$");
         readonly Regex onlyNumbers = new Regex("^[0-9]*$");
         private bool BeAValidDate(DateTime? date)
         {
