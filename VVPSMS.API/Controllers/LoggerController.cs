@@ -87,7 +87,7 @@ namespace VVPSMS.API.Controllers
                 int recordsTotal = 0;
 
                 var result = _loggerService.GetAllLogs(skip, pageSize);
-                //var totalrecordscount = _loggerService.GetAllLogsCount();
+                var totalrecordscount = _loggerService.GetAllLogsCount();
                 var logsData = (from templogdata in result select templogdata);
 
                 logsData = logsData.OrderByDescending(x => x.CreatedOn);
@@ -127,8 +127,8 @@ namespace VVPSMS.API.Controllers
                                                 || m.StackTrace.Contains(searchValue)
                                                 || m.Exception.Contains(searchValue)
                                                 || m.Logger.Contains(searchValue)
-                                                || m.Url.Contains(searchValue)
-                                                || m.FormId.Contains(searchValue));
+                                                || m.Url.Contains(searchValue));
+                                                //|| m.FormId.Contains(searchValue));
 
                     // Call SortFunction to provide sorted Data, then Skip using iDisplayStart  
                     logsData = SortFunction(iSortCol, sortColumnDirection, logsData).ToList();
@@ -142,17 +142,17 @@ namespace VVPSMS.API.Controllers
 
 
                 //Paging   
-                if (pageSize == -1)
-                {
-                    logsData = logsData.Skip(skip);
-                }
-                else
-                {
-                    logsData = logsData.Skip(skip).Take(pageSize);
-                }
+                //if (pageSize == -1)
+                //{
+                //    logsData = logsData.Skip(skip);
+                //}
+                //else
+                //{
+                //    logsData = logsData.Skip(skip).Take(pageSize);
+                //}
 
                 //Returning Json Data  
-                var jsonData = (new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = logsData });
+                var jsonData = (new { draw = draw, recordsFiltered = totalrecordscount, recordsTotal = totalrecordscount, data = logsData });
                 return Ok(jsonData);
             }
             catch (Exception)
@@ -167,7 +167,7 @@ namespace VVPSMS.API.Controllers
         {
 
             //Sorting for String columns
-            if (iSortCol == 1 || iSortCol == 2 || iSortCol == 3 || iSortCol == 4 || iSortCol == 5 || iSortCol == 6 || iSortCol == 7 || iSortCol == 8)
+            if (iSortCol == 1 || iSortCol == 2 || iSortCol == 3 || iSortCol == 4 || iSortCol == 5 || iSortCol == 6 || iSortCol == 7)
             {
                 Func<LogsDto, object> orderingFunction = (c =>
                 {
@@ -187,8 +187,8 @@ namespace VVPSMS.API.Controllers
                             return c.Logger;
                         case 7:
                             return c.Url;
-                        case 8:
-                            return c.FormId;
+                        //case 8:
+                        //    return c.FormId;
                         default:
                             // Default sorting column when iSortCol doesn't match any specified column
                             return c.CreatedOn;
