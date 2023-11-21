@@ -548,6 +548,10 @@ namespace VVPSMS.API.Controllers
             {
                 var errors = validationResult.Errors.Select(e => new Error(e.ErrorCode, e.ErrorMessage));
                 statusCode = StatusCodes.Status400BadRequest; value = errors;
+                foreach (var error in errors)
+                {
+                    _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Error.ToString(), Message = error.Description, Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                }
             }
             return StatusCode(statusCode, value);
         }
