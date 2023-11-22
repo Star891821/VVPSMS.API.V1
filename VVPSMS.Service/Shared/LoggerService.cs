@@ -29,6 +29,13 @@ namespace VVPSMS.Service.Shared
             return _mapper.Map<List<LogsDto>>(result);
         }
 
+        public List<LogsDto> GetLogDetails(string LogId)
+        {
+            int logId = Convert.ToInt32(LogId);
+            var result = _vvpsmsdbLogsContext.Logs.Where(x => x.Id == logId).ToList();
+            return _mapper.Map<List<LogsDto>>(result);
+        }
+
         public int GetAllLogsCount()
         {
             return _vvpsmsdbLogsContext.Logs.Count();

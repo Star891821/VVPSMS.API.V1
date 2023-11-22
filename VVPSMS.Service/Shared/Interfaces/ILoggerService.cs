@@ -8,6 +8,8 @@ namespace VVPSMS.Service.Shared.Interfaces
     {
         List<LogsDto> GetAllLogs(int skip, int pageSize);
 
+        List<LogsDto> GetLogDetails(string LogId);
+
         int GetAllLogsCount();
         void LogInfo(LogsDto logsDto);
 

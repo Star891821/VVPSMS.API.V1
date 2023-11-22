@@ -35,25 +35,34 @@ namespace VVPSMS.API.Controllers
         }
 
 
-        //[HttpGet]
-        //public IActionResult? GetAll()
-        //{
-        //    try
-        //    {
-        //        _logger.Information($"GetAll API Started");
+        [HttpGet]
+        public IActionResult? GetLogDetails(string LogId)
+        {
+            try
+            {
+                var logDetails = _loggerService.GetLogDetails(LogId);
 
-        //        return Ok(_loggerService.GetAllLogs());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.Error($"Something went wrong inside GetAll API for" + typeof(UserController).FullName + "entity with exception" + ex.Message);
-        //        return StatusCode(500);
-        //    }
-        //    finally
-        //    {
-        //        _logger.Information($"GetAll API Completed");
-        //    }
-        //}
+                if (logDetails != null)
+                {
+                    _logger.Information($"GetLogDetails API Completed. LogId: {LogId}");
+                    return Ok(logDetails);
+                }
+                else
+                {
+                    _logger.Information($"Log details not found for LogId: {LogId}");
+                    return NotFound(); // Return 404 if log details are not found
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetAll API for" + typeof(UserController).FullName + "entity with exception" + ex.Message);
+                return StatusCode(500);
+            }
+            finally
+            {
+                _logger.Information($"GetAll API Completed");
+            }
+        }
 
         [HttpGet]
         public IActionResult LoadData()
