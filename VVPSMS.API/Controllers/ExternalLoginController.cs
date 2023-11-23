@@ -11,6 +11,11 @@ using VVPSMS.API.NLog;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository;
 using VVPSMS.Service.Shared.Interfaces;
+using AppleAuth;
+using AppleAuth.TokenObjects;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols;
+using System.Globalization;
 
 namespace VVPSMS.API.Controllers
 {
@@ -183,6 +188,104 @@ namespace VVPSMS.API.Controllers
         {
             public string tokenId { get; set; }
         }
+        [AllowAnonymous]
+        [HttpPost("GetoAuthAppleToken")]
+        public async Task<IActionResult> AppleGetToken(InitialTokenResponse response)
+        {
+            try
+            {
+                //Read the content of they key file.
+                string privateKey = System.IO.File.ReadAllText("path/to/file.p8");
+
+                //Create a new instance of AppleAuthProvider
+                AppleAuth.AppleAuthProvider provider = new AppleAuthProvider("MyClientID", "MyTeamID", "MyKeyID", "https://myredirecturl.com/HandleResponseFromApple", "State1");
+
+                //Retrieve an authorization token
+                AuthorizationToken authorizationToken = await provider.GetAuthorizationToken(response.code, privateKey);
+
+            }
+            catch (Exception ex)
+            {
+                BadRequest(ex.Message);
+            }
+            return BadRequest();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("VerifyoAuthAppleToken")]
+        public void VerifyAppleIDToken(string token, string clientId)
+        {
+            //Read the token and get it's claims using System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = tokenHandler.ReadJwtToken(token);
+            var claims = jwtSecurityToken.Claims;
+            SecurityKey publicKey; SecurityToken validatedToken;
+
+            //Get the expiration of the token and convert its value from unix time seconds to DateTime object
+            var expirationClaim = claims.FirstOrDefault(x => x.Type == "exp").Value;
+            var expirationTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expirationClaim)).DateTime;
+
+            if (expirationTime < DateTime.UtcNow)
+            {
+                throw new SecurityTokenExpiredException("Expired token");
+            }
+
+            using (var httpClient = new HttpClient())
+            {
+                //Request Apple's JWKS used for verifying the tokens.
+                var applePublicKeys = httpClient.GetAsync("https://appleid.apple.com/auth/keys");
+                var keyset = new JsonWebKeySet(applePublicKeys.Result.Content.ReadAsStringAsync().Result);
+
+                //Since there is more than one JSON Web Key we select the one that has been used for our token.
+                //This is achieved by filtering on the "Kid" value from the header of the token
+                publicKey = keyset.Keys.FirstOrDefault(x => x.Kid == jwtSecurityToken.Header.Kid);
+            }
+
+            //Create new TokenValidationParameters object which we pass to ValidateToken method of JwtSecurityTokenHandler.
+            //The handler uses this object to validate the token and will throw an exception if any of the specified parameters is invalid.
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = "https://appleid.apple.com",
+                IssuerSigningKey = publicKey,
+                ValidAudience = clientId
+            };
+
+            tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("VerifyoAuthMicrosoftToken")]
+        public void MicroSoftAzureTokenValidation()
+        {
+            string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IkN0VHVoTUptRDVNN0RMZHpEMnYyeDNRS1NSWSJ9.eyJhdWQiOiI3YjFjZTFhZC1hZjE1LTRlNWYtOWFlNC1hYWYwYTY4YTdhYjQiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vZThlNmQwMTgtYTgzNC00MDZiLTlmNDMtMmU5NGFlNDI1ODc2L3YyLjAiLCJpYXQiOjE1ODkyODQ2OTEsIm5iZiI6MTU4OTI4NDY5MSwiZXhwIjoxNTg5Mjg4NTkxLCJhaW8iOiJBVVFBdS84UEFBQUEyNWpRNzJBc3IyWHBYMEJlUkZRNU1lTTdSLy8zbnpIbUxDUHNYekJYRWZpSGlkQWM4Y0RPNHJoUUVEdk56OWtnRTdPK1pYbmxNTTVRNmk4RjZYY0hLZz09IiwibmFtZSI6IlZpamFpIEFuYW5kIFJhbWFsaW5nYW0iLCJub25jZSI6IjY1OWM5MjU0LTQyN2YtNDg5MC05ODQ5LTU0ZTk1Yjc0NDYyNCIsIm9pZCI6ImU2YmFkYTg2LTk4NDktNGFhNC1hZWQ0LTg5YzZlZmE5YTc0MSIsInByZWZlcnJlZF91c2VybmFtZSI6InZpamFpYW5hbmRAQzk4Ni5vbm1pY3Jvc29mdC5jb20iLCJzdWIiOiJIdjhtQ3RDVkx1NW8wYklrSDJVd2RCTnVUWTlqeC1RNUU4LTVuYU5pdkFJIiwidGlkIjoiZThlNmQwMTgtYTgzNC00MDZiLTlmNDMtMmU5NGFlNDI1ODc2IiwidXRpIjoiVml0alZEcVh5RS0yaWNLQUlRT19BQSIsInZlciI6IjIuMCJ9.UAT3FkgCBYqM7Mfux1V-yF1QTqg0Dlz4Y2G8VQqNqg3WXWdQWf8v4MHcrZVzycV6FSA0-C4ANRpkBxeX1mdmtic4l6e5onOsRS3r_PsWpp7mew_XlTt9TQ1W1pO5dn6lw6J4U3k41kmXVAPwH9hbZNEmVVM6KjNQLW-SdCfaJJIB0XVIqEK2HOlBPxSI8hugh9S5yRMYz6-xi7SrG-wQJtsa9s7Wz5O4FYW2YmjHdUIdj_xwJbfS6_rknJetO756okz4tHY70N3GAKlr_zvfXvuAMjXfsXQNQN5-TQnDcWVkvK6SrhCGQunlPmjvvTvJyp7KLZVrRhxnz8w98yaEfA";
+            string myTenant = "e8e6d018-a834-406b-9f43-2e94ae425876";
+            var myAudience = "7b1ce1ad-af15-4e5f-9ae4-aaf0a68a7ab4";
+            var myIssuer = String.Format(CultureInfo.InvariantCulture, "https://login.microsoftonline.com/{0}/v2.0", myTenant);
+            var mySecret = "t.GDqjoBYBhB.tRC@lbq1GdslFjk8=57";
+            var mySecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(mySecret));
+            var stsDiscoveryEndpoint = String.Format(CultureInfo.InvariantCulture, "https://login.microsoftonline.com/{0}/.well-known/openid-configuration", myTenant);
+            var configManager = new ConfigurationManager<OpenIdConnectConfiguration>(stsDiscoveryEndpoint, new OpenIdConnectConfigurationRetriever());
+            var config =  configManager.GetConfigurationAsync();
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidAudience = myAudience,
+                ValidIssuer = myIssuer,
+             //   IssuerSigningKeys = config.SigningKeys, //UnComment While Validating this code base
+                ValidateLifetime = false,
+                IssuerSigningKey = mySecurityKey
+            };
+
+            var validatedToken = (SecurityToken)new JwtSecurityToken();
+
+            // Throws an Exception as the token is invalid (expired, invalid-formatted, etc.)  
+            tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+
+
+        }
+
 
         [AllowAnonymous]
         [HttpPost("oAuthGoogleToken")]
