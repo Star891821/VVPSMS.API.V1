@@ -1,0 +1,1 @@
+ALTER TABLE [dbo].[FamilyOrGuardianInfoDetails] ALTER COLUMN annual_income decimal NOT NULL

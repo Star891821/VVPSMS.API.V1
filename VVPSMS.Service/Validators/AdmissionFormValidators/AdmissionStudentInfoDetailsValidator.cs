@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
     public class AdmissionStudentInfoDetailsValidator : AbstractValidator<StudentInfoDetailDto>
     {
         readonly Regex onlyAlphabet = new Regex("^\\D+$");
-        readonly Regex AlphaNumeric = new Regex("^[0-9a-zA-Z\" \"''-_@]+$");//   //^[a-zA-Z0-9]*$
+        readonly Regex AlphaNumeric = new Regex("^[0-9a-zA-Z\" \"''-_@#/]+$");//   //^[a-zA-Z0-9]*$
         readonly Regex onlyNumbers = new Regex("^[0-9]*$");
         private bool BeAValidDate(DateTime date)
         {
@@ -49,15 +50,16 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
                 .GreaterThan(0).WithErrorCode("NoOfFamilymembers").WithMessage("NoOfFamilymembers must be greater than 0.");
             RuleFor(p => p.StudentLivesWith).Matches(onlyAlphabet).WithErrorCode("StudentLivesWith").WithMessage("StudentLivesWith should contains only Alphabets");
 
-            RuleFor(p => p.PassportNumber).Matches(AlphaNumeric).WithErrorCode("PassportNumber").WithMessage("PassportNumber should contains only Alpha Numeric Characters");
+            RuleFor(p => p.PassportNumber).Matches(AlphaNumeric)
+                .When(x => !string.IsNullOrEmpty(x.PassportNumber)).WithErrorCode("PassportNumber").WithMessage("PassportNumber should contains only Alpha Numeric Characters");
 
 
-            RuleFor(p => p.DateOfIssue).NotEmpty().WithErrorCode("DateOfIssue").WithMessage("DateOfIssue cannot be Empty")
-              .Must(BeAValidDate).WithErrorCode("DateOfIssue").WithMessage("DateOfIssue should be valid date")
+            RuleFor(p => p.DateOfIssue).Must(BeAValidDate)
+                 .When(x => x.DateOfIssue.HasValue).WithErrorCode("DateOfIssue").WithMessage("DateOfIssue should be valid date")
               .LessThan(p => p.DateOfExpiry).WithErrorCode("DateOfIssue").WithMessage("DateOfIssue should be less than DateOfExpiry");
 
-            RuleFor(p => p.DateOfExpiry).NotEmpty().WithErrorCode("DateOfExpiry").WithMessage("DateOfExpiry cannot be Empty")
-              .Must(BeAValidDate).WithErrorCode("DateOfExpiry").WithMessage("DateOfExpiry should be valid date")
+            RuleFor(p => p.DateOfExpiry).Must(BeAValidDate)
+                .When(x => x.DateOfExpiry.HasValue).WithErrorCode("DateOfExpiry").WithMessage("DateOfExpiry should be valid date")
               .GreaterThan(p => p.DateOfIssue).WithErrorCode("DateOfExpiry").WithMessage("DateOfExpiry should be greater than DateOfIssue");
 
             RuleFor(p => p.OtherKnownLanguages).Matches(onlyAlphabet).WithErrorCode("OtherKnownLanguages").WithMessage("OtherKnownLanguages should contains only Alphabets");

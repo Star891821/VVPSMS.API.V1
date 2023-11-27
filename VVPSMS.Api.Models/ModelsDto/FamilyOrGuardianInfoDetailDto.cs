@@ -19,7 +19,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public string? DesignationNameofcompany { get; set; }
 
-        public int AnnualIncome { get; set; }
+        public decimal AnnualIncome { get; set; }
 
         public string? OfficeAddress { get; set; }
 

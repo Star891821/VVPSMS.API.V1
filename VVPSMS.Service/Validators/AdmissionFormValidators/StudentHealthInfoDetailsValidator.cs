@@ -13,7 +13,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
     {
         readonly Regex onlyAlphabet = new Regex("^\\D+$");
 
-        readonly Regex AlphaNumeric = new Regex("^[0-9a-zA-Z\" \"''-_@]+$");
+        readonly Regex AlphaNumeric = new Regex("^[0-9a-zA-Z\" \"''-_@#/]+$");
         public StudentHealthInfoDetailsValidator()
         {
             RuleFor(p => p.FormId).NotNull().WithErrorCode("FormId").WithMessage("FormId cannot be null");

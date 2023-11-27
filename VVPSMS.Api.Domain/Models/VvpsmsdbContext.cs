@@ -767,7 +767,9 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.AadharNumber)
                 .HasMaxLength(20)
                 .HasColumnName("aadhar_number");
-            entity.Property(e => e.AnnualIncome).HasColumnName("annual_income");
+            entity.Property(e => e.AnnualIncome)
+                .HasColumnType("decimal(18, 0)")
+                .HasColumnName("annual_income");
             entity.Property(e => e.Contact)
                 .HasMaxLength(15)
                 .HasColumnName("contact");
