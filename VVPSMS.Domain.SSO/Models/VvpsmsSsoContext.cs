@@ -51,6 +51,7 @@ public partial class VvpsmsSsoContext : DbContext
                 .ToTable("GoogleConfiguration");
 
             entity.Property(e => e.ActiveYn).HasColumnName("ActiveYN");
+            entity.Property(e => e.ApplicationName).HasMaxLength(500);
             entity.Property(e => e.ClientId).HasMaxLength(500);
             entity.Property(e => e.ClientSecretCode).HasMaxLength(500);
             entity.Property(e => e.CreatedBy).HasMaxLength(100);
@@ -61,7 +62,9 @@ public partial class VvpsmsSsoContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
+            entity.Property(e => e.Oauthurl).HasMaxLength(500);
             entity.Property(e => e.RedirectUrl).HasMaxLength(500);
+            entity.Property(e => e.Scopes).HasMaxLength(500);
             entity.Property(e => e.TokenUrl).HasMaxLength(500);
             entity.Property(e => e.UpdateBy).HasMaxLength(100);
             entity.Property(e => e.UpdateDate).HasColumnType("datetime");

@@ -32,4 +32,10 @@ public partial class GoogleConfiguration
     public string? UpdateBy { get; set; }
 
     public DateTime? UpdateDate { get; set; }
+
+    public string? Oauthurl { get; set; }
+
+    public string? Scopes { get; set; }
+
+    public string? ApplicationName { get; set; }
 }
