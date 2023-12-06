@@ -64,9 +64,14 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
                  .When(x => x.Passportexpirydate.HasValue).WithErrorCode("Passportexpirydate").WithMessage("Passportexpirydate should be valid date")
               .GreaterThan(p => p.Passportissuedate).WithErrorCode("Passportissuedate").WithMessage("Passportexpirydate should be greater than Passportissuedate");
 
+            RuleFor(p => p.Contact)
+             .Cascade(CascadeMode.Stop)
+             .Must(PhoneNumberValidation)
+             .When(p => !string.IsNullOrWhiteSpace(p.Contact))
+             .WithMessage("Invalid phone number format.");
 
-            RuleFor(p => p.Contact).NotNull().WithErrorCode("Contact").WithMessage("Contact cannot be null")
-                .Matches(onlyNumbers).WithErrorCode("Contact").WithMessage("Contact should contains only Numeric Characters");
+            //RuleFor(p => p.Contact).NotNull().WithErrorCode("Contact").WithMessage("Contact cannot be null")
+            //    .Matches(onlyNumbers).WithErrorCode("Contact").WithMessage("Contact should contains only Numeric Characters");
 
 
             RuleFor(p => p.Email).NotNull().WithErrorCode("Email").WithMessage("Email cannot be null")
@@ -75,6 +80,12 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
             RuleFor(p => p.Preferredcontact).Matches(onlyAlphabet)
                  .When(x => !string.IsNullOrEmpty(x.Preferredcontact)).WithErrorCode("Preferredcontact").WithMessage("Preferredcontact should contains only Alphabets");
 
+        }
+
+        private bool PhoneNumberValidation(string? Contact)
+        {
+            // Custom logic to validate phone number
+            return Contact != null && !Contact.All(c => c == '0');
         }
     }
 }

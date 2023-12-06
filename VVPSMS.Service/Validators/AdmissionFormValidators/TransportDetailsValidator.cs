@@ -50,9 +50,9 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
 
             RuleFor(p => p.Address).Matches(AlphaNumeric).WithErrorCode("Address").WithMessage("Address should contains Alpha Numeric Characters");
 
-            RuleFor(p => p.FatherPhone).Matches(onlyNumbers).WithErrorCode("FatherPhone").WithMessage("FatherPhone should contains only Alphabets");
+            RuleFor(p => p.FatherPhone).Matches(onlyNumbers).WithErrorCode("FatherPhone").WithMessage("FatherPhone should contains only Numbers");
 
-            RuleFor(p => p.MotherPhone).Matches(onlyNumbers).WithErrorCode("MotherPhone").WithMessage("MotherPhone should contains only Alphabets");
+            RuleFor(p => p.MotherPhone).Matches(onlyNumbers).WithErrorCode("MotherPhone").WithMessage("MotherPhone should contains only Numbers");
 
 
         }
