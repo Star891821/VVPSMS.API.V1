@@ -32,7 +32,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
         private bool PhoneNumberValidation(string? Contact)
         {
             // Custom logic to validate phone number
-            return Contact != null && !Contact.All(c => c == '0');
+            return Contact != null && !Contact.All(c => c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9');
         }
     }
 }
