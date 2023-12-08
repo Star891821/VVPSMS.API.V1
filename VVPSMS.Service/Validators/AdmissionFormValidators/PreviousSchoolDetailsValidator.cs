@@ -22,7 +22,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
         {
             RuleFor(p => p.FormId).NotNull().WithErrorCode("FormId").WithMessage("FormId cannot be null");
             RuleFor(p => p.NameSchool).Matches(onlyAlphabet).WithErrorCode("NameSchool").WithMessage("NameSchool should contains only Alphabets");
-            RuleFor(p => p.Address).Matches(AlphaNumeric).WithErrorCode("Address").WithMessage("Address should contains Alpha Numeric Characters");
+            //RuleFor(p => p.Address).Matches(AlphaNumeric).WithErrorCode("Address").WithMessage("Address should contains Alpha Numeric Characters");
             RuleFor(p => p.Curriculum).Matches(onlyAlphabet).WithErrorCode("Curriculum").WithMessage("Curriculum should contains only Alphabets");
             RuleFor(p => p.ClassCompleted).Matches(AlphaNumeric).WithErrorCode("ClassCompleted").WithMessage("ClassCompleted should contains Alpha Numeric Characters");           
             RuleFor(p => p.YearsAttended).Matches(AlphaNumeric).WithErrorCode("YearsAttended").WithMessage("YearsAttended should contains Alpha Numeric Characters");

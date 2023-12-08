@@ -44,8 +44,8 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
             RuleFor(p => p.AnnualIncome).NotNull().WithErrorCode("AnnualIncome").WithMessage("AnnualIncome cannot be null")
                           .GreaterThan(0).WithErrorCode("AnnualIncome").WithMessage("AnnualIncome must be greater than 0.");
 
-            RuleFor(p => p.OfficeAddress).Matches(AlphaNumeric)
-                  .When(x => !string.IsNullOrEmpty(x.OfficeAddress)).WithErrorCode("OfficeAddress").WithMessage("OfficeAddress should contains only Alpha Numeric Characters");
+            //RuleFor(p => p.OfficeAddress).Matches(AlphaNumeric)
+            //      .When(x => !string.IsNullOrEmpty(x.OfficeAddress)).WithErrorCode("OfficeAddress").WithMessage("OfficeAddress should contains only Alpha Numeric Characters");
 
             RuleFor(p => p.AadharNumber).Matches(onlyNumbers).WithErrorCode("AadharNumber").WithMessage("AadharNumber should contains only Numeric Characters");
 
@@ -68,7 +68,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
              .Cascade(CascadeMode.Stop)
              .Must(PhoneNumberValidation)
              .When(p => !string.IsNullOrWhiteSpace(p.Contact))
-             .WithMessage("Invalid phone number format.");
+             .WithMessage("Family Or Guardian Info Details: Invalid Phone Number Format.");
 
             //RuleFor(p => p.Contact).NotNull().WithErrorCode("Contact").WithMessage("Contact cannot be null")
             //    .Matches(onlyNumbers).WithErrorCode("Contact").WithMessage("Contact should contains only Numeric Characters");

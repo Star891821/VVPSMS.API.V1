@@ -48,13 +48,29 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
             RuleFor(p => p.MotherEmail).Matches(AlphaNumeric).WithErrorCode("MotherEmail").WithMessage("MotherEmail should contains Alpha Numeric Characters");
 
 
-            RuleFor(p => p.Address).Matches(AlphaNumeric).WithErrorCode("Address").WithMessage("Address should contains Alpha Numeric Characters");
+            //RuleFor(p => p.Address).Matches(AlphaNumeric).WithErrorCode("Address").WithMessage("Address should contains Alpha Numeric Characters");
 
-            RuleFor(p => p.FatherPhone).Matches(onlyNumbers).WithErrorCode("FatherPhone").WithMessage("FatherPhone should contains only Numbers");
+            //RuleFor(p => p.FatherPhone).Matches(onlyNumbers).WithErrorCode("FatherPhone").WithMessage("FatherPhone should contains only Numbers");
 
-            RuleFor(p => p.MotherPhone).Matches(onlyNumbers).WithErrorCode("MotherPhone").WithMessage("MotherPhone should contains only Numbers");
+            //RuleFor(p => p.MotherPhone).Matches(onlyNumbers).WithErrorCode("MotherPhone").WithMessage("MotherPhone should contains only Numbers");
 
+            RuleFor(p => p.FatherPhone)
+            .Cascade(CascadeMode.Stop)
+            .Must(PhoneNumberValidation)
+            .When(p => !string.IsNullOrWhiteSpace(p.FatherPhone))
+            .WithMessage("Invalid Father Phone Number Format.");
 
+            RuleFor(p => p.MotherPhone)
+            .Cascade(CascadeMode.Stop)
+            .Must(PhoneNumberValidation)
+            .When(p => !string.IsNullOrWhiteSpace(p.MotherPhone))
+            .WithMessage("Invalid Mother Phone Number Format.");
+        }
+
+        private bool PhoneNumberValidation(string? Contact)
+        {
+            // Custom logic to validate phone number
+            return Contact != null && !Contact.All(c => c == '0');
         }
     }
 }
