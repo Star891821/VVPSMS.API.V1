@@ -1,11 +1,16 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace VVPSMS.Api.Models.ModelsDto
 {
-    public class MstUserRoleDto
+    public class MstRoleTypeDto
     {
-        public int RoleId { get; set; }
+        public int RoletypeId { get; set; }
 
-        public string RoleName { get; set; } = null!;
+        public string RoletypeName { get; set; } = null!;
 
         public int ActiveYn { get; set; }
 
@@ -16,8 +21,5 @@ namespace VVPSMS.Api.Models.ModelsDto
         public DateTime? ModifiedAt { get; set; }
 
         public int? ModifiedBy { get; set; }
-
-        public int? RoletypeId { get; set; }
-
     }
 }

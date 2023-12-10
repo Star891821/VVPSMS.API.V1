@@ -65,7 +65,11 @@ public partial class VvpsmsdbContext : DbContext
 
     public virtual DbSet<MstGroupOfSchool> MstGroupOfSchools { get; set; }
 
+    public virtual DbSet<MstPermission> MstPermissions { get; set; }
+
     public virtual DbSet<MstRoleGroup> MstRoleGroups { get; set; }
+
+    public virtual DbSet<MstRoleType> MstRoleTypes { get; set; }
 
     public virtual DbSet<MstSchool> MstSchools { get; set; }
 
@@ -82,6 +86,8 @@ public partial class VvpsmsdbContext : DbContext
     public virtual DbSet<ParentDocument> ParentDocuments { get; set; }
 
     public virtual DbSet<PreviousSchoolDetail> PreviousSchoolDetails { get; set; }
+
+    public virtual DbSet<RolePermissionsMapping> RolePermissionsMappings { get; set; }
 
     public virtual DbSet<SiblingInfo> SiblingInfos { get; set; }
 
@@ -803,7 +809,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("occupation");
             entity.Property(e => e.OfficeAddress)
-                .HasMaxLength(255)
+                .HasMaxLength(500)
                 .HasColumnName("office_address");
             entity.Property(e => e.PanNumber)
                 .HasMaxLength(100)
@@ -1020,6 +1026,29 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
         });
 
+        modelBuilder.Entity<MstPermission>(entity =>
+        {
+            entity.HasKey(e => e.PermissionId).HasName("PK__MstPermi__E5331AFACD9EB2E9");
+
+            entity.Property(e => e.PermissionId).HasColumnName("permission_id");
+            entity.Property(e => e.ActiveYn).HasColumnName("activeYN");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.PermissionDetails)
+                .HasMaxLength(255)
+                .HasColumnName("permission_details");
+            entity.Property(e => e.PermissionName)
+                .HasMaxLength(255)
+                .HasColumnName("permission_name");
+        });
+
         modelBuilder.Entity<MstRoleGroup>(entity =>
         {
             entity.HasKey(e => e.RolegroupId).HasName("PK__MstRoleG__680F3A92C8753B77");
@@ -1047,6 +1076,26 @@ public partial class VvpsmsdbContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__MstRoleGr__role___0EF836A4");
+        });
+
+        modelBuilder.Entity<MstRoleType>(entity =>
+        {
+            entity.HasKey(e => e.RoletypeId).HasName("PK__MstRoleT__5C2E375ACF32A7B6");
+
+            entity.Property(e => e.RoletypeId).HasColumnName("roletype_id");
+            entity.Property(e => e.ActiveYn).HasColumnName("activeYN");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.RoletypeName)
+                .HasMaxLength(255)
+                .HasColumnName("roletype_name");
         });
 
         modelBuilder.Entity<MstSchool>(entity =>
@@ -1218,6 +1267,11 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.RoleName)
                 .HasMaxLength(255)
                 .HasColumnName("role_name");
+            entity.Property(e => e.RoletypeId).HasColumnName("roletype_id");
+
+            entity.HasOne(d => d.Roletype).WithMany(p => p.MstUserRoles)
+                .HasForeignKey(d => d.RoletypeId)
+                .HasConstraintName("FK__MstUserRo__rolet__492FC531");
         });
 
         modelBuilder.Entity<Parent>(entity =>
@@ -1338,6 +1392,37 @@ public partial class VvpsmsdbContext : DbContext
             entity.HasOne(d => d.Form).WithMany(p => p.PreviousSchoolDetails)
                 .HasForeignKey(d => d.FormId)
                 .HasConstraintName("FK__PreviousS__form___2BD46C74");
+        });
+
+        modelBuilder.Entity<RolePermissionsMapping>(entity =>
+        {
+            entity.HasKey(e => e.MappingId).HasName("PK__RolePerm__5AE900451BE9AAE0");
+
+            entity.ToTable("RolePermissionsMapping");
+
+            entity.Property(e => e.MappingId).HasColumnName("mapping_id");
+            entity.Property(e => e.ActiveYn).HasColumnName("activeYN");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.ModifiedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("modified_at");
+            entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.PermissionId).HasColumnName("permission_id");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
+
+            entity.HasOne(d => d.Permission).WithMany(p => p.RolePermissionsMappings)
+                .HasForeignKey(d => d.PermissionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__RolePermi__permi__483BA0F8");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.RolePermissionsMappings)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__RolePermi__role___46535886");
         });
 
         modelBuilder.Entity<SiblingInfo>(entity =>
@@ -1601,10 +1686,10 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("passport_number");
             entity.Property(e => e.PermanentAddress)
-                .HasMaxLength(255)
+                .HasMaxLength(500)
                 .HasColumnName("permanent_address");
             entity.Property(e => e.PresentAddress)
-                .HasMaxLength(255)
+                .HasMaxLength(500)
                 .HasColumnName("present_address");
             entity.Property(e => e.Religion)
                 .HasMaxLength(100)
@@ -1739,7 +1824,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("father_name");
             entity.Property(e => e.FatherPhone)
-                .HasMaxLength(70)
+                .HasMaxLength(15)
                 .HasColumnName("father_phone");
             entity.Property(e => e.FormId).HasColumnName("form_id");
             entity.Property(e => e.LandMark)
@@ -1756,7 +1841,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("mother_name");
             entity.Property(e => e.MotherPhone)
-                .HasMaxLength(70)
+                .HasMaxLength(15)
                 .HasColumnName("mother_phone");
             entity.Property(e => e.NameofStudent)
                 .HasMaxLength(255)

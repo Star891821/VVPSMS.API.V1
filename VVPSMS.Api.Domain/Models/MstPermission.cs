@@ -3,11 +3,13 @@ using System.Collections.Generic;
 
 namespace VVPSMS.Domain.Models;
 
-public partial class MstUserRole
+public partial class MstPermission
 {
-    public int RoleId { get; set; }
+    public int PermissionId { get; set; }
 
-    public string RoleName { get; set; } = null!;
+    public string PermissionName { get; set; } = null!;
+
+    public string PermissionDetails { get; set; } = null!;
 
     public int ActiveYn { get; set; }
 
@@ -19,13 +21,5 @@ public partial class MstUserRole
 
     public int? ModifiedBy { get; set; }
 
-    public int? RoletypeId { get; set; }
-
-    public virtual ICollection<MstRoleGroup> MstRoleGroups { get; set; } = new List<MstRoleGroup>();
-
-    public virtual ICollection<MstUser> MstUsers { get; set; } = new List<MstUser>();
-
     public virtual ICollection<RolePermissionsMapping> RolePermissionsMappings { get; set; } = new List<RolePermissionsMapping>();
-
-    public virtual MstRoleType? Roletype { get; set; }
 }

@@ -54,7 +54,8 @@ namespace VVPSMS.API.AutoMapper
             CreateMap<GoogleConfiguration, GoogleConfigurationDto>().ReverseMap();
             CreateMap<MicroSoftConfiguration, MicroSoftConfigurationDto>().ReverseMap();
             CreateMap<AzureBlobConfiguration, AzureBlobConfigurationDto>().ReverseMap();
-            
+            CreateMap<MstPermission, MstPermissionDto>().ReverseMap();
+            CreateMap<RolePermissionsMapping, RolePermissionsMappingDto>().ReverseMap();
         }
     }
 }

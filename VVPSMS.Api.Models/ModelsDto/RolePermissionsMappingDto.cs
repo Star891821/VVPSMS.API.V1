@@ -1,11 +1,13 @@
 ﻿
 namespace VVPSMS.Api.Models.ModelsDto
 {
-    public class MstUserRoleDto
+    public class RolePermissionsMappingDto
     {
+        public int MappingId { get; set; }
+
         public int RoleId { get; set; }
 
-        public string RoleName { get; set; } = null!;
+        public int PermissionId { get; set; }
 
         public int ActiveYn { get; set; }
 
@@ -16,8 +18,6 @@ namespace VVPSMS.Api.Models.ModelsDto
         public DateTime? ModifiedAt { get; set; }
 
         public int? ModifiedBy { get; set; }
-
-        public int? RoletypeId { get; set; }
 
     }
 }
