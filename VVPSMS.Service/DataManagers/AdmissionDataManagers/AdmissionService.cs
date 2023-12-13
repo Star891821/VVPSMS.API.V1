@@ -119,7 +119,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             try
             {
-                return getbyID(id,null);
+                return getbyID(id, null);
             }
             catch
             {
@@ -169,30 +169,30 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             }
             else if (StatusCode == null && !string.IsNullOrEmpty(name))
             {
-              var tempResult = await dbSet
-                         .Where(a => a.AdmissionStatus >= minStatuscode
-                          && a.AdmissionStatus <= maxStatuscode)
-                         .Include(a => a.StudentInfoDetails.Where(o => o.FirstName.Contains(name)))
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                        .Skip((PageNumber - 1) * PageSize)
-                        .Take(PageSize)
-                        .ToListAsync();
+                var tempResult = await dbSet
+                           .Where(a => a.AdmissionStatus >= minStatuscode
+                            && a.AdmissionStatus <= maxStatuscode)
+                           .Include(a => a.StudentInfoDetails.Where(o => o.FirstName.Contains(name)))
+                          .Include(a => a.AdmissionDocuments)
+                          .Include(a => a.AdmissionEnquiryDetails)
+                          .Include(a => a.SiblingInfos)
+                          .Include(a => a.StudentHealthInfoDetails)
+                          .Include(a => a.FamilyOrGuardianInfoDetails)
+                          .Include(a => a.PreviousSchoolDetails)
+                          .Include(a => a.EmergencyContactDetails)
+                          .Include(a => a.TransportDetails)
+                          .Include(a => a.StudentIllnessDetails)
+                          .Skip((PageNumber - 1) * PageSize)
+                          .Take(PageSize)
+                          .ToListAsync();
                 foreach (var item in tempResult)
                 {
-                    if(item.StudentInfoDetails.Count > 0)
+                    if (item.StudentInfoDetails.Count > 0)
                     {
                         pagedData.Add(item);
                     }
                 }
-                
+
             }
             else if (StatusCode != null && string.IsNullOrEmpty(name))
             {
@@ -211,7 +211,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                         .Take(PageSize)
                         .ToListAsync();
             }
-            else 
+            else
             {
                 pagedData = await dbSet.Include(a => a.StudentInfoDetails)
                         .Include(a => a.StudentInfoDetails)
@@ -329,21 +329,25 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             try
             {
-                var admissionForm = new AdmissionForm();
-                admissionForm = dbSet.Where(x => x.FormId == admissionFormStatusDto.FormId).FirstOrDefault();
-
-                if (admissionForm != null)
+                var exist = getbyID(admissionFormStatusDto.FormId, null);
+                AdmissionForm admission = exist;
+                if (exist != null)
                 {
-                    admissionForm.AdmissionStatus = admissionFormStatusDto.StatusId;
-                    //admissionForm.AdmissionStatus = admissionFormStatusDto.StatusId; schedule Date
-                   // admissionForm.AdmissionStatus = admissionFormStatusDto.StatusId; comments
+                    admission.AdmissionStatus = admissionFormStatusDto.StatusId;
+                    admission.ScheduledDate = admissionFormStatusDto.ScheduleDate;
+                    admission.Comments = admissionFormStatusDto.Comments;
+                   
+                    context.Entry(exist).CurrentValues.SetValues(admission);
+                    return admission;
                 }
-                return admissionForm;
+
             }
             catch (Exception ex)
             {
                 throw ex;
+
             }
+            return null;
         }
 
         #endregion

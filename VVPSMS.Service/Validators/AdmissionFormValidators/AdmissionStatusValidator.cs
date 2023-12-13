@@ -5,14 +5,18 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
 {
     public class AdmissionStatusValidator : AbstractValidator<AdmissionFormStatusDto>
     {
-        private bool BeAValidDate(DateTime? date)
-        {
-            return !date.Equals(default);
-        }
+       
         public AdmissionStatusValidator()
         {
-            RuleFor(p => p.ScheduleDate).NotEmpty().WithErrorCode("ScheduleDate").WithMessage("ScheduleDate cannot be Empty")
-               .Must(BeAValidDate).WithErrorCode("ScheduleDate").WithMessage("ScheduleDate should be valid date");
+            RuleFor(p => p.StatusId).NotNull()
+               .WithErrorCode("StatusId")
+               .WithMessage("StatusId cannot be null")
+               .GreaterThan(0).WithErrorCode("StatusId").WithMessage("StatusId must be greater than 0");
+            RuleFor(p => p.FormId).NotNull()
+               .WithErrorCode("FormId")
+               .WithMessage("FormId cannot be null")
+               .GreaterThan(0).WithErrorCode("FormId").WithMessage("FormId must be greater than 0");
+
         }
     }
 }

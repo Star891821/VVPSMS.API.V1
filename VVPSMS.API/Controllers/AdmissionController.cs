@@ -3,6 +3,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Amqp.Framing;
 using Microsoft.Net.Http.Headers;
 using System.Text;
 using VVPSMS.Api.Models.Enums;
@@ -12,6 +13,7 @@ using VVPSMS.Api.Models.ModelsDto;
 
 using VVPSMS.API.NLog;
 using VVPSMS.Domain.Models;
+using VVPSMS.Service.DataManagers.EmailDataManagers;
 using VVPSMS.Service.Filters;
 using VVPSMS.Service.Repository.Admissions;
 using VVPSMS.Service.Repository.Services;
@@ -32,7 +34,8 @@ namespace VVPSMS.API.Controllers
         private readonly IUriService uriService;
         private readonly ILoggerService _loggerService;
         private readonly IValidator<AdmissionFormDto> _admissionValidator;
-        public AdmissionController(IAdmissionUnitOfWork unitOfWork, IValidator<AdmissionFormDto> validator, IUriService uriService, IConfiguration configuration, IMapper mapper, ILog logger, ILoggerService loggerService)
+        private readonly IValidator<AdmissionFormStatusDto> _admissionStatusValidator;
+        public AdmissionController(IAdmissionUnitOfWork unitOfWork, IValidator<AdmissionFormDto> validator, IValidator<AdmissionFormStatusDto> statusvalidator, IUriService uriService, IConfiguration configuration, IMapper mapper, ILog logger, ILoggerService loggerService)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
@@ -41,6 +44,7 @@ namespace VVPSMS.API.Controllers
             this.uriService = uriService;
             _loggerService = loggerService;
             _admissionValidator = validator;
+            _admissionStatusValidator = statusvalidator;
         }
 
         [HttpGet]
@@ -547,7 +551,7 @@ namespace VVPSMS.API.Controllers
             }
             else
             {
-                var errors = validationResult.Errors.Select(e => new Error(e.ErrorCode, e.ErrorMessage));
+                var errors = validationResult.Errors.Select(e => new Service.Filters.Error(e.ErrorCode, e.ErrorMessage));
                 statusCode = StatusCodes.Status400BadRequest; value = errors;
                 foreach (var error in errors)
                 {
@@ -574,6 +578,10 @@ namespace VVPSMS.API.Controllers
             return false;
         }
 
+        private bool BeAValidDate(DateTime? date)
+        {
+            return !date.Equals(default);
+        }
 
         [HttpPost]
         [Authorize]
@@ -581,44 +589,71 @@ namespace VVPSMS.API.Controllers
         {
             var statusCode = StatusCodes.Status200OK;
             object? value = null;
-            try
+            bool admissionstatus = false;
+            var validationResult = _admissionStatusValidator.Validate(admissionFormStatus);
+            if (validationResult.IsValid)
             {
-                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-
-                _logger.Information($"UpdateApplicationStatus API Started");
-                switch (admissionFormStatus.StatusId)
+                try
                 {
-                    case 5:
-                        if(admissionFormStatus.ScheduleDate is null)
-                        {
-                            // validate and return that ScheduleDate is mandatory
-                        }
-                         _unitOfWork.AdmissionService.UpdateApplicationStatus(admissionFormStatus);
-                        await _unitOfWork.CompleteAsync();
-                        break;
-                    default:
-                        _unitOfWork.AdmissionService.UpdateApplicationStatus(admissionFormStatus);
-                        await _unitOfWork.CompleteAsync();
-                        break;
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                    _logger.Information($"UpdateApplicationStatus API Started");
+                    switch (admissionFormStatus.StatusId)
+                    {
+                        case 5:
+                            if (BeAValidDate(admissionFormStatus.ScheduleDate))
+                            {
+                                _unitOfWork.AdmissionService.UpdateApplicationStatus(admissionFormStatus);
+                                await _unitOfWork.CompleteAsync();
+                                admissionstatus = true;
+                            }
+                            else
+                            {
+                                var errors1 = new { ErrorCode = "ScheduleDate", Message = "ScheduleDate should be valid date" };
+                                statusCode = StatusCodes.Status400BadRequest; value = errors1;
+                                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Error.ToString(), Message = errors1.Message, Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                            }
+                            break;
+                        default:
+                            _unitOfWork.AdmissionService.UpdateApplicationStatus(admissionFormStatus);
+                            await _unitOfWork.CompleteAsync();
+                            admissionstatus = true;
+                            break;
+                    }
+                    if (admissionstatus)
+                    {
+                        value = new { AdmissionID = admissionFormStatus.FormId, Message = "Success" };
+                        statusCode = StatusCodes.Status200OK;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Something went wrong inside GetAdmissionDetailsById for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                    _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAdmissionDetailsById for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                    statusCode = StatusCodes.Status500InternalServerError;
+                    value = ex.Message;
+                }
+                finally
+                {
+                    _logger.Information($"GetAdmissionDetailsById API completed Successfully");
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 }
 
             }
-            catch (Exception ex)
+            else
             {
-                _logger.Error($"Something went wrong inside GetAdmissionDetailsById for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
-                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAdmissionDetailsById for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
-                statusCode = StatusCodes.Status500InternalServerError;
-                value = ex.Message;
-            }
-            finally
-            {
-                _logger.Information($"GetAdmissionDetailsById API completed Successfully");
-                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                var errors = validationResult.Errors.Select(e => new Service.Filters.Error(e.ErrorCode, e.ErrorMessage));
+                statusCode = StatusCodes.Status400BadRequest; value = errors;
+                foreach (var error in errors)
+                {
+                    _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Error.ToString(), Message = error.Description, Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                }
             }
             return StatusCode(statusCode, value);
         }
 
-            [HttpDelete]
+        [HttpDelete]
         [Authorize]
         public async Task<IActionResult> Delete(AdmissionFormDto admissionFormDto)
         {
@@ -764,8 +799,8 @@ namespace VVPSMS.API.Controllers
                             using FileStream fs = new FileStream(fileInfo.FullName.ToString(), FileMode.Open, FileAccess.Read);
                             using StreamReader sr = new StreamReader(fs, Encoding.UTF8);
                             var lines = sr.ReadToEnd();
-                           
-                           // string content = new StreamReader(fileInfo.FullName.ToString(), Encoding.UTF8).ReadToEnd();
+
+                            // string content = new StreamReader(fileInfo.FullName.ToString(), Encoding.UTF8).ReadToEnd();
                             byte[] bytes = Encoding.UTF8.GetBytes(lines);
                             document.FileContentsAsBase64 = Convert.ToBase64String(bytes);
                             sr.Close();

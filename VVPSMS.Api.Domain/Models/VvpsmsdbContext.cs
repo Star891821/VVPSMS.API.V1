@@ -180,6 +180,9 @@ public partial class VvpsmsdbContext : DbContext
             entity.Property(e => e.AcademicId).HasColumnName("academic_id");
             entity.Property(e => e.AdmissionStatus).HasColumnName("admission_status");
             entity.Property(e => e.ClassId).HasColumnName("class_id");
+            entity.Property(e => e.Comments)
+                .HasMaxLength(500)
+                .HasColumnName("comments");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
@@ -189,6 +192,10 @@ public partial class VvpsmsdbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("modified_at");
             entity.Property(e => e.ModifiedBy).HasColumnName("modified_by");
+            entity.Property(e => e.ScheduledDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("scheduled_date");
             entity.Property(e => e.SchoolId).HasColumnName("school_id");
             entity.Property(e => e.StreamId).HasColumnName("stream_id");
         });
@@ -803,7 +810,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("occupation");
             entity.Property(e => e.OfficeAddress)
-                .HasMaxLength(255)
+                .HasMaxLength(500)
                 .HasColumnName("office_address");
             entity.Property(e => e.PanNumber)
                 .HasMaxLength(100)
@@ -1601,10 +1608,10 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("passport_number");
             entity.Property(e => e.PermanentAddress)
-                .HasMaxLength(255)
+                .HasMaxLength(500)
                 .HasColumnName("permanent_address");
             entity.Property(e => e.PresentAddress)
-                .HasMaxLength(255)
+                .HasMaxLength(500)
                 .HasColumnName("present_address");
             entity.Property(e => e.Religion)
                 .HasMaxLength(100)
@@ -1739,7 +1746,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("father_name");
             entity.Property(e => e.FatherPhone)
-                .HasMaxLength(70)
+                .HasMaxLength(15)
                 .HasColumnName("father_phone");
             entity.Property(e => e.FormId).HasColumnName("form_id");
             entity.Property(e => e.LandMark)
@@ -1756,7 +1763,7 @@ public partial class VvpsmsdbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("mother_name");
             entity.Property(e => e.MotherPhone)
-                .HasMaxLength(70)
+                .HasMaxLength(15)
                 .HasColumnName("mother_phone");
             entity.Property(e => e.NameofStudent)
                 .HasMaxLength(255)

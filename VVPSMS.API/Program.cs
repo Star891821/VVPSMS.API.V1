@@ -174,7 +174,7 @@ try
     builder.Services.AddScoped<ILoggerService, LoggerService>();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddScoped<IValidator<AdmissionFormDto>, AdmissionValidator>();
-    builder.Services.AddScoped<IValidator<AdmissionFormStatusDto>, AdmissionStatusDto>();
+    builder.Services.AddScoped<IValidator<AdmissionFormStatusDto>, AdmissionStatusValidator>();
     builder.Services.AddScoped<ValidationFilterAttribute>();
     builder.Services.Configure<ApiBehaviorOptions>(options
         => options.SuppressModelStateInvalidFilter = true);

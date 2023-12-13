@@ -34,6 +34,10 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int? ModifiedBy { get; set; }
 
+        public DateTime? ScheduledDate { get; set; }
+
+        public string? Comments { get; set; }
+
         public virtual List<AdmissionDocumentDto> AdmissionDocuments { get; set; }
 
         public virtual List<AdmissionEnquiryDetailDto> AdmissionEnquiryDetails { get; set; }

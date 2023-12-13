@@ -27,6 +27,10 @@ public partial class AdmissionForm
 
     public int? ModifiedBy { get; set; }
 
+    public DateTime? ScheduledDate { get; set; }
+
+    public string? Comments { get; set; }
+
     public virtual ICollection<AdmissionDocument> AdmissionDocuments { get; set; } = new List<AdmissionDocument>();
 
     public virtual ICollection<AdmissionEnquiryDetail> AdmissionEnquiryDetails { get; set; } = new List<AdmissionEnquiryDetail>();
