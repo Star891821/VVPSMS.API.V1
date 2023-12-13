@@ -13,5 +13,6 @@ namespace VVPSMS.Service.Repository.Admissions
         Task<(List<AdmissionForm>,int)> GetAll(int PageNumber, int PageSize,int? StatusCode, string? name);
         Task<List<AdmissionForm>> GetAdmissionDetailsByUserId(int id);
         Task<AdmissionForm> GetAdmissionDetailsByUserIdAndFormId(int id, int UserId);
+        AdmissionForm UpdateApplicationStatus(AdmissionFormStatusDto admissionFormStatusDto);
     }
 }

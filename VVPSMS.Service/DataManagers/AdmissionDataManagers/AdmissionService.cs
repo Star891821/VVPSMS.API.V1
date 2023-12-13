@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Repository.Admissions;
 
@@ -322,6 +323,27 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 throw ex;
             }
             return listOfAdmissionForm;
+        }
+
+        public AdmissionForm UpdateApplicationStatus(AdmissionFormStatusDto admissionFormStatusDto)
+        {
+            try
+            {
+                var admissionForm = new AdmissionForm();
+                admissionForm = dbSet.Where(x => x.FormId == admissionFormStatusDto.FormId).FirstOrDefault();
+
+                if (admissionForm != null)
+                {
+                    admissionForm.AdmissionStatus = admissionFormStatusDto.StatusId;
+                    //admissionForm.AdmissionStatus = admissionFormStatusDto.StatusId; schedule Date
+                   // admissionForm.AdmissionStatus = admissionFormStatusDto.StatusId; comments
+                }
+                return admissionForm;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         #endregion
