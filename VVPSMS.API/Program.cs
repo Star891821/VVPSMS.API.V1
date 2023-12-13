@@ -38,6 +38,7 @@ using VVPSMS.Domain.Logger.Models;
 using FluentValidation;
 using VVPSMS.Service.Validators.AdmissionFormValidators;
 using VVPSMS.Domain.SSO.Models;
+using VVPSMS.Api.Models.Enums;
 
 try
 {
@@ -175,6 +176,7 @@ try
     builder.Services.AddScoped<ILoggerService, LoggerService>();
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddScoped<IValidator<AdmissionFormDto>, AdmissionValidator>();
+    builder.Services.AddScoped<IValidator<AdmissionFormStatusDto>, AdmissionStatusDto>();
     builder.Services.AddScoped<ValidationFilterAttribute>();
     builder.Services.Configure<ApiBehaviorOptions>(options
         => options.SuppressModelStateInvalidFilter = true);

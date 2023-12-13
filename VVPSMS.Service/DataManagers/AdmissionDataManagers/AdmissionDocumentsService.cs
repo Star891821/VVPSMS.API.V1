@@ -74,7 +74,6 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 throw ex;
             }
 
-        }
-
+        }       
     }
 }
