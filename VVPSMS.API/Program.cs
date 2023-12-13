@@ -165,8 +165,6 @@ try
     builder.Services.AddTransient<IGenericService<MstUserRoleDto>, MstUserRoleService>();
     builder.Services.AddTransient<IUserService<MstUserDto>, UserService>();
     builder.Services.AddTransient<IGenericService<MstDocumentTypesDto>, MstDocumentTypeService>();
-    builder.Services.AddTransient<IGenericService<MstPermissionDto>, MstPermissionService>();
-    builder.Services.AddTransient<IGenericService<RolePermissionsMappingDto>, RolePermissionMappingService>();
     //builder.Services.AddTransient<IGenericService<MstEnquiryQuestionDetailDto>, MstEnquiryQuestionDetailService>();
     builder.Services.AddTransient<IExternalLoginAppService, ExternalLoginAppService>();
     builder.Services.AddTransient<IJwtAuthManager, JwtAuthManager>();

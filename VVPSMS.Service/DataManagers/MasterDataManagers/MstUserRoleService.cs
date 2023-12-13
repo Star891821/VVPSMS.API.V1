@@ -19,24 +19,12 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
             using (var dbContext = new VvpsmsdbContext())
             {
                 var entity = dbContext.MstUserRoles.FirstOrDefault(e => e.RoleId == id);
-
                 if (entity != null)
                 {
-                    var roleTypeEntity = dbContext.MstRoleTypes.FirstOrDefault(e => e.RoletypeId == entity.RoletypeId);
-                    if (roleTypeEntity != null)
-                    {
-                        if (roleTypeEntity.RoletypeName != "Seeded")
-                        {
-                            dbContext.MstUserRoles.Remove(entity);
-                            dbContext.SaveChanges();
-                            
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
+                    dbContext.MstUserRoles.Remove(entity);
+                    dbContext.SaveChanges();
                 }
+
                 return true;
             }
 

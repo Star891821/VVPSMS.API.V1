@@ -17,7 +17,5 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int? ModifiedBy { get; set; }
 
-        public int? RoletypeId { get; set; }
-
     }
 }
