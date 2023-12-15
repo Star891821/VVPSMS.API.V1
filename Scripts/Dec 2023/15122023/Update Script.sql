@@ -3,7 +3,7 @@ GO
 
 UPDATE [dbo].[MstAdmissionStatus]
    SET 
-      [status_description] = 'Registrered'
+      [status_description] = 'Registered'
  WHERE status_id = 1
 GO
 UPDATE [dbo].[MstAdmissionStatus]

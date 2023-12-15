@@ -11,21 +11,21 @@ namespace VVPSMS.Api.Models.Enums
     public enum AdmissionStatusDto : int
     {
         
-        [EnumDisplayName(DisplayName = "User Registrered")]
-        User_Registrered = 0,
-        [EnumDisplayName(DisplayName = "Submitted, Payment Pending")]
-        Submitted_Payment_Pending = 1,
-        [EnumDisplayName(DisplayName = "Active and Submitted Application")]
-        Active_and_Submitted_Application = 2,
+        [EnumDisplayName(DisplayName = "Registrered")]
+        Registrered = 0,
+        [EnumDisplayName(DisplayName = "Submitted")]
+        Submitted = 1,
+        [EnumDisplayName(DisplayName = "Active")]
+        Active = 2,
         Applied = 3,
-        [EnumDisplayName(DisplayName = "Review Application")]
-        Review_Application = 4,
-        Scheduled = 5,
-        [EnumDisplayName(DisplayName = "Schedule Interview")]
-        Schedule_Interview = 6,
-        [EnumDisplayName(DisplayName = "Confirm Admission")]
-        Confirm_Admission = 7,
-        [EnumDisplayName(DisplayName = "Rejected or Cancelled")]
-        Rejected_or_Cancelled = 100
+        [EnumDisplayName(DisplayName = "Reviewed")]
+        Reviewed = 4,
+        Entrance = 5,
+        [EnumDisplayName(DisplayName = "Interview")]
+        Interview = 6,
+        [EnumDisplayName(DisplayName = "Confirmed")]
+        Confirmed = 7,
+        [EnumDisplayName(DisplayName = "Rejected")]
+        Rejected = 100
     }
 }
