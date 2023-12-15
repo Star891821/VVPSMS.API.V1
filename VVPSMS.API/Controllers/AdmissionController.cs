@@ -231,9 +231,8 @@ namespace VVPSMS.API.Controllers
 
                 var route = Request.Path.Value;
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter
-                    .StatusCode, filter.Name);
-                var pagedData = await _unitOfWork.AdmissionService.GetAll(validFilter.PageNumber, validFilter.PageSize, filter
-                    .StatusCode, filter.Name);
+                    .StatusCode, filter.Name, filter.academic_id, filter.stream_id, filter.grade_id);
+                var pagedData = await _unitOfWork.AdmissionService.GetAll(validFilter);
                 var itemsDto = GetAdmissionForm(pagedData.Item1);
 
                 var pagedReponse = PaginationHelper.CreatePagedReponse(itemsDto, validFilter, pagedData.Item2, uriService, route);
