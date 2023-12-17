@@ -23,8 +23,8 @@ namespace VVPSMS.Api.Models.ModelsDto
         public string Nationality { get; set; } = null!;
         
         public string Gender { get; set; } = null!;
-     
-        public int Age { get; set; }
+
+        public string Age { get; set; } = null!;
 
         public string? Religion { get; set; }
 

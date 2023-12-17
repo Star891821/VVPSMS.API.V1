@@ -23,7 +23,7 @@ public partial class StudentInfoDetail
 
     public string Gender { get; set; } = null!;
 
-    public int Age { get; set; }
+    public string Age { get; set; } = null!;
 
     public string? Religion { get; set; }
 
