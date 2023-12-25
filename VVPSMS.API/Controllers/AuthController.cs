@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using NLog;
+using Org.BouncyCastle.Asn1;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using VVPSMS.Api.Models.ModelsDto;
+using VVPSMS.Service.Models;
 using VVPSMS.Service.Repository;
 
 namespace VVPSMS.API.Controllers
@@ -21,12 +25,14 @@ namespace VVPSMS.API.Controllers
         {
             _dataRepository = dataRepository;
             _configuration = configuration;
+            //  _clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+
         }
         [AllowAnonymous]
         [Microsoft.AspNetCore.Mvc.HttpPost("AuthTest")]
         public async Task<IActionResult> AuthTest()
         {
-            
+
             return Ok("Hello");
         }
         [AllowAnonymous]
@@ -34,48 +40,80 @@ namespace VVPSMS.API.Controllers
         public async Task<IActionResult> Auth(LoginRequestDto loginRequest)
         {
             IActionResult response = Unauthorized();
-            if(loginRequest != null)
+            if (loginRequest != null)
             {
-                var loginResponse = await _dataRepository.LoginDetails(loginRequest);
-                if(loginResponse!=null && loginResponse.Status ==true)
+                if (loginRequest.UserType == "Applicant")
                 {
-                    var issuer = _configuration["Jwt:Issuer"];
-                    var audience = _configuration["Jwt:Audience"];
-                    var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
-                    var signingCredentails = new SigningCredentials(
-                        new SymmetricSecurityKey(key),
-                        SecurityAlgorithms.HmacSha384Signature
-                        );
-                    var subject = new ClaimsIdentity(new[]
-                    {
-                        new Claim(JwtRegisteredClaimNames.Sub,loginRequest.UserId),
-                        new Claim(JwtRegisteredClaimNames.Email,loginRequest.UserId),
-                    });
-                    var expires = DateTime.UtcNow.AddMinutes(10);
-
-                    var tokenDescriptor = new SecurityTokenDescriptor
-                    {
-                        Subject = subject,
-                        Expires = expires,
-                        Issuer = issuer,
-                        Audience = audience,
-                        SigningCredentials = signingCredentails
-                    };
-
-                    var tokenHandler = new JwtSecurityTokenHandler();
-                    var token=tokenHandler.CreateToken(tokenDescriptor);
-                    var jwtToken=tokenHandler.WriteToken(token);
-
-                    var authResponse = new LoginAuthResponse()
-                    {
-                        JwtToken = jwtToken,
-                        ExpiryDateTime= expires.ToString(),
-                        LoggedInUser= loginResponse.Role
-                    };
-                    return Ok(authResponse);
-                }                
+                    var loginResponse = InsertOrUpdate(loginRequest).Result;
+                    return Ok(Generatejwttoken(loginResponse));
+                }
+                else
+                {
+                    var loginResponse = await _dataRepository.LoginDetails(loginRequest);
+                    return Ok(Generatejwttoken(loginResponse));
+                }
             }
             return response;
         }
+        private LoginAuthResponse Generatejwttoken(LoginResponseDto loginResponse)
+        {
+            if (loginResponse != null && loginResponse.Status == true)
+            {
+                var issuer = _configuration["Jwt:Issuer"];
+                var audience = _configuration["Jwt:Audience"];
+                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+                var signingCredentails = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha384Signature
+                    );
+                var subject = new ClaimsIdentity(new[]
+                {
+                        new Claim(JwtRegisteredClaimNames.Sub,loginResponse.email),
+                        new Claim(JwtRegisteredClaimNames.Email,loginResponse.email),
+                    });
+                var expires = DateTime.UtcNow.AddMinutes(10);
+
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = subject,
+                    Expires = expires,
+                    Issuer = issuer,
+                    Audience = audience,
+                    SigningCredentials = signingCredentails
+                };
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var jwtToken = tokenHandler.WriteToken(token);
+
+                var authResponse = new LoginAuthResponse()
+                {
+                    JwtToken = jwtToken,
+                    ExpiryDateTime = expires.ToString(),
+                    LoggedInUser = loginResponse.Role,
+                    UserId = loginResponse.Id
+                };
+                return authResponse;
+            }
+            return null;
+        }
+        [HttpPost]
+        private async Task<LoginResponseDto> InsertOrUpdate(LoginRequestDto loginRequestDto)
+        {
+            var _oUser = new LoginResponseDto();
+            using (var httpclient = new HttpClient())
+            {
+
+                StringContent content = new StringContent(JsonConvert.SerializeObject(loginRequestDto), Encoding.UTF8, "application/json");
+
+                using (var response = await httpclient.PostAsync("https://localhost:7210/api/Applicant/InsertOrUpdate1", content))
+                {
+                    var apiResponse = await response.Content.ReadAsStringAsync();
+                    _oUser = JsonConvert.DeserializeObject<LoginResponseDto>(apiResponse);
+                }
+            }
+            return _oUser;
+        }
     }
+
 }
