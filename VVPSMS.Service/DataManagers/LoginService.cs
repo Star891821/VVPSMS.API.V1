@@ -22,14 +22,14 @@ namespace VVPSMS.Service.DataManagers
                 switch (loginRequest.LoginUser.ToUpper())
                 {
                     case "STUDENT":
-                        var student = await _vvpsmsdbContext.Students.FirstOrDefaultAsync(x => x.StudentUsername == loginRequest.name && x.StudentPassword == loginRequest.Password);
+                        var student = await _vvpsmsdbContext.Students.FirstOrDefaultAsync(x => x.StudentUsername == loginRequest.UserId && x.StudentPassword == loginRequest.Password);
                         if (student != null)
                         {
                             loginResponseDto = new LoginResponseDto()
                             {
                                 UserName = student.StudentUsername,
-                             //   GivenName = student.StudentGivenName,
-                               // Phone = student.StudentPhone ?? string.Empty,
+                                GivenName = student.StudentGivenName,
+                                Phone = student.StudentPhone ?? string.Empty,
                                 Status=true,
                                 Message="Valid User",
                                 Role="STUDENT"
@@ -37,15 +37,15 @@ namespace VVPSMS.Service.DataManagers
                         }
                         break;
                     case "TEACHER":
-                        var teacher = await _vvpsmsdbContext.Teachers.FirstOrDefaultAsync(x => x.TeacherUsername == loginRequest.name 
+                        var teacher = await _vvpsmsdbContext.Teachers.FirstOrDefaultAsync(x => x.TeacherUsername == loginRequest.UserId 
                         && x.TeacherPassword == loginRequest.Password);
                         if (teacher != null)
                         {
                             loginResponseDto = new LoginResponseDto()
                             {
                                 UserName = teacher.TeacherUsername,
-                              //  GivenName = teacher.TeacherGivenName,
-                               // Phone = teacher.TeacherPhone ?? string.Empty,
+                                GivenName = teacher.TeacherGivenName,
+                                Phone = teacher.TeacherPhone ?? string.Empty,
                                 Status = true,
                                 Message = "Valid User",
                                 Role = "TEACHER"
@@ -53,7 +53,7 @@ namespace VVPSMS.Service.DataManagers
                         }
                         break;
                     default:
-                        var user = await _vvpsmsdbContext.MstUsers.FirstOrDefaultAsync(x => x.Username == loginRequest.name
+                        var user = await _vvpsmsdbContext.MstUsers.FirstOrDefaultAsync(x => x.Username == loginRequest.UserId
                         && x.Userpassword == loginRequest.Password && x.RoleId==loginRequest.RoleId);
                         if (user != null)
                         {
@@ -61,8 +61,8 @@ namespace VVPSMS.Service.DataManagers
                             loginResponseDto = new LoginResponseDto()
                             {
                                 UserName = user.Username,
-                              //  GivenName = user.UserGivenName,
-                               // Phone = user.UserPhone ?? string.Empty,
+                                GivenName = user.UserGivenName,
+                                Phone = user.UserPhone ?? string.Empty,
                                 Status = true,
                                 Message = "Valid User",
                                 Role = loggedInRole!=null? loggedInRole.RoleName:"Unknown"
