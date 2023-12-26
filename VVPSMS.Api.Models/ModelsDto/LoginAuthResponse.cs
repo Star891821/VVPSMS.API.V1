@@ -25,4 +25,33 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public string? Role { get; set; }
     }
+
+    public class ApplicantAuthResponse
+    {
+        public string? JwtToken { get; set; }
+
+        public string? ExpiryDateTime { get; set; }
+
+        public int ApplicantId { get; set; }
+
+        public string Applicantname { get; set; }
+
+        public string Applicantpassword { get; set; }
+
+        public string ApplicantGivenName { get; set; }
+
+        public string ApplicantSurname { get; set; }
+
+        public string? ApplicantPhone { get; set; }
+
+        public int RoleId { get; set; }
+
+        public string ApplicantLoginType { get; set; }
+
+        public int Enforce2Fa { get; set; }
+
+
+        public string? Applicantemail { get; set; }
+
+    }
 }

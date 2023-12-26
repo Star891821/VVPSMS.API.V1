@@ -45,7 +45,7 @@ namespace VVPSMS.API.Controllers
                 if (loginRequest.UserType == "Applicant")
                 {
                     var loginResponse = InsertOrUpdate(loginRequest).Result;
-                    return Ok(Generatejwttoken(loginResponse));
+                    return Ok(Generatejwttokenwithnewresponse(loginResponse));
                 }
                 else
                 {
@@ -97,19 +97,70 @@ namespace VVPSMS.API.Controllers
             }
             return null;
         }
-        [HttpPost]
-        private async Task<LoginResponseDto> InsertOrUpdate(LoginRequestDto loginRequestDto)
+        private ApplicantAuthResponse Generatejwttokenwithnewresponse(ApplicantResponseDto loginResponse)
         {
-            var _oUser = new LoginResponseDto();
+            if (loginResponse != null)
+            {
+                var issuer = _configuration["Jwt:Issuer"];
+                var audience = _configuration["Jwt:Audience"];
+                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+                var signingCredentails = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha384Signature
+                    );
+                var subject = new ClaimsIdentity(new[]
+                {
+                        new Claim(JwtRegisteredClaimNames.Sub,loginResponse.Applicantemail),
+                        new Claim(JwtRegisteredClaimNames.Email,loginResponse.Applicantemail),
+                    });
+                var expires = DateTime.UtcNow.AddMinutes(10);
+
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = subject,
+                    Expires = expires,
+                    Issuer = issuer,
+                    Audience = audience,
+                    SigningCredentials = signingCredentails
+                };
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var jwtToken = tokenHandler.WriteToken(token);
+
+                var authResponse = new ApplicantAuthResponse()
+                {
+                    JwtToken = jwtToken,
+                    ExpiryDateTime = expires.ToString(),
+                    ApplicantId = loginResponse.ApplicantId,
+                    ApplicantGivenName = loginResponse.ApplicantGivenName,
+                    RoleId = loginResponse.RoleId,
+                    Applicantemail = loginResponse.Applicantemail,
+                    ApplicantLoginType = loginResponse.ApplicantLoginType,
+                    Applicantname = loginResponse.Applicantname,
+                    Applicantpassword = loginResponse.Applicantpassword,
+                    ApplicantPhone = loginResponse.ApplicantPhone,
+                    ApplicantSurname = loginResponse.ApplicantSurname,
+                    Enforce2Fa = loginResponse.Enforce2Fa
+                    
+                };
+                return authResponse;
+            }
+            return null;
+        }
+        [HttpPost]
+        private async Task<ApplicantResponseDto> InsertOrUpdate(LoginRequestDto loginRequestDto)
+        {
+            var _oUser = new ApplicantResponseDto();
             using (var httpclient = new HttpClient())
             {
 
                 StringContent content = new StringContent(JsonConvert.SerializeObject(loginRequestDto), Encoding.UTF8, "application/json");
 
-                using (var response = await httpclient.PostAsync("https://localhost:7210/api/Applicant/InsertOrUpdate1", content))
+                using (var response = await httpclient.PostAsync("https://localhost:7210/api/Applicant/InsertOrUpdateWithResponse", content))
                 {
                     var apiResponse = await response.Content.ReadAsStringAsync();
-                    _oUser = JsonConvert.DeserializeObject<LoginResponseDto>(apiResponse);
+                    _oUser = JsonConvert.DeserializeObject<ApplicantResponseDto>(apiResponse);
                 }
             }
             return _oUser;
