@@ -35,7 +35,7 @@ public partial class FamilyOrGuardianInfoDetail
 
     public DateTime? Passportexpirydate { get; set; }
 
-    public string Contact { get; set; } = null!;
+    public string? Contact { get; set; }
 
     public string Email { get; set; } = null!;
 

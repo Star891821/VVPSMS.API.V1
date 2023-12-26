@@ -156,9 +156,25 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             int? grade_id = paginationFilter.grade_id;
             int? stream_id = paginationFilter.stream_id;
 
-            if (StatusCode == null && string.IsNullOrEmpty(name) 
+            int totalRecords = int.MinValue;
+
+            if (StatusCode == null && string.IsNullOrEmpty(name)
                 && academic_id == null && grade_id == null && stream_id == null)
             {
+
+                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Where(a => (a.AdmissionStatus >= minStatuscode)
+                         && (a.AdmissionStatus <= maxStatuscode))
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                       .CountAsync();
 
                 pagedData = await dbSet.Include(a => a.StudentInfoDetails)
                          .Where(a => (a.AdmissionStatus >= minStatuscode)
@@ -180,6 +196,20 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             else if (StatusCode == null && !string.IsNullOrEmpty(name)
                   && academic_id != null && grade_id == null && stream_id == null)
             {
+                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Where(a => (a.AdmissionStatus >= minStatuscode)
+                         && (a.AdmissionStatus <= maxStatuscode))
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                       .CountAsync();
+
                 var tempResult = await dbSet
                            .Where(a => a.AdmissionStatus >= minStatuscode
                             && a.AdmissionStatus <= maxStatuscode
@@ -209,9 +239,24 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             else if (StatusCode != null && string.IsNullOrEmpty(name)
                 && academic_id != null && grade_id != null && stream_id == null)
             {
+                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Where(a => a.AdmissionStatus == StatusCode
+                        && a.AcademicId == academic_id
+                        && a.GradeId == grade_id)
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                       .CountAsync();
+
                 pagedData = await dbSet.Include(a => a.StudentInfoDetails)
                         .Where(a => a.AdmissionStatus == StatusCode
-                        && a.AcademicId == academic_id 
+                        && a.AcademicId == academic_id
                         && a.GradeId == grade_id)
                         .Include(a => a.AdmissionDocuments)
                         .Include(a => a.AdmissionEnquiryDetails)
@@ -226,9 +271,25 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                         .Take(PageSize)
                         .ToListAsync();
             }
-            else if(StatusCode != null && string.IsNullOrEmpty(name)
+            else if (StatusCode != null && string.IsNullOrEmpty(name)
                 && academic_id != null && grade_id != null && stream_id != null)
             {
+                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Where(a => a.AdmissionStatus == StatusCode
+                        && a.AcademicId == academic_id
+                        && a.GradeId == grade_id
+                        && a.StreamId == stream_id)
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                     .CountAsync();
+
                 pagedData = await dbSet.Include(a => a.StudentInfoDetails)
                         .Where(a => a.AdmissionStatus == StatusCode
                         && a.AcademicId == academic_id
@@ -250,6 +311,20 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             else if (StatusCode != null && string.IsNullOrEmpty(name)
              && academic_id == null && grade_id == null && stream_id != null)
             {
+                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Where(a => a.AdmissionStatus == StatusCode
+                        && a.StreamId == stream_id)
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                     .CountAsync();
+
                 pagedData = await dbSet.Include(a => a.StudentInfoDetails)
                         .Where(a => a.AdmissionStatus == StatusCode
                         && a.StreamId == stream_id)
@@ -269,6 +344,21 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             else if (StatusCode != null && string.IsNullOrEmpty(name)
              && academic_id != null && grade_id == null && stream_id != null)
             {
+                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Where(a => a.AdmissionStatus == StatusCode
+                        && a.AcademicId == academic_id
+                        && a.StreamId == stream_id)
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                     .CountAsync();
+
                 pagedData = await dbSet.Include(a => a.StudentInfoDetails)
                         .Where(a => a.AdmissionStatus == StatusCode
                         && a.AcademicId == academic_id
@@ -289,6 +379,21 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             else if (StatusCode != null && string.IsNullOrEmpty(name)
              && academic_id == null && grade_id != null && stream_id != null)
             {
+                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Where(a => a.AdmissionStatus == StatusCode
+                        && a.GradeId == grade_id
+                        && a.StreamId == stream_id)
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                     .CountAsync();
+
                 pagedData = await dbSet.Include(a => a.StudentInfoDetails)
                         .Where(a => a.AdmissionStatus == StatusCode
                         && a.GradeId == grade_id
@@ -309,6 +414,20 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             else if (StatusCode != null && string.IsNullOrEmpty(name)
             && academic_id == null && grade_id != null && stream_id == null)
             {
+                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Where(a => a.AdmissionStatus == StatusCode
+                        && a.GradeId == grade_id)
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                     .CountAsync();
+
                 pagedData = await dbSet.Include(a => a.StudentInfoDetails)
                         .Where(a => a.AdmissionStatus == StatusCode
                         && a.GradeId == grade_id)
@@ -327,6 +446,19 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             }
             else
             {
+                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
+                        .Include(a => a.StudentInfoDetails)
+                        .Include(a => a.AdmissionDocuments)
+                        .Include(a => a.AdmissionEnquiryDetails)
+                        .Include(a => a.SiblingInfos)
+                        .Include(a => a.StudentHealthInfoDetails)
+                        .Include(a => a.FamilyOrGuardianInfoDetails)
+                        .Include(a => a.PreviousSchoolDetails)
+                        .Include(a => a.EmergencyContactDetails)
+                        .Include(a => a.TransportDetails)
+                        .Include(a => a.StudentIllnessDetails)
+                     .CountAsync();
+
                 pagedData = await dbSet.Include(a => a.StudentInfoDetails)
                         .Include(a => a.StudentInfoDetails)
                         .Include(a => a.AdmissionDocuments)
@@ -342,7 +474,9 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                         .Take(PageSize)
                         .ToListAsync();
             }
-            var totalRecords = await dbSet.CountAsync();
+
+
+
             return (pagedData, totalRecords);
         }
 
@@ -450,7 +584,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                     admission.AdmissionStatus = admissionFormStatusDto.StatusId;
                     admission.ScheduledDate = admissionFormStatusDto.ScheduleDate;
                     admission.Comments = admissionFormStatusDto.Comments;
-                   
+
                     context.Entry(exist).CurrentValues.SetValues(admission);
                     return admission;
                 }
