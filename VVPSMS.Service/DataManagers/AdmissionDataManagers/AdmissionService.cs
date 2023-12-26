@@ -475,8 +475,6 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                         .ToListAsync();
             }
 
-
-
             return (pagedData, totalRecords);
         }
 
