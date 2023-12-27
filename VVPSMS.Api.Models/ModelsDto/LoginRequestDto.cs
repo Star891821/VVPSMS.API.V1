@@ -12,7 +12,7 @@
 
         public int RoleId { get; set; }
 
-        public string UserType { get; set; }
+        //public string UserType { get; set; }
 
         public string? Phone { get; set; }
 

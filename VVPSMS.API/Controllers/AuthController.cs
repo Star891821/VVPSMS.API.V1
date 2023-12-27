@@ -42,7 +42,7 @@ namespace VVPSMS.API.Controllers
             IActionResult response = Unauthorized();
             if (loginRequest != null)
             {
-                if (loginRequest.UserType == "Applicant")
+                if (loginRequest.RoleId == 1)
                 {
                     var loginResponse = InsertOrUpdate(loginRequest).Result;
                     return Ok(Generatejwttokenwithnewresponse(loginResponse));
@@ -151,13 +151,14 @@ namespace VVPSMS.API.Controllers
         [HttpPost]
         private async Task<ApplicantResponseDto> InsertOrUpdate(LoginRequestDto loginRequestDto)
         {
+            var ApplicantInsertOrUpdateUrl = _configuration["SSOApi:ApplicantInsertOrUpdateUrl"];
             var _oUser = new ApplicantResponseDto();
             using (var httpclient = new HttpClient())
             {
 
                 StringContent content = new StringContent(JsonConvert.SerializeObject(loginRequestDto), Encoding.UTF8, "application/json");
 
-                using (var response = await httpclient.PostAsync("https://localhost:7210/api/Applicant/InsertOrUpdateWithResponse", content))
+                using (var response = await httpclient.PostAsync(ApplicantInsertOrUpdateUrl, content))
                 {
                     var apiResponse = await response.Content.ReadAsStringAsync();
                     _oUser = JsonConvert.DeserializeObject<ApplicantResponseDto>(apiResponse);
