@@ -145,338 +145,76 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 
         public async Task<(List<AdmissionForm>, int)> GetAll(PaginationFilter paginationFilter)
         {
-            List<AdmissionForm> pagedData = new List<AdmissionForm>();
-            int minStatuscode = 3;
-            int maxStatuscode = 100;
-            int PageNumber = paginationFilter.PageNumber;
-            int PageSize = paginationFilter.PageSize;
-            int? StatusCode = paginationFilter.StatusCode;
-            string? name = paginationFilter.Name;
-            int? academic_id = paginationFilter.academic_id;
-            int? grade_id = paginationFilter.grade_id;
-            int? stream_id = paginationFilter.stream_id;
+            int minStatusCode = 3;
+            int maxStatusCode = 100;
 
-            int totalRecords = int.MinValue;
+            int pageNumber = paginationFilter.PageNumber;
+            int pageSize = paginationFilter.PageSize;
+            int? statusCode = paginationFilter.StatusCode;
+            string name = paginationFilter.Name ?? string.Empty;
+            int? academicId = paginationFilter.academic_id;
+            int? gradeId = paginationFilter.grade_id;
+            int? streamId = paginationFilter.stream_id;
 
-            if (StatusCode == null && string.IsNullOrEmpty(name)
-                && academic_id == null && grade_id == null && stream_id == null)
+            IQueryable<AdmissionForm> query = dbSet
+                .Include(a => a.StudentInfoDetails)
+                .Include(a => a.AdmissionDocuments)
+                .Include(a => a.AdmissionEnquiryDetails)
+                .Include(a => a.SiblingInfos)
+                .Include(a => a.StudentHealthInfoDetails)
+                .Include(a => a.FamilyOrGuardianInfoDetails)
+                .Include(a => a.PreviousSchoolDetails)
+                .Include(a => a.EmergencyContactDetails)
+                .Include(a => a.TransportDetails)
+                .Include(a => a.StudentIllnessDetails);
+
+            // Apply status code filter
+            if (statusCode != null)
             {
-
-                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => (a.AdmissionStatus >= minStatuscode)
-                         && (a.AdmissionStatus <= maxStatuscode))
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                       .CountAsync();
-
-                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
-                         .Where(a => (a.AdmissionStatus >= minStatuscode)
-                          && (a.AdmissionStatus <= maxStatuscode))
-                         .Include(a => a.AdmissionDocuments)
-                         .Include(a => a.AdmissionEnquiryDetails)
-                         .Include(a => a.SiblingInfos)
-                         .Include(a => a.StudentHealthInfoDetails)
-                         .Include(a => a.FamilyOrGuardianInfoDetails)
-                         .Include(a => a.PreviousSchoolDetails)
-                         .Include(a => a.EmergencyContactDetails)
-                         .Include(a => a.TransportDetails)
-                         .Include(a => a.StudentIllnessDetails)
-                         .Skip((PageNumber - 1) * PageSize)
-                         .Take(PageSize)
-                         .ToListAsync();
-
-            }
-            else if (StatusCode == null && !string.IsNullOrEmpty(name)
-                  && academic_id != null && grade_id == null && stream_id == null)
-            {
-                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => (a.AdmissionStatus >= minStatuscode)
-                         && (a.AdmissionStatus <= maxStatuscode))
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                       .CountAsync();
-
-                var tempResult = await dbSet
-                           .Where(a => a.AdmissionStatus >= minStatuscode
-                            && a.AdmissionStatus <= maxStatuscode
-                            && a.AcademicId == academic_id)
-                           .Include(a => a.StudentInfoDetails.Where(o => o.FirstName.Contains(name)))
-                          .Include(a => a.AdmissionDocuments)
-                          .Include(a => a.AdmissionEnquiryDetails)
-                          .Include(a => a.SiblingInfos)
-                          .Include(a => a.StudentHealthInfoDetails)
-                          .Include(a => a.FamilyOrGuardianInfoDetails)
-                          .Include(a => a.PreviousSchoolDetails)
-                          .Include(a => a.EmergencyContactDetails)
-                          .Include(a => a.TransportDetails)
-                          .Include(a => a.StudentIllnessDetails)
-                          .Skip((PageNumber - 1) * PageSize)
-                          .Take(PageSize)
-                          .ToListAsync();
-                foreach (var item in tempResult)
-                {
-                    if (item.StudentInfoDetails.Count > 0)
-                    {
-                        pagedData.Add(item);
-                    }
-                }
-
-            }
-            else if (StatusCode != null && string.IsNullOrEmpty(name)
-                && academic_id != null && grade_id != null && stream_id == null)
-            {
-                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.AcademicId == academic_id
-                        && a.GradeId == grade_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                       .CountAsync();
-
-                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.AcademicId == academic_id
-                        && a.GradeId == grade_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                        .Skip((PageNumber - 1) * PageSize)
-                        .Take(PageSize)
-                        .ToListAsync();
-            }
-            else if (StatusCode != null && string.IsNullOrEmpty(name)
-                && academic_id != null && grade_id != null && stream_id != null)
-            {
-                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.AcademicId == academic_id
-                        && a.GradeId == grade_id
-                        && a.StreamId == stream_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                     .CountAsync();
-
-                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.AcademicId == academic_id
-                        && a.GradeId == grade_id
-                        && a.StreamId == stream_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                        .Skip((PageNumber - 1) * PageSize)
-                        .Take(PageSize)
-                        .ToListAsync();
-            }
-            else if (StatusCode != null && string.IsNullOrEmpty(name)
-             && academic_id == null && grade_id == null && stream_id != null)
-            {
-                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.StreamId == stream_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                     .CountAsync();
-
-                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.StreamId == stream_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                        .Skip((PageNumber - 1) * PageSize)
-                        .Take(PageSize)
-                        .ToListAsync();
-            }
-            else if (StatusCode != null && string.IsNullOrEmpty(name)
-             && academic_id != null && grade_id == null && stream_id != null)
-            {
-                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.AcademicId == academic_id
-                        && a.StreamId == stream_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                     .CountAsync();
-
-                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.AcademicId == academic_id
-                        && a.StreamId == stream_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                        .Skip((PageNumber - 1) * PageSize)
-                        .Take(PageSize)
-                        .ToListAsync();
-            }
-            else if (StatusCode != null && string.IsNullOrEmpty(name)
-             && academic_id == null && grade_id != null && stream_id != null)
-            {
-                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.GradeId == grade_id
-                        && a.StreamId == stream_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                     .CountAsync();
-
-                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.GradeId == grade_id
-                        && a.StreamId == stream_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                        .Skip((PageNumber - 1) * PageSize)
-                        .Take(PageSize)
-                        .ToListAsync();
-            }
-            else if (StatusCode != null && string.IsNullOrEmpty(name)
-            && academic_id == null && grade_id != null && stream_id == null)
-            {
-                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.GradeId == grade_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                     .CountAsync();
-
-                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Where(a => a.AdmissionStatus == StatusCode
-                        && a.GradeId == grade_id)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                        .Skip((PageNumber - 1) * PageSize)
-                        .Take(PageSize)
-                        .ToListAsync();
+                query = query.Where(a => a.AdmissionStatus == statusCode);
             }
             else
             {
-                totalRecords = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Include(a => a.StudentInfoDetails)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                     .CountAsync();
-
-                pagedData = await dbSet.Include(a => a.StudentInfoDetails)
-                        .Include(a => a.StudentInfoDetails)
-                        .Include(a => a.AdmissionDocuments)
-                        .Include(a => a.AdmissionEnquiryDetails)
-                        .Include(a => a.SiblingInfos)
-                        .Include(a => a.StudentHealthInfoDetails)
-                        .Include(a => a.FamilyOrGuardianInfoDetails)
-                        .Include(a => a.PreviousSchoolDetails)
-                        .Include(a => a.EmergencyContactDetails)
-                        .Include(a => a.TransportDetails)
-                        .Include(a => a.StudentIllnessDetails)
-                        .Skip((PageNumber - 1) * PageSize)
-                        .Take(PageSize)
-                        .ToListAsync();
+                query = query.Where(a => a.AdmissionStatus >= minStatusCode && a.AdmissionStatus <= maxStatusCode);
             }
+
+            // Apply name filter
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(a => a.StudentInfoDetails.Any(o => o.FirstName.Contains(name)));
+            }
+
+            // Apply academic ID filter
+            if (academicId != null)
+            {
+                query = query.Where(a => a.AcademicId == academicId);
+            }
+
+            // Apply grade ID filter
+            if (gradeId != null)
+            {
+                query = query.Where(a => a.GradeId == gradeId);
+            }
+
+            // Apply stream ID filter
+            if (streamId != null)
+            {
+                query = query.Where(a => a.StreamId == streamId);
+            }
+
+            // Get total count of records that match the filters
+            int totalRecords = await query.CountAsync();
+
+            // Retrieve paged data with specified filters and order by FormId in descending order
+            List<AdmissionForm> pagedData = await query
+                .OrderByDescending(a => a.FormId)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
             return (pagedData, totalRecords);
         }
+
 
         public async Task<List<AdmissionForm>> GetAdmissionDetailsByUserId(int userId)
         {
