@@ -46,7 +46,7 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public int RoleId { get; set; }
 
-        public string ApplicantLoginType { get; set; }
+        public string? ApplicantLoginType { get; set; }
 
         public int Enforce2Fa { get; set; }
 
