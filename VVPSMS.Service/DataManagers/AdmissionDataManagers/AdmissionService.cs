@@ -166,7 +166,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 .Include(a => a.PreviousSchoolDetails)
                 .Include(a => a.EmergencyContactDetails)
                 .Include(a => a.TransportDetails)
-                .Include(a => a.StudentIllnessDetails);
+                .Include(a => a.StudentIllnessDetails).AsQueryable();
 
             // Apply status code filter
             if (statusCode != null)
