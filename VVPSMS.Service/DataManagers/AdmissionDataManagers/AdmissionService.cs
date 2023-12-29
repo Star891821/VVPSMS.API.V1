@@ -317,8 +317,17 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 AdmissionForm admission = exist;
                 if (exist != null)
                 {
+                    if(admissionFormStatusDto.StatusId==5)
+                    {
+                        
+                        admission.ScheduledDate = admissionFormStatusDto.ScheduleDate;
+                    }
+                    else if(admissionFormStatusDto.StatusId==6)
+                    {
+                        admission.EntranceScheduleDate = admissionFormStatusDto.EntranceScheduleDate;
+                    }
+
                     admission.AdmissionStatus = admissionFormStatusDto.StatusId;
-                    admission.ScheduledDate = admissionFormStatusDto.ScheduleDate;
                     admission.Comments = admissionFormStatusDto.Comments;
 
                     context.Entry(exist).CurrentValues.SetValues(admission);

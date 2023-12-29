@@ -9,6 +9,7 @@ namespace VVPSMS.Api.Models.ModelsDto
         public int? StatusId { get; set; }
 
         public DateTime? ScheduleDate { get; set; }
+        public DateTime? EntranceScheduleDate { get; set; }
 
         public string? Comments { get; set; }
     }

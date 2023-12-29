@@ -608,9 +608,24 @@ namespace VVPSMS.API.Controllers
                             }
                             else
                             {
-                                var errors1 = new { ErrorCode = "ScheduleDate", Message = "ScheduleDate should be valid date" };
-                                statusCode = StatusCodes.Status400BadRequest; value = errors1;
-                                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Error.ToString(), Message = errors1.Message, Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                                var errors = new { ErrorCode = "ScheduleDate", Message = "ScheduleDate should be valid date" };
+                                statusCode = StatusCodes.Status400BadRequest; value = errors;
+                                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Error.ToString(), Message = errors.Message, Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                            }
+                            break;
+                        case 6:
+                            if (BeAValidDate(admissionFormStatus.EntranceScheduleDate))
+                            {
+                                _unitOfWork.AdmissionService.UpdateApplicationStatus(admissionFormStatus);
+                                await _unitOfWork.CompleteAsync();
+                                admissionstatus = true;
+                            }
+                            else
+                            {
+                                var errors = new { ErrorCode = "EntranceScheduleDate", Message = "EntranceScheduleDate should be valid date" };
+                                statusCode = StatusCodes.Status400BadRequest; value = errors;
+                                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Error.ToString(), Message = errors.Message, Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
 
                             }
                             break;
