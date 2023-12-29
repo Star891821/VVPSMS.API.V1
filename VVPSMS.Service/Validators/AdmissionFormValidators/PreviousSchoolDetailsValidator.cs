@@ -30,7 +30,7 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
             RuleFor(p => p.HasapplicanteverExpelledorsuspended).Matches(onlyAlphabet).WithErrorCode("HasapplicanteverExpelledorsuspended").WithMessage("HasapplicanteverExpelledorsuspended should contains only Alphabets");
             RuleFor(p => p.Reasonforsuspension).Matches(AlphaNumeric).WithErrorCode("Reasonforsuspension").WithMessage("Reasonforsuspension should contains Alpha Numeric Characters");
             RuleFor(p => p.MediumofInstruction).Matches(onlyAlphabet).WithErrorCode("MediumofInstruction").WithMessage("MediumofInstruction should contains only Alphabets");
-            RuleFor(p => p.DateOfLeavingschool).Must(BeAValidDate).WithErrorCode("DateOfLeavingschool").WithMessage("DateOfLeavingschool should be valid date");
+           // RuleFor(p => p.DateOfLeavingschool).Must(BeAValidDate).WithErrorCode("DateOfLeavingschool").WithMessage("DateOfLeavingschool should be valid date");
 
         }
     }

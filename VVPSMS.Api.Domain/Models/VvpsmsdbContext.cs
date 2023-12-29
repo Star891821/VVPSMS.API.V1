@@ -187,6 +187,9 @@ public partial class VvpsmsdbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.EntranceScheduleDate)
+                .HasColumnType("datetime")
+                .HasColumnName("entrance_schedule_date");
             entity.Property(e => e.GradeId).HasColumnName("grade_id");
             entity.Property(e => e.ModifiedAt)
                 .HasColumnType("datetime")
