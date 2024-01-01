@@ -41,8 +41,8 @@ namespace VVPSMS.Service.Validators.AdmissionFormValidators
             RuleFor(p => p.DesignationNameofcompany).NotEmpty().WithErrorCode("DesignationNameofcompany").WithMessage("DesignationNameofcompany cannot be Empty")
                            .Matches(onlyAlphabet).WithErrorCode("DesignationNameofcompany").WithMessage("DesignationNameofcompany should contains only Alphabets");
 
-            RuleFor(p => p.AnnualIncome).NotNull().WithErrorCode("AnnualIncome").WithMessage("AnnualIncome cannot be null")
-                          .GreaterThan(0).WithErrorCode("AnnualIncome").WithMessage("AnnualIncome must be greater than 0.");
+            RuleFor(p => p.AnnualIncome).NotNull().WithErrorCode("AnnualIncome").WithMessage("AnnualIncome cannot be null");
+                         // .GreaterThan(0).WithErrorCode("AnnualIncome").WithMessage("AnnualIncome must be greater than 0.");
 
             //RuleFor(p => p.OfficeAddress).Matches(AlphaNumeric)
             //      .When(x => !string.IsNullOrEmpty(x.OfficeAddress)).WithErrorCode("OfficeAddress").WithMessage("OfficeAddress should contains only Alpha Numeric Characters");
