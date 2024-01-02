@@ -38,6 +38,8 @@ namespace VVPSMS.Api.Models.ModelsDto
 
         public string? Comments { get; set; }
 
+        public DateTime? EntranceScheduleDate { get; set; }
+
         public virtual List<AdmissionDocumentDto> AdmissionDocuments { get; set; }
 
         public virtual List<AdmissionEnquiryDetailDto> AdmissionEnquiryDetails { get; set; }

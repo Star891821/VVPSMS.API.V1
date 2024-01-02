@@ -118,7 +118,7 @@ namespace VVPSMS.API.Controllers
 
                 _logger.Information($"GetAdmissionDetailsByUserId API Started");
                 var item = await _unitOfWork.AdmissionService.GetAdmissionDetailsByUserId(id);
-                var itemsDto = GetAdmissionForm(item);
+                var itemsDto = GetAdmissionSearchForm(item);
                 if (itemsDto == null)
                 {
                     statusCode = StatusCodes.Status404NotFound;
@@ -233,7 +233,7 @@ namespace VVPSMS.API.Controllers
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter
                     .StatusCode, filter.Name, filter.academic_id, filter.stream_id, filter.grade_id);
                 var pagedData = await _unitOfWork.AdmissionService.GetAll(validFilter);
-                var itemsDto = GetAdmissionForm(pagedData.Item1);
+                var itemsDto = GetAdmissionSearchForm(pagedData.Item1);
 
                 var pagedReponse = PaginationHelper.CreatePagedReponse(itemsDto, validFilter, pagedData.Item2, uriService, route);
                 value = pagedReponse;
@@ -849,6 +849,36 @@ namespace VVPSMS.API.Controllers
                 foreach (var item in items)
                 {
                     itemsDto.Add(GetAdmissionForm(item));
+                }
+                return itemsDto;
+            }
+            return null;
+        }
+        private List<AdmissionSearchDto>? GetAdmissionSearchForm(List<AdmissionForm> items)
+        {
+            if (items != null)
+            {
+                List<AdmissionSearchDto> itemsDto = new List<AdmissionSearchDto>();
+                foreach (var item in items)
+                {
+                    itemsDto.Add(new AdmissionSearchDto()
+                    {
+                        FormId = item.FormId,
+                        AdmissionStatus = item.AdmissionStatus,
+                        GradeId = item.GradeId,
+                        AcademicId = item.AcademicId,
+                        FirstName = item.StudentInfoDetails.Count() > 0? item.StudentInfoDetails.FirstOrDefault().FirstName:"",
+                        LastName = item.StudentInfoDetails.Count() > 0 ? item.StudentInfoDetails.FirstOrDefault().LastName : "",
+                        MiddleName = item.StudentInfoDetails.Count() > 0 ? item.StudentInfoDetails.FirstOrDefault().MiddleName : "",
+                        EntranceScheduleDate = item.EntranceScheduleDate,
+                        ScheduledDate = item.ScheduledDate,
+                        SchoolId = item.SchoolId,
+                        StreamId = item.StreamId,
+                        CreatedAt = item.CreatedAt,
+                        CreatedBy = item.CreatedBy,
+                        ModifiedAt = item.ModifiedAt,
+                        ModifiedBy = item.ModifiedBy
+                    });
                 }
                 return itemsDto;
             }

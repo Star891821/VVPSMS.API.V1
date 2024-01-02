@@ -156,8 +156,8 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             int? gradeId = paginationFilter.grade_id;
             int? streamId = paginationFilter.stream_id;
 
-            IQueryable<AdmissionForm> query = dbSet.AsQueryable();
-                //.Include(a => a.StudentInfoDetails)
+            IQueryable<AdmissionForm> query = dbSet.AsQueryable()
+                .Include(a => a.StudentInfoDetails);
                 //.Include(a => a.AdmissionDocuments)
                 //.Include(a => a.AdmissionEnquiryDetails)
                 //.Include(a => a.SiblingInfos)
@@ -261,7 +261,10 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 if (admissionForm != null)
                 {
                     dbSet.Entry(admissionForm).Collection(adm => adm.StudentInfoDetails).Load();
-                    dbSet.Entry(admissionForm).Collection(adm => adm.AdmissionDocuments).Load();
+                    if(!userWise)
+                    {
+                        dbSet.Entry(admissionForm).Collection(adm => adm.AdmissionDocuments).Load();
+                    }
                     dbSet.Entry(admissionForm).Collection(adm => adm.AdmissionEnquiryDetails).Load();
                     dbSet.Entry(admissionForm).Collection(adm => adm.SiblingInfos).Load();
                     dbSet.Entry(admissionForm).Collection(adm => adm.StudentHealthInfoDetails).Load();

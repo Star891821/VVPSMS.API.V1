@@ -30,7 +30,7 @@ namespace VVPSMS.Service.DataManagers.MasterDataManagers
         {
             using (var dbContext = new VvpsmsdbContext())
             {
-                var result = dbContext.MstAcademicYears.ToList();
+                var result = dbContext.MstAcademicYears.ToList().OrderByDescending(x => x.AcademicId);
                 return _mapper.Map<List<MstAcademicYearDto>>(result);
             }
         }
