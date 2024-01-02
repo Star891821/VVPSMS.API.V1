@@ -156,17 +156,17 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             int? gradeId = paginationFilter.grade_id;
             int? streamId = paginationFilter.stream_id;
 
-            IQueryable<AdmissionForm> query = dbSet
-                .Include(a => a.StudentInfoDetails)
-                .Include(a => a.AdmissionDocuments)
-                .Include(a => a.AdmissionEnquiryDetails)
-                .Include(a => a.SiblingInfos)
-                .Include(a => a.StudentHealthInfoDetails)
-                .Include(a => a.FamilyOrGuardianInfoDetails)
-                .Include(a => a.PreviousSchoolDetails)
-                .Include(a => a.EmergencyContactDetails)
-                .Include(a => a.TransportDetails)
-                .Include(a => a.StudentIllnessDetails).AsQueryable();
+            IQueryable<AdmissionForm> query = dbSet.AsQueryable();
+                //.Include(a => a.StudentInfoDetails)
+                //.Include(a => a.AdmissionDocuments)
+                //.Include(a => a.AdmissionEnquiryDetails)
+                //.Include(a => a.SiblingInfos)
+                //.Include(a => a.StudentHealthInfoDetails)
+                //.Include(a => a.FamilyOrGuardianInfoDetails)
+                //.Include(a => a.PreviousSchoolDetails)
+                //.Include(a => a.EmergencyContactDetails)
+                //.Include(a => a.TransportDetails)
+                //.Include(a => a.StudentIllnessDetails).AsQueryable();
 
             // Apply status code filter
             if (statusCode != null)
