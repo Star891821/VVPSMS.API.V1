@@ -156,8 +156,8 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             int? gradeId = paginationFilter.grade_id;
             int? streamId = paginationFilter.stream_id;
 
-            IQueryable<AdmissionForm> query = dbSet.AsQueryable()
-                .Include(a => a.StudentInfoDetails);
+            IQueryable<AdmissionForm> query = dbSet
+                .Include(a => a.StudentInfoDetails).AsQueryable();
                 //.Include(a => a.AdmissionDocuments)
                 //.Include(a => a.AdmissionEnquiryDetails)
                 //.Include(a => a.SiblingInfos)
