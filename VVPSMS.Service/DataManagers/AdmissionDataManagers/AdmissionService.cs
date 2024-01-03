@@ -322,12 +322,13 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 {
                     if(admissionFormStatusDto.StatusId==5)
                     {
-                        
-                        admission.ScheduledDate = admissionFormStatusDto.ScheduleDate;
+                        admission.EntranceScheduleDate = admissionFormStatusDto.EntranceScheduleDate;
+
                     }
                     else if(admissionFormStatusDto.StatusId==6)
                     {
-                        admission.EntranceScheduleDate = admissionFormStatusDto.EntranceScheduleDate;
+                        admission.ScheduledDate = admissionFormStatusDto.ScheduleDate;
+                       
                     }
 
                     admission.AdmissionStatus = admissionFormStatusDto.StatusId;
