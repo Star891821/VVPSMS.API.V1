@@ -158,15 +158,15 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 
             IQueryable<AdmissionForm> query = dbSet
                 .Include(a => a.StudentInfoDetails).AsQueryable();
-                //.Include(a => a.AdmissionDocuments)
-                //.Include(a => a.AdmissionEnquiryDetails)
-                //.Include(a => a.SiblingInfos)
-                //.Include(a => a.StudentHealthInfoDetails)
-                //.Include(a => a.FamilyOrGuardianInfoDetails)
-                //.Include(a => a.PreviousSchoolDetails)
-                //.Include(a => a.EmergencyContactDetails)
-                //.Include(a => a.TransportDetails)
-                //.Include(a => a.StudentIllnessDetails).AsQueryable();
+            //.Include(a => a.AdmissionDocuments)
+            //.Include(a => a.AdmissionEnquiryDetails)
+            //.Include(a => a.SiblingInfos)
+            //.Include(a => a.StudentHealthInfoDetails)
+            //.Include(a => a.FamilyOrGuardianInfoDetails)
+            //.Include(a => a.PreviousSchoolDetails)
+            //.Include(a => a.EmergencyContactDetails)
+            //.Include(a => a.TransportDetails)
+            //.Include(a => a.StudentIllnessDetails).AsQueryable();
 
             // Apply status code filter
             if (statusCode != null)
@@ -245,6 +245,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         #endregion
 
         #region Private Methods
+
         private AdmissionForm getbyID(int? id, int? UserId, bool userWise = false)
         {
             var admissionForm = new AdmissionForm();
@@ -261,7 +262,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 if (admissionForm != null)
                 {
                     dbSet.Entry(admissionForm).Collection(adm => adm.StudentInfoDetails).Load();
-                    if(!userWise)
+                    if (!userWise)
                     {
                         dbSet.Entry(admissionForm).Collection(adm => adm.AdmissionDocuments).Load();
                     }
@@ -311,7 +312,110 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             }
             return listOfAdmissionForm;
         }
+        public List<AdmissionPayment> GetAdmissionPaymentDetailsByUserId(int userId)
+        {
+            var listOfAdmissionPayment = new List<AdmissionPayment>();
+            try
+            {
 
+                listOfAdmissionPayment = context.Set<AdmissionPayment>().Local.Where(e => e.UserId == userId).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return listOfAdmissionPayment;
+        }
+        public bool UpdateAdmissionPaymentStatus(int admissionPaymentId, int StatusId)
+        {
+            try
+            {
+                AdmissionPayment existingEntity = context.Set<AdmissionPayment>().Local.FirstOrDefault(e => e.AdmissionpaymentId == admissionPaymentId);
+
+                AdmissionPayment updatedEntity = existingEntity;
+                updatedEntity.Status = StatusId;
+                if (existingEntity != null)
+                {
+                    context.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+                }
+                else
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the specific exception
+                return false;
+            }
+        }
+        public bool UpdateAdmissionPaymentStatusbyUserId(int UserId, int StatusId)
+        {
+            try
+            {
+                var existingEntity = context.Set<AdmissionPayment>().Local.Where(e => e.UserId == UserId);
+
+                List<AdmissionPayment> updatedEntity = existingEntity.ToList();
+                foreach (AdmissionPayment entity in updatedEntity)
+                {
+                    entity.Status = StatusId;
+                }
+                if (existingEntity != null)
+                {
+                    context.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+                }
+                else
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the specific exception
+                return false;
+            }
+        }
+        public List<AdmissionPayment> GetAdmissionPaymentDetails(int UserId)
+        {
+            try
+            {
+                return context.Set<AdmissionPayment>().Local.Where(e => e.UserId == UserId).ToList();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public bool SaveAdmissionPaymentDetails(AdmissionPayment admissionPayment)
+        {
+            try
+            {
+                AdmissionPayment existingEntity = context.Set<AdmissionPayment>().Local.FirstOrDefault(e => e.AdmissionpaymentId == admissionPayment.AdmissionpaymentId);
+
+                if (existingEntity != null)
+                {
+                    context.Entry(existingEntity).CurrentValues.SetValues(admissionPayment);
+                }
+                else
+                {
+                    context.Set<AdmissionPayment>().AddAsync(admissionPayment);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the specific exception
+                return false;
+            }
+
+        }
         public AdmissionForm UpdateApplicationStatus(AdmissionFormStatusDto admissionFormStatusDto)
         {
             try
@@ -320,15 +424,15 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 AdmissionForm admission = exist;
                 if (exist != null)
                 {
-                    if(admissionFormStatusDto.StatusId==5)
+                    if (admissionFormStatusDto.StatusId == 5)
                     {
                         admission.EntranceScheduleDate = admissionFormStatusDto.EntranceScheduleDate;
 
                     }
-                    else if(admissionFormStatusDto.StatusId==6)
+                    else if (admissionFormStatusDto.StatusId == 6)
                     {
                         admission.ScheduledDate = admissionFormStatusDto.ScheduleDate;
-                       
+
                     }
 
                     admission.AdmissionStatus = admissionFormStatusDto.StatusId;

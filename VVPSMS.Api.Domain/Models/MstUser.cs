@@ -35,6 +35,8 @@ public partial class MstUser
 
     public string? Useremail { get; set; }
 
+    public virtual ICollection<AdmissionPayment> AdmissionPayments { get; set; } = new List<AdmissionPayment>();
+
     public virtual ICollection<Announcement> Announcements { get; set; } = new List<Announcement>();
 
     public virtual MstUserRole Role { get; set; } = null!;
