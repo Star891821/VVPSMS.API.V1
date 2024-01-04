@@ -617,7 +617,7 @@ namespace VVPSMS.API.Controllers
             return !date.Equals(default);
         }
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> SaveAdmissionPaymentDetails(AdmissionPaymentDto admissionPaymentDto)
         {
             var statusCode = StatusCodes.Status200OK;
