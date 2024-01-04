@@ -727,7 +727,7 @@ namespace VVPSMS.API.Controllers
             return StatusCode(statusCode, value);
         }
         [HttpPost]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> UpdateAdmissionPaymentStatus(int AdmissionPaymentId, int StatusId)
         {
             var statusCode = StatusCodes.Status200OK;

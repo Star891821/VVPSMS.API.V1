@@ -331,20 +331,26 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             try
             {
-                AdmissionPayment existingEntity = context.Set<AdmissionPayment>().Local.FirstOrDefault(e => e.AdmissionpaymentId == admissionPaymentId);
-
-                AdmissionPayment updatedEntity = existingEntity;
-                updatedEntity.Status = StatusId;
-                if (existingEntity != null)
+                List<AdmissionPayment> existingEntities = context.Set<AdmissionPayment>()
+                                                             .Where(e => e.AdmissionpaymentId == admissionPaymentId)
+                                                             .ToList();
+                if (existingEntities.Count > 0)
                 {
-                    context.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
+                    foreach (AdmissionPayment entity in existingEntities)
+                    {
+                        entity.Status = StatusId;
+                        if (entity != null)
+                        {
+                            context.Entry(entity).CurrentValues.SetValues(existingEntities);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
                 }
-                else
-                {
-                    return false;
-                }
-
-                return true;
+                return false;
             }
             catch (Exception ex)
             {
@@ -357,27 +363,25 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             try
             {
                 List<AdmissionPayment> existingEntities = context.Set<AdmissionPayment>()
-                                                            .Local
                                                             .Where(e => e.UserId == UserId)
                                                             .ToList();
-                //var existingEntity = context.Set<AdmissionPayment>().Local.Where(e => e.UserId == UserId);
-                AdmissionPayment existingEntity = context.Set<AdmissionPayment>().Local.FirstOrDefault(e => e.UserId == UserId);
-
-                //List<AdmissionPayment> updatedEntity = existingEntity.ToList();
-                //foreach (AdmissionPayment entity in updatedEntity)
-                //{
-                //    entity.Status = StatusId;
-                //}
-                //if (existingEntity != null)
-                //{
-                //    context.Entry(existingEntity).CurrentValues.SetValues(existingEntities);
-                //}
-                //else
-                //{
-                //    return false;
-                //}
-
-                return true;
+                if(existingEntities.Count > 0) 
+                { 
+                    foreach (AdmissionPayment entity in existingEntities)
+                    {
+                        entity.Status = StatusId;
+                        if (entity != null)
+                        {
+                            context.Entry(entity).CurrentValues.SetValues(existingEntities);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return false;
             }
             catch (Exception ex)
             {
