@@ -393,7 +393,7 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             try
             {
-                return context.Set<AdmissionPayment>().Local.Where(e => e.UserId == UserId).ToList();
+                return context.Set<AdmissionPayment>().Where(e => e.UserId == UserId).ToList();
             }
             catch
             {

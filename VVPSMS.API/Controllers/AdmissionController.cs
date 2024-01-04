@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Amqp.Framing;
 using Microsoft.Net.Http.Headers;
+using Org.BouncyCastle.Utilities;
+using System.Collections.Generic;
+using System.Reflection.Metadata;
 using System.Text;
 using VVPSMS.Api.Models.Enums;
 using VVPSMS.Api.Models.Helpers;
@@ -299,17 +302,46 @@ namespace VVPSMS.API.Controllers
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDocumentsByAdmissionId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"GetAdmissionPaymentDetails API Started");
-                value = _unitOfWork.AdmissionService.GetAdmissionPaymentDetails(UserId);
-                //var itemsDto = GetAdmissionDocumentDto(item);
-                //if (itemsDto == null)
-                //{
-                //    statusCode = StatusCodes.Status404NotFound;
-                //    value = "AllDocumentsByAdmissionId data is not found";
-                //}
-                //else
-                //{
-                //    value = itemsDto;
-                //}
+                List <AdmissionPayment> admissionPayments = _unitOfWork.AdmissionService.GetAdmissionPaymentDetails(UserId);
+                List<AdmissionPaymentDto> itemsDto = new List<AdmissionPaymentDto>();
+                if (admissionPayments != null && admissionPayments.Count > 0)
+                {
+                    foreach (var item in admissionPayments)
+                    {
+                        AdmissionPaymentDto dto = new AdmissionPaymentDto()
+                        {
+                            AdmissionpaymentId = item.AdmissionpaymentId,
+                            UserId = item.UserId,
+                            Status = item.Status,
+                            ImageName = item.ImageName,
+                            ImagePath = item.ImagePath,
+                            Useremail = item.Useremail,
+                            CreatedAt = item.CreatedAt,
+                            CreatedBy = item.CreatedBy,
+                            ModifiedAt = item.ModifiedAt,
+                            ModifiedBy = item.ModifiedBy,
+                        };
+
+                        if (Directory.Exists(item.ImagePath))
+                        {
+                            using FileStream fs = new FileStream(item.ImagePath + "\\" + item.ImageName, FileMode.Open, FileAccess.Read);
+                            using StreamReader sr = new StreamReader(fs, Encoding.UTF8);
+                            var lines = sr.ReadToEnd();
+                            byte[] bytes = Encoding.UTF8.GetBytes(lines);
+                            dto.FileContentsAsBase64 = Convert.ToBase64String(bytes);
+                            sr.Close();
+                            fs.Close();
+                        }
+
+                        itemsDto.Add(dto);
+                    }
+
+                    value = itemsDto;
+                }
+                else
+                {
+                    value = "No Admission Payment Details Found";
+                }
             }
             catch (Exception ex)
             {
@@ -632,7 +664,7 @@ namespace VVPSMS.API.Controllers
                 var temp = fileDetails.Split('.');
                 string fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
                 var filePath = _configuration["Upload:AdmissionPaymentFilePath"];
-                admissionPaymentDto.ImagePath = filePath + "\\" + admissionPaymentDto.UserId + "\\" + fileName;
+                admissionPaymentDto.ImagePath = filePath + "\\" + admissionPaymentDto.UserId;
                 admissionPaymentDto.ImageName = fileName;
                 _unitOfWork.BeginTransaction();
                 var result = _mapper.Map<AdmissionPayment>(admissionPaymentDto);
