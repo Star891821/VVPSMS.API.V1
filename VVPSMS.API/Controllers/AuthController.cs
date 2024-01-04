@@ -22,13 +22,7 @@ namespace VVPSMS.API.Controllers
             _dataRepository = dataRepository;
             _configuration = configuration;
         }
-        [AllowAnonymous]
-        [Microsoft.AspNetCore.Mvc.HttpPost("AuthTest")]
-        public async Task<IActionResult> AuthTest()
-        {
-            
-            return Ok("Hello");
-        }
+       
         [AllowAnonymous]
         [Microsoft.AspNetCore.Mvc.HttpPost("Auth")]
         public async Task<IActionResult> Auth(LoginRequestDto loginRequest)
