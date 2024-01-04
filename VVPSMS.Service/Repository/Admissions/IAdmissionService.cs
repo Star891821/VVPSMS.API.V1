@@ -24,5 +24,7 @@ namespace VVPSMS.Service.Repository.Admissions
         bool UpdateAdmissionPaymentStatusbyUserId(int UserId,int StatusId);
 
         List<AdmissionPayment> GetAdmissionPaymentDetails(int UserId);
+
+        void createDirectory(string directoryPath);
     }
 }

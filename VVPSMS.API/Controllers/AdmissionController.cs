@@ -617,7 +617,7 @@ namespace VVPSMS.API.Controllers
             return !date.Equals(default);
         }
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> SaveAdmissionPaymentDetails(AdmissionPaymentDto admissionPaymentDto)
         {
             var statusCode = StatusCodes.Status200OK;
@@ -626,16 +626,92 @@ namespace VVPSMS.API.Controllers
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
 
-                _logger.Information($"SaveAdmissionPaymentDetails API Started");
+                _logger.Information($"SaveAdmissionPaymentDetails API Started");                
+                
+                var fileDetails = admissionPaymentDto.ImageName;
+                var temp = fileDetails.Split('.');
+                string fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
+                var filePath = _configuration["Upload:AdmissionPaymentFilePath"];
+                admissionPaymentDto.ImagePath = filePath + "\\" + admissionPaymentDto.UserId + "\\" + fileName;
+                admissionPaymentDto.ImageName = fileName;
+                _unitOfWork.BeginTransaction();
                 var result = _mapper.Map<AdmissionPayment>(admissionPaymentDto);
                 _unitOfWork.AdmissionService.SaveAdmissionPaymentDetails(result);
                 await _unitOfWork.CompleteAsync();
 
-
-                value = new { AdmissionPaymentID = admissionPaymentDto.AdmissionpaymentId, Message = "Success" };
+                value = new { AdmissionPaymentID = result.AdmissionpaymentId, Message = "Success" };
                 statusCode = StatusCodes.Status200OK;
+                
+                if (admissionPaymentDto.FileContentsAsBase64 != null && result.AdmissionpaymentId != 0)
+                {
+                    filePath += "\\" + result.UserId;
+                    _unitOfWork.AdmissionService.createDirectory(filePath);
+                    bool IsImageSaved = false;
+                       
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(admissionPaymentDto.FileContentsAsBase64))
+                        {
+                            var Base64FileContent = admissionPaymentDto.FileContentsAsBase64;
+                            string base64stringwithoutsignature = string.Empty;
+                            if (Base64FileContent.IndexOf(',') != -1)
+                            {
+                                var index = Base64FileContent.IndexOf(',');
+                                base64stringwithoutsignature = Base64FileContent.Substring(index + 1);
+                            }
+                            else
+                            {
+                                base64stringwithoutsignature = Base64FileContent;
+                            }
+                            if (IsBase64(base64stringwithoutsignature))
+                            {
+                                byte[] bytes = Convert.FromBase64String(base64stringwithoutsignature);
+                                if (temp.Length > 1)
+                                {
+                                    System.IO.File.WriteAllBytes(filePath + "\\" + fileName, bytes);
+                                    IsImageSaved = true;
+                                }
 
-            }
+                            }
+                            else
+                            {
+                                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Admission Is not Saved since in Document  File Content is not Base64 Type", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                                _logger.Information($"Image Is not Saved since in Image File Content is not Base64 Type");
+
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        statusCode = StatusCodes.Status404NotFound;
+                        value = new { AdmissionpaymentId = "", Message = ex.Message };
+                    }
+
+
+
+                    if (IsImageSaved)
+                    {
+                        _unitOfWork.CommitTransaction();
+                        value = new { AdmissionpaymentId = result.AdmissionpaymentId, Message = "Success" };
+                        statusCode = StatusCodes.Status200OK;
+                    }
+                    else
+                    {
+                        _unitOfWork.RollBack();
+                        value = new { AdmissionpaymentId = "", Message = "Transaction Failed Since Image Didnot Saved" };
+                        statusCode = StatusCodes.Status422UnprocessableEntity;
+                    }
+                }
+                else
+                {
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "listOfAdmissionDocuments or FormID is Null", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                    _logger.Information($"Image or AdmissionpaymentId is Null");
+                }
+
+
+                }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside SaveAdmissionPaymentDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
@@ -651,7 +727,7 @@ namespace VVPSMS.API.Controllers
             return StatusCode(statusCode, value);
         }
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UpdateAdmissionPaymentStatus(int AdmissionPaymentId, int StatusId)
         {
             var statusCode = StatusCodes.Status200OK;

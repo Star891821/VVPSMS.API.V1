@@ -356,21 +356,26 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
         {
             try
             {
-                var existingEntity = context.Set<AdmissionPayment>().Local.Where(e => e.UserId == UserId);
+                List<AdmissionPayment> existingEntities = context.Set<AdmissionPayment>()
+                                                            .Local
+                                                            .Where(e => e.UserId == UserId)
+                                                            .ToList();
+                //var existingEntity = context.Set<AdmissionPayment>().Local.Where(e => e.UserId == UserId);
+                AdmissionPayment existingEntity = context.Set<AdmissionPayment>().Local.FirstOrDefault(e => e.UserId == UserId);
 
-                List<AdmissionPayment> updatedEntity = existingEntity.ToList();
-                foreach (AdmissionPayment entity in updatedEntity)
-                {
-                    entity.Status = StatusId;
-                }
-                if (existingEntity != null)
-                {
-                    context.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
-                }
-                else
-                {
-                    return false;
-                }
+                //List<AdmissionPayment> updatedEntity = existingEntity.ToList();
+                //foreach (AdmissionPayment entity in updatedEntity)
+                //{
+                //    entity.Status = StatusId;
+                //}
+                //if (existingEntity != null)
+                //{
+                //    context.Entry(existingEntity).CurrentValues.SetValues(existingEntities);
+                //}
+                //else
+                //{
+                //    return false;
+                //}
 
                 return true;
             }
@@ -389,6 +394,14 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
             catch
             {
                 return null;
+            }
+        }
+
+        public void createDirectory(string directory)
+        {
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
             }
         }
 
