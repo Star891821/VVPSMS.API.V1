@@ -15,5 +15,14 @@ namespace VVPSMS.Service.Repository.Admissions
         Task<List<AdmissionForm>> GetAdmissionDetailsByUserId(int id);
         Task<AdmissionForm> GetAdmissionDetailsByUserIdAndFormId(int id, int UserId);
         AdmissionForm UpdateApplicationStatus(AdmissionFormStatusDto admissionFormStatusDto);
+
+        bool SaveAdmissionPaymentDetails(AdmissionPayment admissionPayment);
+
+        List<AdmissionPayment> GetAdmissionPaymentDetailsByUserId(int UserId);
+
+        bool UpdateAdmissionPaymentStatus(int  admissionPaymentId,int StatusId);
+        bool UpdateAdmissionPaymentStatusbyUserId(int UserId,int StatusId);
+
+        List<AdmissionPayment> GetAdmissionPaymentDetails(int UserId);
     }
 }

@@ -12,6 +12,7 @@ namespace VVPSMS.API.AutoMapper
         public AutoMapperProfile()
         {
             CreateMap<AdmissionForm, AdmissionFormDto>().ReverseMap();
+            CreateMap<AdmissionPayment, AdmissionPaymentDto>().ReverseMap();
             CreateMap<StudentInfoDetail, StudentInfoDetailDto>().ReverseMap();
             CreateMap<FamilyOrGuardianInfoDetail, FamilyOrGuardianInfoDetailDto>().ReverseMap();
             CreateMap<SiblingInfo, SiblingInfoDto>().ReverseMap();

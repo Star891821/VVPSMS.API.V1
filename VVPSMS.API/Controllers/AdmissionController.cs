@@ -289,7 +289,42 @@ namespace VVPSMS.API.Controllers
             }
             return StatusCode(statusCode, value);
         }
-
+        [HttpGet("{UserId}")]
+        [Authorize]
+        public async Task<IActionResult> GetAdmissionPaymentDetails(int UserId)
+        {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
+            try
+            {
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDocumentsByAdmissionId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                _logger.Information($"GetAdmissionPaymentDetails API Started");
+                value = _unitOfWork.AdmissionService.GetAdmissionPaymentDetails(UserId);
+                //var itemsDto = GetAdmissionDocumentDto(item);
+                //if (itemsDto == null)
+                //{
+                //    statusCode = StatusCodes.Status404NotFound;
+                //    value = "AllDocumentsByAdmissionId data is not found";
+                //}
+                //else
+                //{
+                //    value = itemsDto;
+                //}
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside GetAdmissionPaymentDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at GetAdmissionPaymentDetails for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
+            }
+            finally
+            {
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionPaymentDetails API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                _logger.Information($"GetAdmissionPaymentDetails API completed Successfully");
+            }
+            return StatusCode(statusCode, value);
+        }
         [HttpGet("{formId}")]
         [Authorize]
         public async Task<IActionResult> GetTrackAdmissionStatusDetails(int formId)
@@ -581,7 +616,159 @@ namespace VVPSMS.API.Controllers
         {
             return !date.Equals(default);
         }
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SaveAdmissionPaymentDetails(AdmissionPaymentDto admissionPaymentDto)
+        {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
+            try
+            {
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
 
+                _logger.Information($"SaveAdmissionPaymentDetails API Started");
+                var result = _mapper.Map<AdmissionPayment>(admissionPaymentDto);
+                _unitOfWork.AdmissionService.SaveAdmissionPaymentDetails(result);
+                await _unitOfWork.CompleteAsync();
+
+
+                value = new { AdmissionPaymentID = admissionPaymentDto.AdmissionpaymentId, Message = "Success" };
+                statusCode = StatusCodes.Status200OK;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside SaveAdmissionPaymentDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at SaveAdmissionPaymentDetails for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
+            }
+            finally
+            {
+                _logger.Information($"SaveAdmissionPaymentDetails API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+            }
+            return StatusCode(statusCode, value);
+        }
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> UpdateAdmissionPaymentStatus(int AdmissionPaymentId, int StatusId)
+        {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
+            bool isValidAdmissionPaymentStatus = false;
+            try
+            {
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                _logger.Information($"UpdateAdmissionPaymentStatus API Started");
+                var enumDTOs = Enum<Status>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
+                if (int.TryParse(StatusId.ToString(), out int value1))
+                {
+                    StatusId = value1;
+                    isValidAdmissionPaymentStatus = enumDTOs.Where(a => a.Key == value1).Count() > 0;
+                }
+                if (isValidAdmissionPaymentStatus)
+                {
+                    var saved = _unitOfWork.AdmissionService.UpdateAdmissionPaymentStatus(AdmissionPaymentId, StatusId);
+                    if (saved)
+                    {
+                        await _unitOfWork.CompleteAsync();
+                        value = new { AdmissionPaymentID = AdmissionPaymentId, Message = "Success" };
+                        statusCode = StatusCodes.Status200OK;
+                    }
+                    else
+                    {
+                        statusCode = StatusCodes.Status500InternalServerError;
+                        value = new { AdmissionPaymentID = "", Message = "Update Failed" };
+                        _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Update Failed", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                        _logger.Information($"Update Failed");
+                    }
+                }
+                else
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = new { AdmissionPaymentID = "", Message = "Failure due to invalid status code" };
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Invalid Admission Payment Status Code", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                    _logger.Information($"Invalid Admissionpayment Status Code");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside UpdateAdmissionPaymentStatus for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at UpdateAdmissionPaymentStatus for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
+            }
+            finally
+            {
+                _logger.Information($"UpdateAdmissionPaymentStatus API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+            }
+            return StatusCode(statusCode, value);
+        }
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> UpdateAdmissionPaymentStatusbyUserId(int UserId, int StatusId)
+        {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
+            bool isValidAdmissionPaymentStatus = false;
+            try
+            {
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                _logger.Information($"UpdateAdmissionPaymentStatusbyUserId API Started");
+                var enumDTOs = Enum<Status>.GetAllValuesAsIEnumerable().Select(d => new EnumDTO(d));
+                if (int.TryParse(StatusId.ToString(), out int value1))
+                {
+                    StatusId = value1;
+                    isValidAdmissionPaymentStatus = enumDTOs.Where(a => a.Key == value1).Count() > 0;
+                }
+                if (isValidAdmissionPaymentStatus)
+                {
+                    var saved = _unitOfWork.AdmissionService.UpdateAdmissionPaymentStatusbyUserId(UserId, StatusId);
+                    if (saved)
+                    {
+                        await _unitOfWork.CompleteAsync();
+                        value = new { UserID = UserId, Message = "Success" };
+                        statusCode = StatusCodes.Status200OK;
+                    }
+                    else
+                    {
+                        statusCode = StatusCodes.Status500InternalServerError;
+                        value = new { AdmissionPaymentID = "", Message = "Update Failed" };
+                        _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Update Failed", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                        _logger.Information($"Update Failed");
+                    }
+                }
+                else
+                {
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = new { AdmissionPaymentID = "", Message = "Failure due to invalid status code" };
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Invalid Admission Status Code", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                    _logger.Information($"Invalid Admissionpayment Status Code");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside UpdateAdmissionPaymentStatusbyUserId for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at UpdateAdmissionPaymentStatusbyUserId for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
+            }
+            finally
+            {
+                _logger.Information($"UpdateAdmissionPaymentStatusbyUserId API completed Successfully");
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+            }
+            return StatusCode(statusCode, value);
+        }
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> UpdateApplicationStatus(AdmissionFormStatusDto admissionFormStatus)
@@ -868,7 +1055,7 @@ namespace VVPSMS.API.Controllers
                         AdmissionStatus = item.AdmissionStatus,
                         GradeId = item.GradeId,
                         AcademicId = item.AcademicId,
-                        FirstName = item.StudentInfoDetails.Count() > 0? item.StudentInfoDetails.FirstOrDefault().FirstName:"",
+                        FirstName = item.StudentInfoDetails.Count() > 0 ? item.StudentInfoDetails.FirstOrDefault().FirstName : "",
                         LastName = item.StudentInfoDetails.Count() > 0 ? item.StudentInfoDetails.FirstOrDefault().LastName : "",
                         MiddleName = item.StudentInfoDetails.Count() > 0 ? item.StudentInfoDetails.FirstOrDefault().MiddleName : "",
                         EntranceScheduleDate = item.EntranceScheduleDate,
