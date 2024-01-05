@@ -327,7 +327,7 @@ namespace VVPSMS.API.Controllers
                             using FileStream fs = new FileStream(item.ImagePath + "\\" + item.ImageName, FileMode.Open, FileAccess.Read);
                             using StreamReader sr = new StreamReader(fs, Encoding.UTF8);
                             var lines = sr.ReadToEnd();
-                            byte[] bytes = Encoding.UTF8.GetBytes(lines);
+                            byte[] bytes = System.IO.File.ReadAllBytes(item.ImagePath + "\\" + item.ImageName);
                             dto.FileContentsAsBase64 = Convert.ToBase64String(bytes);
                             sr.Close();
                             fs.Close();
