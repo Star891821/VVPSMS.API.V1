@@ -11,7 +11,7 @@ namespace VVPSMS.Service.Repository.Admissions
 {
     public interface IAdmissionService : ICommonService<AdmissionForm>
     {
-        Task<(List<AdmissionForm>,int)> GetAll(PaginationFilter paginationFilter);
+        Task<(List<AdmissionForm>, int)> GetAll(PaginationFilter paginationFilter);
         Task<List<AdmissionForm>> GetAdmissionDetailsByUserId(int id);
         Task<AdmissionForm> GetAdmissionDetailsByUserIdAndFormId(int id, int UserId);
         AdmissionForm UpdateApplicationStatus(AdmissionFormStatusDto admissionFormStatusDto);
@@ -20,11 +20,13 @@ namespace VVPSMS.Service.Repository.Admissions
 
         List<AdmissionPayment> GetAdmissionPaymentDetailsByUserId(int UserId);
 
-        bool UpdateAdmissionPaymentStatus(int  admissionPaymentId,int StatusId);
-        bool UpdateAdmissionPaymentStatusbyUserId(int UserId,int StatusId);
+        bool UpdateAdmissionPaymentStatus(int admissionPaymentId, int StatusId);
+        bool UpdateAdmissionPaymentStatusbyUserId(int UserId, int StatusId);
 
         List<AdmissionPayment> GetAdmissionPaymentDetails(int UserId);
-
+        public List<AdmissionPayment> GetAdmissionPaymentDetailsByPaymentId(int PaymentId);
         void createDirectory(string directoryPath);
+        public void deleteFileFromDirectory(string directory, string fileName);
+        bool DeleteAdmissionPaymentDetails(List<AdmissionPayment> admissionPayments);
     }
 }

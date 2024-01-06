@@ -302,7 +302,7 @@ namespace VVPSMS.API.Controllers
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAllDocumentsByAdmissionId API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
                 _logger.Information($"GetAdmissionPaymentDetails API Started");
-                List <AdmissionPayment> admissionPayments = _unitOfWork.AdmissionService.GetAdmissionPaymentDetails(UserId);
+                List<AdmissionPayment> admissionPayments = _unitOfWork.AdmissionService.GetAdmissionPaymentDetails(UserId);
                 List<AdmissionPaymentDto> itemsDto = new List<AdmissionPaymentDto>();
                 if (admissionPayments != null && admissionPayments.Count > 0)
                 {
@@ -658,8 +658,8 @@ namespace VVPSMS.API.Controllers
             {
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "GetAdmissionDetailsById API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
 
-                _logger.Information($"SaveAdmissionPaymentDetails API Started");                
-                
+                _logger.Information($"SaveAdmissionPaymentDetails API Started");
+
                 var fileDetails = admissionPaymentDto.ImageName;
                 var temp = fileDetails.Split('.');
                 string fileName = temp[0] + "_" + DateTime.Now.ToString("HH_mm_dd-MM-yyyy") + "." + temp[1];
@@ -673,13 +673,13 @@ namespace VVPSMS.API.Controllers
 
                 value = new { AdmissionPaymentID = result.AdmissionpaymentId, Message = "Success" };
                 statusCode = StatusCodes.Status200OK;
-                
+
                 if (admissionPaymentDto.FileContentsAsBase64 != null && result.AdmissionpaymentId != 0)
                 {
                     filePath += "\\" + result.UserId;
                     _unitOfWork.AdmissionService.createDirectory(filePath);
                     bool IsImageSaved = false;
-                       
+
                     try
                     {
                         if (!string.IsNullOrEmpty(admissionPaymentDto.FileContentsAsBase64))
@@ -743,7 +743,7 @@ namespace VVPSMS.API.Controllers
                 }
 
 
-                }
+            }
             catch (Exception ex)
             {
                 _logger.Error($"Something went wrong inside SaveAdmissionPaymentDetails for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
@@ -894,7 +894,7 @@ namespace VVPSMS.API.Controllers
                     _logger.Information($"UpdateApplicationStatus API Started");
                     switch (admissionFormStatus.StatusId)
                     {
-                       
+
                         case 5:
                             if (BeAValidDate(admissionFormStatus.EntranceScheduleDate))
                             {
@@ -1075,6 +1075,95 @@ namespace VVPSMS.API.Controllers
                 }
                 _logger.Information($"DeleteByFormId API completed Successfully");
                 _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Completed Successfully", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+            }
+            return StatusCode(statusCode, value);
+        }
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeleteAdmissionPaymentsByUserId(int UserID)
+        {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
+            try
+            {
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                _logger.Information($"DeleteAdmissionPaymentsByUserId API Started");
+                List<AdmissionPayment> result = _unitOfWork.AdmissionService.GetAdmissionPaymentDetails(UserID);
+
+                if (result.Count() > 0)
+                {
+                    var item =  _unitOfWork.AdmissionService.DeleteAdmissionPaymentDetails(result);
+
+                    var documents = result;
+                    foreach (var document in documents)
+                    {
+                        _unitOfWork.AdmissionDocumentService.createDirectory(document.ImagePath);
+                    }
+
+                    await _unitOfWork.CompleteAsync();
+                    value = item;
+                }
+                else
+                {
+                    _logger.Information($"Admission Payment Details is not availablein Database");
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Admission Payment details is not availablein Database", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "Admission Payment Details is not available in Database";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside Delete for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at DeleteAdmissionPaymentsByUserId for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
+            }
+            return StatusCode(statusCode, value);
+        }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeleteAdmissionPaymentsByAdmissionPaymentId(int paymentID)
+        {
+            var statusCode = StatusCodes.Status200OK;
+            object? value = null;
+            try
+            {
+                _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Delete API Started", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                _logger.Information($"DeleteAdmissionPaymentsByUserId API Started");
+                List<AdmissionPayment> result = _unitOfWork.AdmissionService.GetAdmissionPaymentDetailsByPaymentId(paymentID);
+
+                if (result.Count() > 0)
+                {
+                    var item = _unitOfWork.AdmissionService.DeleteAdmissionPaymentDetails(result);
+
+                    var documents = result;
+                    foreach (var document in documents)
+                    {
+                        _unitOfWork.AdmissionService.deleteFileFromDirectory(document.ImagePath,document.ImageName);
+                    }
+
+                    await _unitOfWork.CompleteAsync();
+                    value = item;
+                }
+                else
+                {
+                    _logger.Information($"Admission Payment Details is not availablein Database");
+                    _loggerService.LogInfo(new LogsDto() { CreatedOn = DateTime.Now, Exception = "", Level = LogLevel.Info.ToString(), Message = "Admission Payment details is not availablein Database", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+                    statusCode = StatusCodes.Status404NotFound;
+                    value = "Admission Payment Details is not available in Database";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something went wrong inside Delete for" + typeof(AdmissionController).FullName + "entity with exception" + ex.Message);
+
+                _loggerService.LogError(new LogsDto() { CreatedOn = DateTime.Now, Exception = ex.Message + "-" + ex.InnerException, Level = LogLevel.Error.ToString(), Message = "Exception at DeleteAdmissionPaymentsByUserId for" + typeof(AdmissionController).FullName + "entity with exception", Url = Request.GetDisplayUrl(), StackTrace = Environment.StackTrace, Logger = "" });
+
+                statusCode = StatusCodes.Status500InternalServerError;
+                value = ex.Message;
             }
             return StatusCode(statusCode, value);
         }

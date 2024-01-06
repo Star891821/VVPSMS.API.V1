@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.IO;
 using VVPSMS.Api.Models.ModelsDto;
 using VVPSMS.Domain.Models;
 using VVPSMS.Service.Filters;
@@ -365,8 +366,8 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 List<AdmissionPayment> existingEntities = context.Set<AdmissionPayment>()
                                                             .Where(e => e.UserId == UserId)
                                                             .ToList();
-                if(existingEntities.Count > 0) 
-                { 
+                if (existingEntities.Count > 0)
+                {
                     foreach (AdmissionPayment entity in existingEntities)
                     {
                         entity.Status = StatusId;
@@ -400,7 +401,17 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 return null;
             }
         }
-
+        public List<AdmissionPayment> GetAdmissionPaymentDetailsByPaymentId(int PaymentId)
+        {
+            try
+            {
+                return context.Set<AdmissionPayment>().Where(e => e.AdmissionpaymentId == PaymentId).ToList();
+            }
+            catch
+            {
+                return null;
+            }
+        }
         public void createDirectory(string directory)
         {
             if (!Directory.Exists(directory))
@@ -408,7 +419,19 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
                 Directory.CreateDirectory(directory);
             }
         }
-
+        public void deleteFileFromDirectory(string directory,string fileName)
+        {
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            else
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+                foreach (FileInfo fileInfo in directoryInfo.GetFiles(fileName))
+                    fileInfo.Delete();
+            }
+        }
         public bool SaveAdmissionPaymentDetails(AdmissionPayment admissionPayment)
         {
             try
@@ -466,6 +489,19 @@ namespace VVPSMS.Service.DataManagers.AdmissionDataManagers
 
             }
             return null;
+        }
+
+        public bool DeleteAdmissionPaymentDetails(List<AdmissionPayment> admissionPayments)
+        {
+            try
+            {
+                context.Set<AdmissionPayment>().RemoveRange(admissionPayments);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         #endregion
